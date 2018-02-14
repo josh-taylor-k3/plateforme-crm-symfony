@@ -122,11 +122,12 @@ class ProductController extends Controller
      * @Method("GET")
      *
      */
-    public function produit(Connection $connection, Request $request, $id)
+    public function produit(Connection $connection, Request $request, $id, HelperService $helper)
     {
 
 
-            $sql = "SELECT 
+
+        $sql = "SELECT 
                       PR_ID,
                       SO_ID,
                       (
@@ -176,12 +177,15 @@ class ProductController extends Controller
 
 
 
-        if (isset($result)){
+        if (!isset($result)){
             return new JsonResponse("Aucun produit trouvé pour l'id ". $id, 200);
 
         }
 
-        return new JsonResponse($result[0], 200);
+        $data = $helper->array_utf8_encode($result[0]);
+
+
+        return new JsonResponse($data, 200);
 
 
     }
