@@ -2,50 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="36d3a3de-d254-4909-aae7-0d38c1322295" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/.env.dist" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/api_ac.iml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/dataSources/f183d500-3570-4cbf-bdf7-ba7c0eeafbdc.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/dataSources/f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/storage_v2/_src_/database/CENTRALE_PRODUITS.uRlhxA.meta" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/dataSources/f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/storage_v2/_src_/database/CENTRALE_PRODUITS.uRlhxA/schema/dbo.sYMBAA.meta" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/php.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/symfony2.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/bin/console" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/composer.json" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/composer.lock" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/config/bundles.php" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/config/packages/dev/routing.yaml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/config/packages/dev/web_profiler.yaml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/config/packages/doctrine.yaml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/config/packages/doctrine_migrations.yaml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/config/packages/framework.yaml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/config/packages/prod/doctrine.yaml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/config/packages/routing.yaml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/config/packages/security.yaml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/config/packages/test/framework.yaml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/config/packages/test/web_profiler.yaml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/config/packages/twig.yaml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/config/routes.yaml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/config/routes/annotations.yaml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/config/routes/dev/twig.yaml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/config/routes/dev/web_profiler.yaml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/config/services.yaml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/public/index.php" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/Controller/.gitignore" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/Controller/ProductController.php" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/Entity/.gitignore" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/Kernel.php" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/Migrations/.gitignore" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/Repository/.gitignore" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/Security/ApiKeyAuthenticator.php" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/Security/ApiKeyUserProvider.php" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/symfony.lock" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/templates/base.html.twig" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/ProductController.php" afterPath="$PROJECT_DIR$/src/Controller/ProductController.php" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -92,41 +50,46 @@
     </expand>
     <select />
   </component>
-  <component name="DockManager">
-    <window id="2">
-      <content type="file-editors">
-        <state>
-          <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-            <file leaf-file-name="PRODUITS" pinned="false" current-in-tab="true">
-              <entry file="das://src:table:/72f36c62/f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/CENTRALE_PRODUITS.dbo.PRODUITS">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="0">
-                    <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-                    <folding />
-                  </state>
-                </provider>
-              </entry>
-            </file>
-          </leaf>
-        </state>
-      </content>
-    </window>
-  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="ProductController.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Controller/ProductController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="205">
-              <caret line="77" column="0" lean-forward="false" selection-start-line="77" selection-start-column="0" selection-end-line="77" selection-end-column="0" />
+            <state relative-caret-position="381">
+              <caret line="106" column="13" lean-forward="false" selection-start-line="106" selection-start-column="13" selection-end-line="106" selection-end-column="13" />
               <folding>
                 <element signature="e#34#63#0#PHP" expanded="true" />
-                <element signature="e#520#1956#0#PHP" expanded="false" />
-                <marker date="1518534447394" expanded="true" signature="2352:3759" ph="SELECT PR_ID... PRODUITS" />
-                <marker date="1518534447394" expanded="true" signature="2466:2615" ph="SELECT FO_RA... FOURNISSEURS" />
-                <marker date="1518534447394" expanded="true" signature="2705:2836" ph="SELECT RA_NO... RAYONS" />
-                <marker date="1518534447394" expanded="true" signature="2919:3054" ph="SELECT FA_NO... FAMILLES" />
+                <element signature="e#657#3502#0#PHP" expanded="false" />
+                <element signature="e#3988#5892#0#PHP" expanded="false" />
+                <marker date="1518620348141" expanded="false" signature="2121:3490" ph="SELECT PR_ID... PRODUITS" />
+                <marker date="1518620348141" expanded="true" signature="2235:2384" ph="SELECT FO_RA... FOURNISSEURS" />
+                <marker date="1518620348141" expanded="true" signature="2474:2605" ph="SELECT RA_NO... RAYONS" />
+                <marker date="1518620348141" expanded="true" signature="2688:2823" ph="SELECT FA_NO... FAMILLES" />
+                <marker date="1518620348141" expanded="true" signature="4087:5494" ph="SELECT PR_ID... PRODUITS" />
+                <marker date="1518620348141" expanded="true" signature="4201:4350" ph="SELECT FO_RA... FOURNISSEURS" />
+                <marker date="1518620348141" expanded="true" signature="4440:4571" ph="SELECT RA_NO... RAYONS" />
+                <marker date="1518620348141" expanded="true" signature="4654:4789" ph="SELECT FA_NO... FAMILLES" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="services.yaml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config/services.yaml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="255">
+              <caret line="17" column="36" lean-forward="false" selection-start-line="17" selection-start-column="36" selection-end-line="17" selection-end-column="36" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="HelperService.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Service/HelperService.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="345">
+              <caret line="23" column="5" lean-forward="false" selection-start-line="23" selection-start-column="5" selection-end-line="23" selection-end-column="5" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -155,6 +118,7 @@
         <option value="$PROJECT_DIR$/src/Security/ApiKeyUserProvider.php" />
         <option value="$PROJECT_DIR$/config/packages/doctrine.yaml" />
         <option value="$APPLICATION_CONFIG_DIR$/consoles/db/f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/console.sql" />
+        <option value="$PROJECT_DIR$/src/Service/HelperService.php" />
         <option value="$PROJECT_DIR$/src/Controller/ProductController.php" />
       </list>
     </option>
@@ -228,8 +192,9 @@
       <path value="$PROJECT_DIR$/vendor/symfony/var-dumper" />
     </include_path>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="y" value="23" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="1920" />
+    <option name="y" value="-20" />
     <option name="width" value="1920" />
     <option name="height" value="999" />
   </component>
@@ -258,6 +223,11 @@
             <path>
               <item name="api_ac" type="b2602c69:ProjectViewProjectNode" />
               <item name="api_ac" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="api_ac" type="b2602c69:ProjectViewProjectNode" />
+              <item name="api_ac" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="config" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
             <path>
               <item name="api_ac" type="b2602c69:ProjectViewProjectNode" />
@@ -318,23 +288,24 @@
       <workItem from="1518517908023" duration="267000" />
       <workItem from="1518518202956" duration="209000" />
       <workItem from="1518519717092" duration="6110000" />
-      <workItem from="1518606337115" duration="679000" />
+      <workItem from="1518606337115" duration="3089000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="14004000" />
+    <option name="totallyTimeSpent" value="16414000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1920" height="999" extended-state="6" />
+    <frame x="1920" y="-20" width="1920" height="999" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Regex Tester" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32964602" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32952183" sideWeight="0.5021299" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.46128318" sideWeight="0.4978701" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.080404684" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26769912" sideWeight="0.4978701" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15921193" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.30138445" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -370,11 +341,16 @@
           <caret line="77" column="0" lean-forward="true" selection-start-line="77" selection-start-column="0" selection-end-line="77" selection-end-column="0" />
           <folding>
             <element signature="e#34#63#0#PHP" expanded="true" />
-            <element signature="e#520#1956#0#PHP" expanded="false" />
-            <marker date="1518534447394" expanded="true" signature="2352:3759" ph="SELECT PR_ID... PRODUITS" />
-            <marker date="1518534447394" expanded="true" signature="2466:2615" ph="SELECT FO_RA... FOURNISSEURS" />
-            <marker date="1518534447394" expanded="true" signature="2705:2836" ph="SELECT RA_NO... RAYONS" />
-            <marker date="1518534447394" expanded="true" signature="2919:3054" ph="SELECT FA_NO... FAMILLES" />
+            <element signature="e#657#3502#0#PHP" expanded="false" />
+            <element signature="e#3988#5892#0#PHP" expanded="false" />
+            <marker date="1518620348141" expanded="false" signature="2121:3490" ph="SELECT PR_ID... PRODUITS" />
+            <marker date="1518620348141" expanded="true" signature="2235:2384" ph="SELECT FO_RA... FOURNISSEURS" />
+            <marker date="1518620348141" expanded="true" signature="2474:2605" ph="SELECT RA_NO... RAYONS" />
+            <marker date="1518620348141" expanded="true" signature="2688:2823" ph="SELECT FA_NO... FAMILLES" />
+            <marker date="1518620348141" expanded="true" signature="4087:5494" ph="SELECT PR_ID... PRODUITS" />
+            <marker date="1518620348141" expanded="true" signature="4201:4350" ph="SELECT FO_RA... FOURNISSEURS" />
+            <marker date="1518620348141" expanded="true" signature="4440:4571" ph="SELECT RA_NO... RAYONS" />
+            <marker date="1518620348141" expanded="true" signature="4654:4789" ph="SELECT FA_NO... FAMILLES" />
           </folding>
         </state>
       </provider>
@@ -401,11 +377,16 @@
           <caret line="19" column="10" lean-forward="false" selection-start-line="19" selection-start-column="10" selection-end-line="19" selection-end-column="10" />
           <folding>
             <element signature="e#34#63#0#PHP" expanded="true" />
-            <element signature="e#520#1956#0#PHP" expanded="false" />
-            <marker date="1518534447394" expanded="true" signature="2352:3759" ph="SELECT PR_ID... PRODUITS" />
-            <marker date="1518534447394" expanded="true" signature="2466:2615" ph="SELECT FO_RA... FOURNISSEURS" />
-            <marker date="1518534447394" expanded="true" signature="2705:2836" ph="SELECT RA_NO... RAYONS" />
-            <marker date="1518534447394" expanded="true" signature="2919:3054" ph="SELECT FA_NO... FAMILLES" />
+            <element signature="e#657#3502#0#PHP" expanded="false" />
+            <element signature="e#3988#5892#0#PHP" expanded="false" />
+            <marker date="1518620348141" expanded="false" signature="2121:3490" ph="SELECT PR_ID... PRODUITS" />
+            <marker date="1518620348141" expanded="true" signature="2235:2384" ph="SELECT FO_RA... FOURNISSEURS" />
+            <marker date="1518620348141" expanded="true" signature="2474:2605" ph="SELECT RA_NO... RAYONS" />
+            <marker date="1518620348141" expanded="true" signature="2688:2823" ph="SELECT FA_NO... FAMILLES" />
+            <marker date="1518620348141" expanded="true" signature="4087:5494" ph="SELECT PR_ID... PRODUITS" />
+            <marker date="1518620348141" expanded="true" signature="4201:4350" ph="SELECT FO_RA... FOURNISSEURS" />
+            <marker date="1518620348141" expanded="true" signature="4440:4571" ph="SELECT RA_NO... RAYONS" />
+            <marker date="1518620348141" expanded="true" signature="4654:4789" ph="SELECT FA_NO... FAMILLES" />
           </folding>
         </state>
       </provider>
@@ -414,6 +395,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2040">
           <caret line="136" column="44" lean-forward="false" selection-start-line="136" selection-start-column="44" selection-end-line="136" selection-end-column="44" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -423,11 +405,16 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#34#63#0#PHP" expanded="true" />
-            <element signature="e#520#1956#0#PHP" expanded="false" />
-            <marker date="1518534447394" expanded="true" signature="2352:3759" ph="SELECT PR_ID... PRODUITS" />
-            <marker date="1518534447394" expanded="true" signature="2466:2615" ph="SELECT FO_RA... FOURNISSEURS" />
-            <marker date="1518534447394" expanded="true" signature="2705:2836" ph="SELECT RA_NO... RAYONS" />
-            <marker date="1518534447394" expanded="true" signature="2919:3054" ph="SELECT FA_NO... FAMILLES" />
+            <element signature="e#657#3502#0#PHP" expanded="false" />
+            <element signature="e#3988#5892#0#PHP" expanded="false" />
+            <marker date="1518620348141" expanded="false" signature="2121:3490" ph="SELECT PR_ID... PRODUITS" />
+            <marker date="1518620348141" expanded="true" signature="2235:2384" ph="SELECT FO_RA... FOURNISSEURS" />
+            <marker date="1518620348141" expanded="true" signature="2474:2605" ph="SELECT RA_NO... RAYONS" />
+            <marker date="1518620348141" expanded="true" signature="2688:2823" ph="SELECT FA_NO... FAMILLES" />
+            <marker date="1518620348141" expanded="true" signature="4087:5494" ph="SELECT PR_ID... PRODUITS" />
+            <marker date="1518620348141" expanded="true" signature="4201:4350" ph="SELECT FO_RA... FOURNISSEURS" />
+            <marker date="1518620348141" expanded="true" signature="4440:4571" ph="SELECT RA_NO... RAYONS" />
+            <marker date="1518620348141" expanded="true" signature="4654:4789" ph="SELECT FA_NO... FAMILLES" />
           </folding>
         </state>
       </provider>
@@ -436,6 +423,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="435">
           <caret line="29" column="0" lean-forward="true" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -445,11 +433,16 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#34#63#0#PHP" expanded="true" />
-            <element signature="e#520#1956#0#PHP" expanded="false" />
-            <marker date="1518534447394" expanded="true" signature="2352:3759" ph="SELECT PR_ID... PRODUITS" />
-            <marker date="1518534447394" expanded="true" signature="2466:2615" ph="SELECT FO_RA... FOURNISSEURS" />
-            <marker date="1518534447394" expanded="true" signature="2705:2836" ph="SELECT RA_NO... RAYONS" />
-            <marker date="1518534447394" expanded="true" signature="2919:3054" ph="SELECT FA_NO... FAMILLES" />
+            <element signature="e#657#3502#0#PHP" expanded="false" />
+            <element signature="e#3988#5892#0#PHP" expanded="false" />
+            <marker date="1518620348141" expanded="false" signature="2121:3490" ph="SELECT PR_ID... PRODUITS" />
+            <marker date="1518620348141" expanded="true" signature="2235:2384" ph="SELECT FO_RA... FOURNISSEURS" />
+            <marker date="1518620348141" expanded="true" signature="2474:2605" ph="SELECT RA_NO... RAYONS" />
+            <marker date="1518620348141" expanded="true" signature="2688:2823" ph="SELECT FA_NO... FAMILLES" />
+            <marker date="1518620348141" expanded="true" signature="4087:5494" ph="SELECT PR_ID... PRODUITS" />
+            <marker date="1518620348141" expanded="true" signature="4201:4350" ph="SELECT FO_RA... FOURNISSEURS" />
+            <marker date="1518620348141" expanded="true" signature="4440:4571" ph="SELECT RA_NO... RAYONS" />
+            <marker date="1518620348141" expanded="true" signature="4654:4789" ph="SELECT FA_NO... FAMILLES" />
           </folding>
         </state>
       </provider>
@@ -467,11 +460,16 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#34#63#0#PHP" expanded="true" />
-            <element signature="e#520#1956#0#PHP" expanded="false" />
-            <marker date="1518534447394" expanded="true" signature="2352:3759" ph="SELECT PR_ID... PRODUITS" />
-            <marker date="1518534447394" expanded="true" signature="2466:2615" ph="SELECT FO_RA... FOURNISSEURS" />
-            <marker date="1518534447394" expanded="true" signature="2705:2836" ph="SELECT RA_NO... RAYONS" />
-            <marker date="1518534447394" expanded="true" signature="2919:3054" ph="SELECT FA_NO... FAMILLES" />
+            <element signature="e#657#3502#0#PHP" expanded="false" />
+            <element signature="e#3988#5892#0#PHP" expanded="false" />
+            <marker date="1518620348141" expanded="false" signature="2121:3490" ph="SELECT PR_ID... PRODUITS" />
+            <marker date="1518620348141" expanded="true" signature="2235:2384" ph="SELECT FO_RA... FOURNISSEURS" />
+            <marker date="1518620348141" expanded="true" signature="2474:2605" ph="SELECT RA_NO... RAYONS" />
+            <marker date="1518620348141" expanded="true" signature="2688:2823" ph="SELECT FA_NO... FAMILLES" />
+            <marker date="1518620348141" expanded="true" signature="4087:5494" ph="SELECT PR_ID... PRODUITS" />
+            <marker date="1518620348141" expanded="true" signature="4201:4350" ph="SELECT FO_RA... FOURNISSEURS" />
+            <marker date="1518620348141" expanded="true" signature="4440:4571" ph="SELECT RA_NO... RAYONS" />
+            <marker date="1518620348141" expanded="true" signature="4654:4789" ph="SELECT FA_NO... FAMILLES" />
           </folding>
         </state>
       </provider>
@@ -497,13 +495,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/config/bundles.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/services.yaml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -545,6 +536,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="95">
           <caret line="18" column="25" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -552,6 +544,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="226">
           <caret line="81" column="43" lean-forward="false" selection-start-line="81" selection-start-column="35" selection-end-line="81" selection-end-column="43" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -585,17 +578,38 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/Service/HelperService.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="23" column="5" lean-forward="false" selection-start-line="23" selection-start-column="5" selection-end-line="23" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/services.yaml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="36" lean-forward="false" selection-start-line="17" selection-start-column="36" selection-end-line="17" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Controller/ProductController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="205">
-          <caret line="77" column="0" lean-forward="false" selection-start-line="77" selection-start-column="0" selection-end-line="77" selection-end-column="0" />
+        <state relative-caret-position="381">
+          <caret line="106" column="13" lean-forward="false" selection-start-line="106" selection-start-column="13" selection-end-line="106" selection-end-column="13" />
           <folding>
             <element signature="e#34#63#0#PHP" expanded="true" />
-            <element signature="e#520#1956#0#PHP" expanded="false" />
-            <marker date="1518534447394" expanded="true" signature="2352:3759" ph="SELECT PR_ID... PRODUITS" />
-            <marker date="1518534447394" expanded="true" signature="2466:2615" ph="SELECT FO_RA... FOURNISSEURS" />
-            <marker date="1518534447394" expanded="true" signature="2705:2836" ph="SELECT RA_NO... RAYONS" />
-            <marker date="1518534447394" expanded="true" signature="2919:3054" ph="SELECT FA_NO... FAMILLES" />
+            <element signature="e#657#3502#0#PHP" expanded="false" />
+            <element signature="e#3988#5892#0#PHP" expanded="false" />
+            <marker date="1518620348141" expanded="false" signature="2121:3490" ph="SELECT PR_ID... PRODUITS" />
+            <marker date="1518620348141" expanded="true" signature="2235:2384" ph="SELECT FO_RA... FOURNISSEURS" />
+            <marker date="1518620348141" expanded="true" signature="2474:2605" ph="SELECT RA_NO... RAYONS" />
+            <marker date="1518620348141" expanded="true" signature="2688:2823" ph="SELECT FA_NO... FAMILLES" />
+            <marker date="1518620348141" expanded="true" signature="4087:5494" ph="SELECT PR_ID... PRODUITS" />
+            <marker date="1518620348141" expanded="true" signature="4201:4350" ph="SELECT FO_RA... FOURNISSEURS" />
+            <marker date="1518620348141" expanded="true" signature="4440:4571" ph="SELECT RA_NO... RAYONS" />
+            <marker date="1518620348141" expanded="true" signature="4654:4789" ph="SELECT FA_NO... FAMILLES" />
           </folding>
         </state>
       </provider>
