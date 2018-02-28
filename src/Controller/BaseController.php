@@ -111,7 +111,7 @@ class BaseController extends Controller
      * @Route("/user/setDroits",name="set_droits_user" )
      * @Method("POST")
      */
-    public function setDroitsApiUser($id, DbService $db, Request $request){
+    public function setDroitsApiUser( DbService $db, Request $request){
 
 
         $client = $request->request->get('clients');
