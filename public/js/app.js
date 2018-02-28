@@ -17,6 +17,8 @@
         var url = "http://api.achatcentrale.fr/user/setDroits";
 
 
+        console.log(clients);
+
         $.ajax({
             type: "POST",
             url: url,
