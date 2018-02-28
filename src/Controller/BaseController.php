@@ -115,6 +115,9 @@ class BaseController extends Controller
 
 
         $client = $request->request->get('clients');
+        $tickets = $request->request->get('tickets');
+        $fourn = $request->request->get('fourn');
+        $produits = $request->request->get('produits');
 
         dump($client);
 
