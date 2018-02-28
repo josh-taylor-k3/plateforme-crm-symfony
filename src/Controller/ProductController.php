@@ -23,6 +23,9 @@ class ProductController extends Controller
     public function produits(Connection $connection, Request $request, HelperService $helper, ApiKeyAuth $auth, LogHsitory $log)
     {
 
+        header("Access-Control-Allow-Origin: *");
+
+
         $key = $request->headers->get('X-ac-key');
 
         if (isset($key) && $auth->grant($key)) {
@@ -138,6 +141,9 @@ class ProductController extends Controller
      */
     public function produit(Connection $connection, Request $request, $id, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log)
     {
+
+
+        header("Access-Control-Allow-Origin: *");
 
 
         $key = $request->headers->get('X-ac-key');
