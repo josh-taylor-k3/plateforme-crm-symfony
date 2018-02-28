@@ -26,6 +26,7 @@ class BaseController extends Controller
 
     /**
      * @Route("/list", name="list_api_user")
+     * @throws \Doctrine\DBAL\DBALException
      */
     public function ListApiUser(Request $request, Connection $connection, Environment $twig)
     {
@@ -42,11 +43,35 @@ class BaseController extends Controller
         $result = $conn->fetchAll();
 
 
+        try {
+            return new Response($twig->render("Api/ListToken.html.twig", [
+                "list" => $result
+            ]));
+        } catch (\Twig_Error_Loader $e) {
+        } catch (\Twig_Error_Runtime $e) {
+        } catch (\Twig_Error_Syntax $e) {
+        }
+    }
 
 
-        return new Response($twig->render("Api/ListToken.html.twig", [
-            "list" => $result
+    /**
+     * @Route("/list/{id}", name="detail_api_user")
+     * @Method("GET")
+     */
+    public function detailApuUser(Request $request, Connection $connection, Environment $twig, $id, DbService $db)
+    {
+
+        $detail = $db->getDetailById($id);
+
+        $history = $db->getHistoryById($id);
+
+
+
+        return new Response($twig->render("Api/detail_user.html.twig", [
+            "list" => $detail[0],
+            "history" => $history
         ]));
+
     }
 
     /**
@@ -83,24 +108,18 @@ class BaseController extends Controller
     }
 
     /**
-     * @Route("/list/{id}", name="detail_api_user")
-     * @Method("GET")
+     * @Route(
      */
-    public function detailApuUser(Request $request, Connection $connection, Environment $twig, $id, DbService $db)
-    {
-
-        $detail = $db->getDetailById($id);
-
-        $history = $db->getHistoryById($id);
+    public function setDroitsApiUser($id, DbService $db, Request $request){
 
 
+        $client = $request->request->get('clients');
 
-        return new Response($twig->render("Api/detail_user.html.twig", [
-            "list" => $detail[0],
-            "history" => $history
-        ]));
+        dump($client);
+
+
+        return new JsonResponse('ok', 200);
 
     }
-
 
 }

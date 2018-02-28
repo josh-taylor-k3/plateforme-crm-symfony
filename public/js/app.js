@@ -7,24 +7,38 @@
 
     btn_save_droits_api.addEventListener('click', function (ev) {
 
-        var myHeaders = new Headers();
 
-        var myInit = { method: 'GET',
-            headers: myHeaders,
-            mode: 'cors',
-            cache: 'default' };
 
-        fetch('http://api.achatcentrale.fr/produit/8626',myInit)
-            .then(function(response) {
-                return response.blob();
-            })
-            .then(function(myBlob) {
 
-                console.log(myBlob)
+        var clients = document.getElementById('checkbox_clients');
+        var tickets = document.getElementById('checkbox_tickets');
+        var fourn = document.getElementById('checkbox_fourn');
+        var produits = document.getElementById('checkbox_produits');
+        var url = "http://api.achatcentrale.fr/produit/8626";
 
-            });
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            contentType: "json",
+            cache: false,
+            processData:false,
+            headers: {
+                "X-ac-key":"hdmSTymnVdBm2r7xGL64Ie7hB6PQ1Hnd3jAAXF36"
+            },
+            data : {
+                "clients" : clients,
+                "tickets" : tickets,
+                "fourn" : fourn,
+                "produits" : produits
+            }
+        }).done(function(data) {
+            console.log(data);
+        });
 
 
     })
+
+
 
 })();

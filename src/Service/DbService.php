@@ -35,4 +35,11 @@ class DbService
         return $conn->fetchAll();
     }
 
+
+    public function setDroitsById($id)
+    {
+
+
+    }
+
 }
