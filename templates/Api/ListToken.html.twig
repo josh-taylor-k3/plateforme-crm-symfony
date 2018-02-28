@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+
+    <div class="container">
+        <div class="jumbotron">
+            <h1 class="display-4">Liste des applications enregistré dans l'API</h1>
+            <p class="lead"></p>
+            <hr class="my-4">
+            <p class="lead">
+                <a class="btn btn-primary btn-lg" href="#" role="button">Voir la documentation</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">id</th>
+                        <th scope="col">Clé api</th>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Dernières utilisation</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                   {% for lists in list %}
+                       <tr>
+                           <th scope="row">{{ lists['APP_ID'] }}</th>
+                           <td>{{ lists['AU_SECRET'] }}</td>
+                           <td>{{ lists['AU_NAME'] }}</td>
+                           <td></td>
+                           <td><a class="btn btn-success " href="{{ path('detail_api_user', {'id' :lists['APP_ID'] }) }}" role="button">Voir le profil</a></td>
+                       </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+
+            </div>
+            <div class="col">
+                <h4 >Enregistrer une nouvelle application :</h4>
+
+                <form action="{{  path('new_api_user') }}" method="post">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Nom de l'application</label>
+                        <input type="text" class="form-control" name="app_name" id="InputApp" aria-describedby="AppHelp" placeholder="Nom d'application">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

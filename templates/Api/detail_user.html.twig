@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+
+    <div class="container">
+        <div class="jumbotron">
+            <h1 class="display-3">Nom de l'application : <b>{{ list['AU_NAME'] }}</b></h1>
+            <p class="lead">Clé api : <b>{{ list['AU_SECRET'] }}</b></p>
+            <p class="lead">
+                <a class="btn btn-primary btn-lg" href="{{ path('list_api_user') }}" role="button">Retour a l'accueil</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="container ">
+
+        <div class="row ">
+            <div class="col-6">
+                <h2>Droits de l'application</h2>
+
+                <small id="" class="form-text text-muted">Modifier les droits de cet application</small>
+                <div class="border pl-3 pt-3">
+                    <div class="row pb-3">
+                        <div class="col">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" {% if list['AD_CLIENTS'] == 1%}checked='checked'{% endif %} id="Ressource_clients">
+                                <label class="custom-control-label" for="Ressource_clients">Clients</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" {% if list['AD_FOURN'] == 1%}checked='checked'{% endif %} id="Ressource_fournisseur">
+                                <label class="custom-control-label" for="Ressource_fournisseur"> Fournisseur</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" {% if list['AD_TICKETS'] == 1%}checked='checked'{% endif %} id="Ressource_tickets">
+                                <label class="custom-control-label" for="Ressource_tickets"> Tickets</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" {% if list['AD_PRODUITS'] == 1%}checked='checked'{% endif %} id="Ressource_produits">
+                                <label class="custom-control-label" for="Ressource_produits"> Produits</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a class="btn btn-success float-right mt-3" href="#" role="button">Enregistrer</a>
+            </div>
+            <div class="col-6">
+
+                <h2>Historique d'utilisation</h2>
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Ressource</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for hist in history  %}
+                        <tr>
+                            <th scope="row">{{ hist['AH_DATE'] |date("d - M - Y") }}</th>
+                            <td>{{ hist['AH_RESSOURCE'] }}</td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+    </div>
+
+
+{% endblock %}
