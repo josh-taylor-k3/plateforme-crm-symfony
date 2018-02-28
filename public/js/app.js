@@ -14,7 +14,7 @@
         var tickets = document.getElementById('checkbox_tickets');
         var fourn = document.getElementById('checkbox_fourn');
         var produits = document.getElementById('checkbox_produits');
-        var url = "http://api.achatcentrale.fr/produit/8626";
+        var url = "http://api.achatcentrale.fr/user/setDroits";
 
 
         $.ajax({

@@ -108,7 +108,8 @@ class BaseController extends Controller
     }
 
     /**
-     * @Route(
+     * @Route("/user/setDroits",name="set_droits_user" )
+     * @Method("POST")
      */
     public function setDroitsApiUser($id, DbService $db, Request $request){
 
