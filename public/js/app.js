@@ -27,12 +27,14 @@
 
             type: "POST",
             url: url,
-            cache: false,
             headers: {
                 "X-ac-key":"hdmSTymnVdBm2r7xGL64Ie7hB6PQ1Hnd3jAAXF36"
             },
             data: {
-                client: "test"
+                client: clients,
+                tickets: tickets,
+                fourn: fourn,
+                produits: produits
             },
 
             // La fonction à apeller si la requête aboutie
