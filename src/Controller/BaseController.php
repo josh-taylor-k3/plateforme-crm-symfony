@@ -114,7 +114,7 @@ class BaseController extends Controller
     public function setDroitsApiUser( DbService $db, Request $request, Connection $conn){
 
 
-        $clients = $request->request->get('client');
+        $clients = $request->request->get('clients');
         $tickets = $request->request->get('tickets');
         $fourn = $request->request->get('fourn');
         $produits = $request->request->get('produits');
@@ -127,7 +127,7 @@ class BaseController extends Controller
 
 
         $conn = $conn->prepare($sql);
-        $conn->bindValue('ticket', $clients);
+        $conn->bindValue('ticket', $tickets);
         $conn->bindValue('produits', $produits);
         $conn->bindValue('fourn', $fourn);
         $conn->bindValue('client', $clients);
