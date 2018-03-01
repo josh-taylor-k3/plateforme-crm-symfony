@@ -111,7 +111,7 @@ class BaseController extends Controller
      * @Route("/user/setDroits",name="set_droits_user" )
      * @Method("POST")
      */
-    public function setDroitsApiUser( DbService $db, Request $request){
+    public function setDroitsApiUser( DbService $db, Request $request, Connection $conn){
 
 
         $clients = $request->request->get('client');
@@ -124,6 +124,18 @@ class BaseController extends Controller
         $sql = "UPDATE CENTRALE_ACHAT_v2.dbo.API_DROITS
                 SET AD_TICKETS = :ticket, AD_PRODUITS = :produits,  AD_FOURN = :fourn, AD_CLIENTS = :client
                 WHERE APP_ID = :id";
+
+
+        $conn = $conn->prepare($sql);
+        $conn->bindValue('ticket', $clients);
+        $conn->bindValue('produits', $produits);
+        $conn->bindValue('fourn', $fourn);
+        $conn->bindValue('client', $clients);
+        $conn->bindValue('id', $id);
+
+
+        $conn->execute();
+        $result = $conn->fetchAll();
 
 
 
