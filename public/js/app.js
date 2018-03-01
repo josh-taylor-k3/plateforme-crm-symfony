@@ -24,34 +24,34 @@
         console.log(id);
 
 
-        // $.ajax({
-        //
-        //     type: "POST",
-        //     url: url,
-        //     headers: {
-        //         "X-ac-key":"hdmSTymnVdBm2r7xGL64Ie7hB6PQ1Hnd3jAAXF36"
-        //     },
-        //     data: {
-        //         clients: clients,
-        //         tickets: tickets,
-        //         fourn: fourn,
-        //         produits: produits,
-        //         id: "5"
-        //     },
-        //
-        //     // La fonction à apeller si la requête aboutie
-        //     success: function (data) {
-        //         console.log(data);
-        //
-        //     },
-        //
-        //     // La fonction à appeler si la requête n'a pas abouti
-        //     error: function (data) {
-        //         console.log(data);
-        //
-        //     }
-        //
-        // });
+        $.ajax({
+
+            type: "POST",
+            url: url,
+            headers: {
+                "X-ac-key":"hdmSTymnVdBm2r7xGL64Ie7hB6PQ1Hnd3jAAXF36"
+            },
+            data: {
+                clients: clients,
+                tickets: tickets,
+                fourn: fourn,
+                produits: produits,
+                id: id
+            },
+
+            // La fonction à apeller si la requête aboutie
+            success: function (data) {
+                console.log(data);
+
+            },
+
+            // La fonction à appeler si la requête n'a pas abouti
+            error: function (data) {
+                console.log(data);
+
+            }
+
+        });
 
 
 
