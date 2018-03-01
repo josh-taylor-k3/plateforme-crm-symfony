@@ -28,7 +28,6 @@
             type: "POST",
             url: url,
             cache: false,
-            processData:false,
             headers: {
                 "X-ac-key":"hdmSTymnVdBm2r7xGL64Ie7hB6PQ1Hnd3jAAXF36"
             },
