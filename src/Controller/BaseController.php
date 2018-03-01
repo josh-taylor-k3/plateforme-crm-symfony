@@ -118,6 +118,7 @@ class BaseController extends Controller
         $tickets = $request->request->get('tickets');
         $fourn = $request->request->get('fourn');
         $produits = $request->request->get('produits');
+        $id = $request->request->get('id');
 
 
         $sql = "UPDATE CENTRALE_ACHAT_v2.dbo.API_DROITS
@@ -132,6 +133,7 @@ class BaseController extends Controller
             "tickets" => $tickets,
             "fourn" => $fourn,
             "produits" => $produits,
+            "id" => $id,
 
         ];
 
