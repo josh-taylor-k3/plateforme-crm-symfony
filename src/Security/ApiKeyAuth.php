@@ -32,7 +32,7 @@ class ApiKeyAuth
 
         dump($result);
 
-        if (isset($result)){
+        if (!empty($result)){
             return true;
         }else {
             throw new Exception("Mauvaise clé api", 500);
