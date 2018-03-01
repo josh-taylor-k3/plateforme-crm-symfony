@@ -30,7 +30,6 @@ class ApiKeyAuth
         $conn->execute();
         $result = $conn->fetchAll();
 
-        dump($result);
 
         if (!empty($result)){
             return true;
