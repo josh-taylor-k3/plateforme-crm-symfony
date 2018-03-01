@@ -32,47 +32,51 @@ class ProductController extends Controller
             $limit = $request->query->get('limit');
 
             if (isset($limit)) {
-                $sql = "SELECT TOP " . $limit . "
-                      PR_ID,
-                      SO_ID,
-                      (
-                        SELECT FO_RAISONSOC
-                        FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS
-                        WHERE FOURNISSEURS.FO_ID = PRODUITS.FO_ID
-                      ) as Fournisseur ,
-                      (
-                        SELECT RA_NOM
-                        FROM CENTRALE_PRODUITS.dbo.RAYONS
-                        WHERE RAYONS.RA_ID = PRODUITS.RA_ID
-                      ) as Rayon,
-                      (
-                        SELECT FA_NOM
-                        FROM CENTRALE_PRODUITS.dbo.FAMILLES
-                        WHERE FAMILLES.FA_ID = PRODUITS.FA_ID
-                      ) as Famille,
-                      PR_REF,
-                      PR_REF_FRS,
-                      PR_EAN,
-                      PR_NOM,
-                      PR_DESCR_COURTE,
-                      PR_DESCR_LONGUE,
-                      PR_TRIPTYQUE,
-                      PR_QTE_CMDE,
-                      PR_CONDT,
-                      PR_PRIX_PUBLIC,
-                      PR_PRIX_CA,
-                      PR_REMISE,
-                      PR_PRIX_VC,
-                      PR_TYPE_LIEN,
-                      PR_LIEN,
-                      PR_PHARE,
-                      PR_STATUS
-                    FROM CENTRALE_PRODUITS.dbo.PRODUITS";
+                $sql = "SELECT TOP ". $limit."
+                          CENTRALE_PRODUITS.dbo.PRODUITS.PR_ID,
+                          SO_ID,
+                          (
+                            SELECT FO_RAISONSOC
+                            FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS
+                            WHERE FOURNISSEURS.FO_ID = PRODUITS.FO_ID
+                          ) as Fournisseur ,
+                          (
+                            SELECT RA_NOM
+                            FROM CENTRALE_PRODUITS.dbo.RAYONS
+                            WHERE RAYONS.RA_ID = PRODUITS.RA_ID
+                          ) as Rayon,
+                          (
+                            SELECT FA_NOM
+                            FROM CENTRALE_PRODUITS.dbo.FAMILLES
+                            WHERE FAMILLES.FA_ID = PRODUITS.FA_ID
+                          ) as Famille,
+                          PR_REF,
+                          PR_REF_FRS,
+                          PR_EAN,
+                          PR_NOM,
+                          PR_DESCR_COURTE,
+                          PR_DESCR_LONGUE,
+                          PR_TRIPTYQUE,
+                          PR_QTE_CMDE,
+                          PR_CONDT,
+                          PR_PRIX_PUBLIC,
+                          PR_PRIX_CA,
+                          PR_REMISE,
+                          PR_PRIX_VC,
+                          PR_TYPE_LIEN,
+                          PR_LIEN,
+                          PR_PHARE,
+                          PR_STATUS,
+                          PP_TYPE,
+                          PP_FICHIER
+                        FROM CENTRALE_PRODUITS.dbo.PRODUITS
+                        INNER JOIN CENTRALE_PRODUITS.dbo.PRODUITS_PHOTOS ON PRODUITS.PR_ID = PRODUITS_PHOTOS.PR_ID
+                        ";
 
             } else {
 
-                $sql = "SELECT 
-                      PR_ID,
+                $sql = "SELECT
+                      CENTRALE_PRODUITS.dbo.PRODUITS.PR_ID,
                       SO_ID,
                       (
                         SELECT FO_RAISONSOC
@@ -105,8 +109,11 @@ class ProductController extends Controller
                       PR_TYPE_LIEN,
                       PR_LIEN,
                       PR_PHARE,
-                      PR_STATUS
-                    FROM CENTRALE_PRODUITS.dbo.PRODUITS";
+                      PR_STATUS,
+                      PP_TYPE,
+                      PP_FICHIER
+                    FROM CENTRALE_PRODUITS.dbo.PRODUITS
+                    INNER JOIN CENTRALE_PRODUITS.dbo.PRODUITS_PHOTOS ON PRODUITS.PR_ID = PRODUITS_PHOTOS.PR_ID";
             }
 
             $conn = $connection->prepare($sql);
