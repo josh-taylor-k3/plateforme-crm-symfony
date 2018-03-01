@@ -32,10 +32,10 @@
                 "X-ac-key":"hdmSTymnVdBm2r7xGL64Ie7hB6PQ1Hnd3jAAXF36"
             },
             data : {
-                "clients" : clients,
-                "tickets" : tickets,
-                "fourn" : fourn,
-                "produits" : produits
+                clients : clients,
+                tickets : tickets,
+                fourn : fourn,
+                produits : produits
             }
         }).done(function(data) {
             console.log(data);
