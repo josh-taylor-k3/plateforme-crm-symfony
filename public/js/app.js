@@ -43,6 +43,9 @@
             success: function (data) {
                 console.log(data);
 
+
+                window.location.reload()
+
             },
 
             // La fonction à appeler si la requête n'a pas abouti
