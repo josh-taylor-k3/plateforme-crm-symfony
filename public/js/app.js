@@ -7,7 +7,6 @@
 
     btn_save_droits_api.addEventListener('click', function (ev) {
 
-        ev.preventDefault();
 
 
         var clients = $('#checkbox_clients').is(':checked') ? 1 : 0;
