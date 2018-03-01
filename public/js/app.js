@@ -22,7 +22,9 @@
         console.log(fourn);
         console.log(produits);
 
+
         $.ajax({
+
             type: "POST",
             url: url,
             contentType: "json",
@@ -32,12 +34,25 @@
                 "X-ac-key":"hdmSTymnVdBm2r7xGL64Ie7hB6PQ1Hnd3jAAXF36"
             },
             data: {
-                "clients" : "test"
+                client: "test"
+            },
+
+            // La fonction à apeller si la requête aboutie
+            success: function (data) {
+                console.log(data);
+
+            },
+
+            // La fonction à appeler si la requête n'a pas abouti
+            error: function (data) {
+                console.log(data);
 
             }
-        }).done(function(data) {
-            console.log(data);
+
         });
+
+
+
 
 
     })
