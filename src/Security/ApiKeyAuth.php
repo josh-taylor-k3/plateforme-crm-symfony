@@ -30,10 +30,9 @@ class ApiKeyAuth
         $conn->execute();
         $result = $conn->fetchAll();
 
-
+        dump($result);
 
         if (isset($result)){
-
             return true;
         }else {
             throw new Exception("Mauvaise clé api", 500);
