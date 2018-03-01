@@ -10,14 +10,17 @@
 
 
 
-        var clients = document.getElementById('checkbox_clients');
-        var tickets = document.getElementById('checkbox_tickets');
-        var fourn = document.getElementById('checkbox_fourn');
-        var produits = document.getElementById('checkbox_produits');
+        var clients = $('#checkbox_clients').is(':checked') ? 1 : 0;
+        var tickets = $('#checkbox_tickets').is(':checked') ? 1 : 0;
+        var fourn = $('#checkbox_fourn').is(':checked') ? 1 : 0;
+        var produits = $('#checkbox_produits').is(':checked') ? 1 : 0;
         var url = "http://api.achatcentrale.fr/user/setDroits";
 
 
         console.log(clients);
+        console.log(tickets);
+        console.log(fourn);
+        console.log(produits);
 
         $.ajax({
             type: "POST",
