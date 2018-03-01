@@ -114,16 +114,21 @@ class BaseController extends Controller
     public function setDroitsApiUser( DbService $db, Request $request){
 
 
-        $client = $request->request->get('clients');
+        $clients = $request->request->get('client');
         $tickets = $request->request->get('tickets');
         $fourn = $request->request->get('fourn');
         $produits = $request->request->get('produits');
 
 
+        $sql = "UPDATE CENTRALE_ACHAT_v2.dbo.API_DROITS
+                SET AD_TICKETS = :ticket, AD_PRODUITS = :produits,  AD_FOURN = :fourn, AD_CLIENTS = :client
+                WHERE APP_ID = :id";
+
+
 
         $data = [
 
-            "client" => $client,
+            "clients" => $clients,
             "tickets" => $tickets,
             "fourn" => $fourn,
             "produits" => $produits,

@@ -7,7 +7,7 @@
 
     btn_save_droits_api.addEventListener('click', function (ev) {
 
-
+        ev.preventDefault();
 
 
         var clients = $('#checkbox_clients').is(':checked') ? 1 : 0;
@@ -15,12 +15,14 @@
         var fourn = $('#checkbox_fourn').is(':checked') ? 1 : 0;
         var produits = $('#checkbox_produits').is(':checked') ? 1 : 0;
         var url = "http://api.achatcentrale.fr/user/setDroits";
+        var id = $('#id_user_actual').html();
 
 
         console.log(clients);
         console.log(tickets);
         console.log(fourn);
         console.log(produits);
+        console.log(id);
 
 
         $.ajax({
@@ -34,7 +36,8 @@
                 clients: clients,
                 tickets: tickets,
                 fourn: fourn,
-                produits: produits
+                produits: produits,
+                id: "5"
             },
 
             // La fonction à apeller si la requête aboutie
