@@ -3,6 +3,7 @@
 namespace App\Security;
 
 use Doctrine\DBAL\Connection;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 class ApiKeyAuth
 {
@@ -35,7 +36,7 @@ class ApiKeyAuth
 
             return true;
         }else {
-            return false;
+            throw new Exception("Mauvaise clé api", 500);
         }
 
 
