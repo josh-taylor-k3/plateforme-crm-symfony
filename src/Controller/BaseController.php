@@ -119,10 +119,9 @@ class BaseController extends Controller
         $fourn = $request->request->get('fourn');
         $produits = $request->request->get('produits');
 
-        dump($client);
 
 
-        return new JsonResponse('ok', 200);
+        return new JsonResponse($client, 200);
 
     }
 
