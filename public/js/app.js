@@ -27,7 +27,6 @@
 
             type: "POST",
             url: url,
-            contentType: "json",
             cache: false,
             processData:false,
             headers: {
