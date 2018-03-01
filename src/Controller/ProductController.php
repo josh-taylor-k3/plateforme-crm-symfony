@@ -122,7 +122,7 @@ class ProductController extends Controller
 
             $id = $helper->getIdFromApiKey($key);
 
-            $log->logAction($id[0]['APP_ID'], "get:produits");
+//            $log->logAction($id[0]['APP_ID'], "get:produits");
             return new JsonResponse($data, 200);
         } else {
 
