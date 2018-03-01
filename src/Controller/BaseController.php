@@ -121,7 +121,17 @@ class BaseController extends Controller
 
 
 
-        return new JsonResponse($client, 200);
+        $data = [
+
+            "client" => $client,
+            "tickets" => $tickets,
+            "fourn" => $fourn,
+            "produits" => $produits,
+
+        ];
+
+
+        return new JsonResponse($data, 200);
 
     }
 
