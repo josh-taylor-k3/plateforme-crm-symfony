@@ -4,20 +4,21 @@ namespace App\Controller;
 
 use App\Security\ApiKeyAuth;
 use App\Service\HelperService;
-use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\Connection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ClientController extends Controller
+class FournisseurController extends Controller
 {
     /**
-     * @Route("/clients/{idCentrale}", name="clients")
+     * @Route("/fournisseurs", name="fournisseurs")
      */
-    public function getClients(Request $request , ApiKeyAuth $auth, Connection $connection, HelperService $helper, $idCentrale)
+    public function getFournisseurs(Request $request , ApiKeyAuth $auth, Connection $connection, HelperService $helper)
     {
+
 
         header("Access-Control-Allow-Origin: *");
 
@@ -27,11 +28,9 @@ class ClientController extends Controller
         if (isset($key) && $auth->grant($key)) {
 
             $sql = "SELECT *
-                    FROM CENTRALE_ACHAT.dbo.Vue_All_Clients
-                    WHERE SO_ID = :id";
+                    FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS";
 
             $conn = $connection->prepare($sql);
-            $conn->bindValue('id', $idCentrale);
             $conn->execute();
             $result = $conn->fetchAll();
             if (!isset($result)) {
@@ -45,32 +44,31 @@ class ClientController extends Controller
             return new JsonResponse("Vous n'avez pas accès a ces ressources", 500);
         }
 
+
     }
 
 
+
     /**
-     * @Route("/client/{id}", name="clients")
+     * @Route("/fournisseur/{id}", name="fournisseur")
      */
-    public function getClient(Request $request, ApiKeyAuth $auth, Connection $connection, HelperService $helper, $id)
+    public function getFournisseur(Request $request , ApiKeyAuth $auth, Connection $connection, HelperService $helper, $id)
     {
+
 
 
         header("Access-Control-Allow-Origin: *");
 
 
         $key = $request->headers->get('X-ac-key');
-        $centrale = $request->query->get('centrale');
-
 
         if (isset($key) && $auth->grant($key)) {
 
-            $sql = "SELECT TOP 1 *
-                    FROM CENTRALE_ACHAT.dbo.Vue_All_Clients
-                    WHERE SO_ID = :idCentrale
-                    AND CL_ID = :id";
+            $sql = "SELECT *
+                    FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS
+                    WHERE FO_ID = :id";
 
             $conn = $connection->prepare($sql);
-            $conn->bindValue('idCentrale', $centrale);
             $conn->bindValue('id', $id);
             $conn->execute();
             $result = $conn->fetchAll();
@@ -84,7 +82,6 @@ class ClientController extends Controller
         } else {
             return new JsonResponse("Vous n'avez pas accès a ces ressources", 500);
         }
-
 
 
 
