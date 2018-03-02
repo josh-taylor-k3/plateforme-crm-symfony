@@ -9,7 +9,7 @@
       <case-sensitivity plain-identifiers="mixed" quoted-identifiers="mixed" />
       <secret-storage>master_key</secret-storage>
       <user-name>AC_JBAGOSTIN</user-name>
-      <introspection-schemas>CENTRALE_ACHAT:|CENTRALE_ACHAT_v2:dbo|CENTRALE_FUNECAP:|CENTRALE_GCCP:|CENTRALE_PFPL:|CENTRALE_PRODUITS:dbo|CENTRALE_PROMUCF:|CENTRALE_ROC_ECLERC:</introspection-schemas>
+      <introspection-schemas>CENTRALE_ACHAT:@|CENTRALE_ACHAT_v2:dbo|CENTRALE_FUNECAP:|CENTRALE_GCCP:|CENTRALE_PFPL:|CENTRALE_PRODUITS:dbo|CENTRALE_PROMUCF:|CENTRALE_ROC_ECLERC:</introspection-schemas>
     </data-source>
   </component>
 </project>

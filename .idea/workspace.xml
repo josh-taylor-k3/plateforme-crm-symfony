@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="36d3a3de-d254-4909-aae7-0d38c1322295" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/f183d500-3570-4cbf-bdf7-ba7c0eeafbdc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/f183d500-3570-4cbf-bdf7-ba7c0eeafbdc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/storage_v2/_src_/database/CENTRALE_ACHAT_v2.Ma-ViA/schema/dbo.sYMBAA.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/storage_v2/_src_/database/CENTRALE_ACHAT_v2.Ma-ViA/schema/dbo.sYMBAA.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/storage_v2/_src_/database/CENTRALE_PRODUITS.uRlhxA/schema/dbo.sYMBAA.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/storage_v2/_src_/database/CENTRALE_PRODUITS.uRlhxA/schema/dbo.sYMBAA.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/ProductController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/ProductController.php" afterDir="false" />
     </list>
     <ignored mask="rest-client.private.env.json" />
     <ignored mask="http-client.private.env.json" />
@@ -36,77 +39,64 @@
       <path>
         <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
         <item name="CENTRALE_PRODUITS@185.29.149.144" type="feb32156:DbDataSourceImpl" />
-        <item name="CENTRALE_PRODUITS: database" type="bdf80c8a:MssqlImplModel$Database" />
+        <item name="CENTRALE_ACHAT: database" type="bdf80c8a:MssqlImplModel$Database" />
       </path>
       <path>
         <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
         <item name="CENTRALE_PRODUITS@185.29.149.144" type="feb32156:DbDataSourceImpl" />
-        <item name="CENTRALE_PRODUITS: database" type="bdf80c8a:MssqlImplModel$Database" />
+        <item name="CENTRALE_ACHAT: database" type="bdf80c8a:MssqlImplModel$Database" />
         <item name="dbo: schema" type="3adcb6a6:MssqlImplModel$Schema" />
       </path>
       <path>
         <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
         <item name="CENTRALE_PRODUITS@185.29.149.144" type="feb32156:DbDataSourceImpl" />
-        <item name="CENTRALE_PRODUITS: database" type="bdf80c8a:MssqlImplModel$Database" />
+        <item name="CENTRALE_ACHAT: database" type="bdf80c8a:MssqlImplModel$Database" />
         <item name="dbo: schema" type="3adcb6a6:MssqlImplModel$Schema" />
-        <item name="tables" type="d4e8921:DatabaseStructure$FamilyGroup" />
-      </path>
-      <path>
-        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
-        <item name="CENTRALE_PRODUITS@185.29.149.144" type="feb32156:DbDataSourceImpl" />
-        <item name="CENTRALE_PRODUITS: database" type="bdf80c8a:MssqlImplModel$Database" />
-        <item name="dbo: schema" type="3adcb6a6:MssqlImplModel$Schema" />
-        <item name="tables" type="d4e8921:DatabaseStructure$FamilyGroup" />
-        <item name="PRODUITS_PHOTOS: table" type="a00791b9:MssqlImplModel$Table" />
+        <item name="views" type="d4e8921:DatabaseStructure$FamilyGroup" />
       </path>
     </expand>
     <select />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ProductController.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ProductController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Controller/ProductController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="149">
-              <caret line="73" column="30" selection-start-line="73" selection-start-column="30" selection-end-line="73" selection-end-column="30" />
+            <state relative-caret-position="1680">
+              <caret line="120" column="40" selection-start-line="118" selection-start-column="10" selection-end-line="120" selection-end-column="40" />
+              <folding>
+                <element signature="e#5051#7419#0#PHP" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ClientController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Controller/ClientController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="360">
+              <caret line="66" column="20" selection-start-line="66" selection-start-column="20" selection-end-line="69" selection-end-column="35" />
               <folding>
                 <element signature="e#34#62#0#PHP" expanded="true" />
-                <element signature="e#912#3779#0#PHP" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ApiKeyAuth.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Security/ApiKeyAuth.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="398">
-              <caret line="32" selection-start-line="32" selection-end-line="32" />
-              <folding>
-                <element signature="e#32#61#0#PHP" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PRODUITS" pinned="false" current-in-tab="false">
-        <entry file="das://f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/database/CENTRALE_PRODUITS/schema/dbo/table/PRODUITS">
-          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-            <state>
-              <filtering enabled="true">
-                <filter text="PR_ID = 9138" />
-                <filter text="PR_ID=9138" />
-                <filter text="PR_ID = 27522" />
-              </filtering>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="console.sql" pinned="false" current-in-tab="false">
+      <file leaf-file-name="console.sql" pinned="false" current-in-tab="true">
         <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/console.sql">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="420">
-              <caret line="28" column="13" selection-end-line="39" />
+            <state relative-caret-position="45">
+              <caret line="3" column="21" selection-start-line="3" selection-start-column="21" selection-end-line="3" selection-end-column="21" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Vue_All_Clients" pinned="false" current-in-tab="false">
+        <entry file="das://f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/database/CENTRALE_ACHAT/schema/dbo/view/Vue_All_Clients">
+          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+            <state>
+              <filtering enabled="true" />
             </state>
           </provider>
         </entry>
@@ -134,8 +124,10 @@
         <option value="$PROJECT_DIR$/src/Controller/BaseController.php" />
         <option value="$PROJECT_DIR$/public/js/app.js" />
         <option value="$PROJECT_DIR$/src/Security/ApiKeyAuth.php" />
-        <option value="$APPLICATION_CONFIG_DIR$/consoles/db/f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/console.sql" />
         <option value="$PROJECT_DIR$/src/Controller/ProductController.php" />
+        <option value="$APPLICATION_CONFIG_DIR$/consoles/db/f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/console_2.sql" />
+        <option value="$PROJECT_DIR$/src/Controller/ClientController.php" />
+        <option value="$APPLICATION_CONFIG_DIR$/consoles/db/f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/console.sql" />
       </list>
     </option>
   </component>
@@ -209,7 +201,8 @@
     </include_path>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="y" value="23" />
+    <option name="x" value="1920" />
+    <option name="y" value="-20" />
     <option name="width" value="1920" />
     <option name="height" value="999" />
   </component>
@@ -221,6 +214,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -281,7 +275,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -290,7 +283,7 @@
     <property name="http.client.ignore.private.env.files.were.configured" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
-    <property name="settings.editor.selected.configurable" value="web-ide.project.structure" />
+    <property name="settings.editor.selected.configurable" value="database.main" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -332,25 +325,27 @@
       <workItem from="1519894290530" duration="70000" />
       <workItem from="1519894400847" duration="651000" />
       <workItem from="1519895235735" duration="6758000" />
-      <workItem from="1519916027105" duration="912000" />
+      <workItem from="1519916027105" duration="1959000" />
+      <workItem from="1519979935716" duration="603000" />
+      <workItem from="1519982813376" duration="2442000" />
+      <workItem from="1519988413169" duration="505000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="61568000" />
+    <option name="totallyTimeSpent" value="66165000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1920" height="999" extended-state="0" />
-    <editor active="true" />
+    <frame x="1920" y="-20" width="1920" height="999" extended-state="0" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Regex Tester" order="7" weight="0.32964602" />
-      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5026624" side_tool="true" weight="0.27272728" />
+      <window_info anchor="bottom" id="Regex Tester" order="12" weight="0.3292683" />
+      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.5026624" side_tool="true" weight="0.27272728" />
       <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.49733758" weight="0.27161863" />
-      <window_info active="true" anchor="bottom" id="Database Console" order="8" visible="true" weight="0.27937916" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1517572" />
+      <window_info anchor="bottom" id="Version Control" order="11" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="9" sideWeight="0.49733758" visible="true" weight="0.27161863" />
+      <window_info anchor="bottom" id="Database Console" order="13" weight="0.27937916" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15654951" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="3" visible="true" weight="0.24440895" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -360,7 +355,7 @@
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="CSS-X-Fire" order="7" />
+      <window_info anchor="bottom" id="CSS-X-Fire" order="10" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -378,42 +373,13 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/config/services.yaml">
+    <entry file="file://$PROJECT_DIR$/src/Controller/ClientController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="36" selection-start-line="17" selection-start-column="36" selection-end-line="17" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Service/HelperService.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="23" column="5" selection-start-line="23" selection-start-column="5" selection-end-line="23" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/console.sql">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="36" column="17" selection-start-line="36" selection-start-column="17" selection-end-line="36" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Controller/ProductController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="585">
-          <caret line="77" lean-forward="true" selection-start-line="77" selection-end-line="77" />
+        <state relative-caret-position="1110">
+          <caret line="74" column="38" selection-start-line="74" selection-start-column="38" selection-end-line="74" selection-end-column="38" />
           <folding>
             <element signature="e#34#62#0#PHP" expanded="true" />
-            <element signature="e#912#3779#0#PHP" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/console.sql">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="26" column="11" selection-start-line="26" selection-start-column="11" selection-end-line="26" selection-end-column="11" />
         </state>
       </provider>
     </entry>
@@ -422,8 +388,7 @@
         <state relative-caret-position="285">
           <caret line="19" column="10" selection-start-line="19" selection-start-column="10" selection-end-line="19" selection-end-column="10" />
           <folding>
-            <element signature="e#34#62#0#PHP" expanded="true" />
-            <element signature="e#912#3779#0#PHP" />
+            <element signature="e#5051#7419#0#PHP" />
           </folding>
         </state>
       </provider>
@@ -439,8 +404,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state>
           <folding>
-            <element signature="e#34#62#0#PHP" expanded="true" />
-            <element signature="e#912#3779#0#PHP" />
+            <element signature="e#5051#7419#0#PHP" />
           </folding>
         </state>
       </provider>
@@ -456,8 +420,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state>
           <folding>
-            <element signature="e#34#62#0#PHP" expanded="true" />
-            <element signature="e#912#3779#0#PHP" />
+            <element signature="e#5051#7419#0#PHP" />
           </folding>
         </state>
       </provider>
@@ -466,8 +429,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state>
           <folding>
-            <element signature="e#34#62#0#PHP" expanded="true" />
-            <element signature="e#912#3779#0#PHP" />
+            <element signature="e#5051#7419#0#PHP" />
           </folding>
         </state>
       </provider>
@@ -635,27 +597,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Security/ApiKeyAuth.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="398">
-          <caret line="32" selection-start-line="32" selection-end-line="32" />
-          <folding>
-            <element signature="e#32#61#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/72f36c62/f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/CENTRALE_PRODUITS.dbo.PRODUITS">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true">
-            <filter text="PR_ID = 9138" />
-            <filter text="PR_ID=9138" />
-            <filter text="PR_ID = 27522" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
     <entry file="das://f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/database/CENTRALE_PRODUITS/schema/dbo/table/PRODUITS_PHOTOS">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
@@ -674,27 +615,75 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
           <caret line="5" column="27" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/72f36c62/f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/CENTRALE_PRODUITS.dbo.PRODUITS">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true">
+            <filter text="PR_ID = 9138" />
+            <filter text="PR_ID=9138" />
+            <filter text="PR_ID = 27522" />
+          </filtering>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Security/ApiKeyAuth.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="398">
+          <caret line="32" selection-start-line="32" selection-end-line="32" />
           <folding>
-            <element signature="e#103#124#0#HTML" expanded="true" />
+            <element signature="e#32#61#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/console.sql">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="28" column="13" selection-end-line="39" />
+    <entry file="das://f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/database/CENTRALE_ACHAT/schema/dbo/view/Vue_Remontee_Filets">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/database/CENTRALE_ACHAT/schema/dbo/view/Vue_SocietesUsers">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Controller/ProductController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="149">
-          <caret line="73" column="30" selection-start-line="73" selection-start-column="30" selection-end-line="73" selection-end-column="30" />
+        <state relative-caret-position="1680">
+          <caret line="120" column="40" selection-start-line="118" selection-start-column="10" selection-end-line="120" selection-end-column="40" />
+          <folding>
+            <element signature="e#5051#7419#0#PHP" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Controller/ClientController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="66" column="20" selection-start-line="66" selection-start-column="20" selection-end-line="69" selection-end-column="35" />
           <folding>
             <element signature="e#34#62#0#PHP" expanded="true" />
-            <element signature="e#912#3779#0#PHP" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/database/CENTRALE_ACHAT/schema/dbo/view/Vue_All_Clients">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/f183d500-3570-4cbf-bdf7-ba7c0eeafbdc/console.sql">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="21" selection-start-line="3" selection-start-column="21" selection-end-line="3" selection-end-column="21" />
         </state>
       </provider>
     </entry>
