@@ -88,7 +88,12 @@ class TicketsController extends Controller
 
             }
 
-            return new JsonResponse($result, 200);
+
+            $data = $helper->array_utf8_encode($result);
+
+
+
+            return new JsonResponse($data, 200);
         } else {
 
             return new JsonResponse("Vous n'avez pas accès a ces ressources", 500);
