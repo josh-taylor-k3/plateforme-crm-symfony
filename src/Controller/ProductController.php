@@ -32,6 +32,7 @@ class ProductController extends Controller
             $limit = $request->query->get('limit');
 
             if (isset($limit)) {
+
                 $sql = "SELECT TOP ". $limit."
                           CENTRALE_PRODUITS.dbo.PRODUITS.PR_ID,
                           SO_ID,
@@ -335,11 +336,20 @@ class ProductController extends Controller
 
 
 
+
+
+
+
+
             $id = $helper->getIdFromApiKey($key);
 
             $log->logAction($id[0]['APP_ID'], "post:produit");
 
 
+
+
+
+            return new JsonResponse("ok", 200);
 
         } else {
             return new JsonResponse("Vous n'avez pas accès a ces ressources", 500);
@@ -347,7 +357,6 @@ class ProductController extends Controller
         }
 
 
-        return new JsonResponse("ok", 200);
     }
 
 
