@@ -106,6 +106,57 @@ class TicketsController extends Controller
 
 
 
+    /**
+     * @Route("/ticket/new", name="ticket_new")
+     */
+    public function TicketsNew(Connection $connection, Request $request, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log)
+    {
+
+
+        header("Access-Control-Allow-Origin: *");
+
+
+        $key = $request->headers->get('X-ac-key');
+        $centrale = $request->request->get('centrale');
+
+
+
+        $data = [
+          "centrale" => $centrale
+        ];
+
+
+//        $sql = "
+//                    SELECT * FROM CENTRALE_ACHAT.dbo.Vue_All_Tickets
+//                    WHERE CL_ID = :id
+//                    ";
+//
+//
+//        $conn = $connection->prepare($sql);
+//        $conn->bindValue('id', $id);
+//        $conn->execute();
+//        $result = $conn->fetchAll();
+//
+//        if (!isset($result)) {
+//            return new JsonResponse("Aucun produit trouvé", 200);
+//
+//        }
+//
+//
+//        $data = $helper->array_utf8_encode($result);
+
+
+
+        return new JsonResponse($data, 200);
+
+
+
+
+
+
+
+
+    }
 
 
 
