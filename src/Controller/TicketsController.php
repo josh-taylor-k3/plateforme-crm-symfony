@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 class TicketsController extends Controller
 {
     /**
-     * @Route("/tickets/{id}", name="tickets")
+     * @Route("/ticket/{id}", name="ticket_byId")
      */
     public function ticketsById(Connection $connection, Request $request, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log, $id)
     {
@@ -49,16 +49,12 @@ class TicketsController extends Controller
 
             return new JsonResponse("Vous n'avez pas accès a ces ressources", 500);
 
-
         }
-
-
-
 
     }
 
     /**
-     * @Route("/tickets/client/{id}", name="tickets")
+     * @Route("/tickets/client/{id}", name="ticket_client")
      */
     public function TicketsByClients(Connection $connection, Request $request, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log, $id)
     {
@@ -73,9 +69,9 @@ class TicketsController extends Controller
             $limit = $request->query->get('limit');
 
             $sql = "
-        SELECT * FROM CENTRALE_ACHAT.dbo.Vue_All_Tickets
-        WHERE CL_ID = :id
-        ";
+                    SELECT * FROM CENTRALE_ACHAT.dbo.Vue_All_Tickets
+                    WHERE CL_ID = :id
+                    ";
 
 
             $conn = $connection->prepare($sql);
@@ -106,5 +102,10 @@ class TicketsController extends Controller
 
 
     }
+
+
+
+
+
 
 }

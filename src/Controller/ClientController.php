@@ -89,4 +89,85 @@ class ClientController extends Controller
 
 
     }
+
+    /**
+     * @Route("/client/{idCentrale}/{id}/user", name="clients")
+     */
+    public function getClientsUsers(Request $request, ApiKeyAuth $auth, Connection $connection, HelperService $helper, $id, $idCentrale)
+    {
+
+        header("Access-Control-Allow-Origin: *");
+
+
+        $key = $request->headers->get('X-ac-key');
+        $centrale = $request->query->get('centrale');
+
+
+        if (isset($key) && $auth->grant($key)) {
+
+            $sql = "SELECT CC_MAIL, CC_NOM, CC_PRENOM
+                    FROM CENTRALE_ACHAT.dbo.Vue_All_Clients
+                    WHERE SO_ID = :idCentrale
+                    AND CL_ID = :id";
+
+            $conn = $connection->prepare($sql);
+            $conn->bindValue('idCentrale', $idCentrale);
+            $conn->bindValue('id', $id);
+            $conn->execute();
+            $result = $conn->fetchAll();
+            if (!isset($result)) {
+                return new JsonResponse("Aucun produit trouvé", 200);
+            }
+            $data = $helper->array_utf8_encode($result);
+            $id = $helper->getIdFromApiKey($key);
+//            $log->logAction($id[0]['APP_ID'], "get:produits");
+            return new JsonResponse($data, 200);
+        } else {
+            return new JsonResponse("Vous n'avez pas accès a ces ressources", 500);
+        }
+
+
+
+    }
+
+    /**
+     * @Route("/client/{idCentrale}/{id}/regions", name="clients")
+     */
+    public function getClientsRegion(Request $request, ApiKeyAuth $auth, Connection $connection, HelperService $helper, $id, $idCentrale)
+    {
+
+        header("Access-Control-Allow-Origin: *");
+
+
+        $key = $request->headers->get('X-ac-key');
+        $centrale = $request->query->get('centrale');
+
+
+        if (isset($key) && $auth->grant($key)) {
+
+            $sql = "SELECT CC_MAIL, CC_NOM, CC_PRENOM
+                    FROM CENTRALE_ACHAT.dbo.Vue_All_Clients
+                    WHERE SO_ID = :idCentrale
+                    AND CL_ID = :id";
+
+            $conn = $connection->prepare($sql);
+            $conn->bindValue('idCentrale', $idCentrale);
+            $conn->bindValue('id', $id);
+            $conn->execute();
+            $result = $conn->fetchAll();
+            if (!isset($result)) {
+                return new JsonResponse("Aucun produit trouvé", 200);
+            }
+            $data = $helper->array_utf8_encode($result);
+            $id = $helper->getIdFromApiKey($key);
+//            $log->logAction($id[0]['APP_ID'], "get:produits");
+            return new JsonResponse($data, 200);
+        } else {
+            return new JsonResponse("Vous n'avez pas accès a ces ressources", 500);
+        }
+
+
+
+    }
+
 }
