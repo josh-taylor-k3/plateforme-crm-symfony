@@ -23,17 +23,34 @@ class ProductController extends Controller
     public function produits(Connection $connection, Request $request, HelperService $helper, ApiKeyAuth $auth, LogHsitory $log)
     {
 
-        header("Access-Control-Allow-Origin: *");
 
 
         $key = $request->headers->get('X-ac-key');
+        $grant = $auth->grant($key);
 
-        if (isset($key) && $auth->grant($key)) {
-            $limit = $request->query->get('limit');
+        switch ($grant){
+            case $grant['profil'] == "FOURNISSEUR":
+                $frsRaisonSoc = $db->getRaisonSocFrs($grant['fo_id']);
+                $sql = "SELECT * FROM CENTRALE_ACHAT.dbo.Vue_All_Tickets
+                        WHERE FO_RAISONSOC = :id_four";
+                $conn = $connection->prepare($sql);
+                $conn->bindValue('id_four', $frsRaisonSoc[0]['FO_RAISONSOC'] );
+                $conn->execute();
+                $result = $conn->fetchAll();
 
-            if (isset($limit)) {
+                if (!empty($result)) {
+                    $data = $helper->array_utf8_encode($result);
+                    return new JsonResponse($data, 200);
+                }
+                return new JsonResponse("Aucun tickets trouvé ", 200);
+                break;
 
-                $sql = "SELECT TOP ". $limit."
+            case $grant['profil'] == "CENTRALE":
+
+                $limit = $request->query->get('limit');
+
+
+                $sql = "SELECT TOP ".$limit."
                           CENTRALE_PRODUITS.dbo.PRODUITS.PR_ID,
                           SO_ID,
                           (
@@ -72,72 +89,144 @@ class ProductController extends Controller
                           PP_FICHIER
                         FROM CENTRALE_PRODUITS.dbo.PRODUITS
                         INNER JOIN CENTRALE_PRODUITS.dbo.PRODUITS_PHOTOS ON PRODUITS.PR_ID = PRODUITS_PHOTOS.PR_ID
+                        WHERE SO_ID = :id
                         ";
+                $conn = $connection->prepare($sql);
+                $conn->bindValue('id', $grant['centrale']);
 
-            } else {
+                $conn->execute();
+                $result = $conn->fetchAll();
 
-                $sql = "SELECT
-                      CENTRALE_PRODUITS.dbo.PRODUITS.PR_ID,
-                      SO_ID,
-                      (
-                        SELECT FO_RAISONSOC
-                        FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS
-                        WHERE FOURNISSEURS.FO_ID = PRODUITS.FO_ID
-                      ) as Fournisseur ,
-                      (
-                        SELECT RA_NOM
-                        FROM CENTRALE_PRODUITS.dbo.RAYONS
-                        WHERE RAYONS.RA_ID = PRODUITS.RA_ID
-                      ) as Rayon,
-                      (
-                        SELECT FA_NOM
-                        FROM CENTRALE_PRODUITS.dbo.FAMILLES
-                        WHERE FAMILLES.FA_ID = PRODUITS.FA_ID
-                      ) as Famille,
-                      PR_REF,
-                      PR_REF_FRS,
-                      PR_EAN,
-                      PR_NOM,
-                      PR_DESCR_COURTE,
-                      PR_DESCR_LONGUE,
-                      PR_TRIPTYQUE,
-                      PR_QTE_CMDE,
-                      PR_CONDT,
-                      PR_PRIX_PUBLIC,
-                      PR_PRIX_CA,
-                      PR_REMISE,
-                      PR_PRIX_VC,
-                      PR_TYPE_LIEN,
-                      PR_LIEN,
-                      PR_PHARE,
-                      PR_STATUS,
-                      PP_TYPE,
-                      PP_FICHIER
-                    FROM CENTRALE_PRODUITS.dbo.PRODUITS
-                    INNER JOIN CENTRALE_PRODUITS.dbo.PRODUITS_PHOTOS ON PRODUITS.PR_ID = PRODUITS_PHOTOS.PR_ID";
-            }
-
-            $conn = $connection->prepare($sql);
-            $conn->execute();
-            $result = $conn->fetchAll();
-
-            if (!isset($result)) {
-                return new JsonResponse("Aucun produit trouvé", 200);
-
-            }
-
-            $data = $helper->array_utf8_encode($result);
-
-            $id = $helper->getIdFromApiKey($key);
-
-//            $log->logAction($id[0]['APP_ID'], "get:produits");
-            return new JsonResponse($data, 200);
-        } else {
-
-            return new JsonResponse("Vous n'avez pas accès a ces ressources", 500);
+                if (!empty($result)) {
+                    $data = $helper->array_utf8_encode($result);
+                    return new JsonResponse($data, 200);
+                }
+                return new JsonResponse("Aucun tickets trouvé ", 200);
 
 
+
+
+                break;
         }
+
+
+
+
+//        header("Access-Control-Allow-Origin: *");
+//
+//
+//        $key = $request->headers->get('X-ac-key');
+//
+//        if (isset($key) && $auth->grant($key)) {
+//            $limit = $request->query->get('limit');
+//
+//            if (isset($limit)) {
+//
+//                $sql = "SELECT TOP ". $limit."
+//                          CENTRALE_PRODUITS.dbo.PRODUITS.PR_ID,
+//                          SO_ID,
+//                          (
+//                            SELECT FO_RAISONSOC
+//                            FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS
+//                            WHERE FOURNISSEURS.FO_ID = PRODUITS.FO_ID
+//                          ) as Fournisseur ,
+//                          (
+//                            SELECT RA_NOM
+//                            FROM CENTRALE_PRODUITS.dbo.RAYONS
+//                            WHERE RAYONS.RA_ID = PRODUITS.RA_ID
+//                          ) as Rayon,
+//                          (
+//                            SELECT FA_NOM
+//                            FROM CENTRALE_PRODUITS.dbo.FAMILLES
+//                            WHERE FAMILLES.FA_ID = PRODUITS.FA_ID
+//                          ) as Famille,
+//                          PR_REF,
+//                          PR_REF_FRS,
+//                          PR_EAN,
+//                          PR_NOM,
+//                          PR_DESCR_COURTE,
+//                          PR_DESCR_LONGUE,
+//                          PR_TRIPTYQUE,
+//                          PR_QTE_CMDE,
+//                          PR_CONDT,
+//                          PR_PRIX_PUBLIC,
+//                          PR_PRIX_CA,
+//                          PR_REMISE,
+//                          PR_PRIX_VC,
+//                          PR_TYPE_LIEN,
+//                          PR_LIEN,
+//                          PR_PHARE,
+//                          PR_STATUS,
+//                          PP_TYPE,
+//                          PP_FICHIER
+//                        FROM CENTRALE_PRODUITS.dbo.PRODUITS
+//                        INNER JOIN CENTRALE_PRODUITS.dbo.PRODUITS_PHOTOS ON PRODUITS.PR_ID = PRODUITS_PHOTOS.PR_ID
+//                        ";
+//
+//            } else {
+//
+//                $sql = "SELECT
+//                      CENTRALE_PRODUITS.dbo.PRODUITS.PR_ID,
+//                      SO_ID,
+//                      (
+//                        SELECT FO_RAISONSOC
+//                        FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS
+//                        WHERE FOURNISSEURS.FO_ID = PRODUITS.FO_ID
+//                      ) as Fournisseur ,
+//                      (
+//                        SELECT RA_NOM
+//                        FROM CENTRALE_PRODUITS.dbo.RAYONS
+//                        WHERE RAYONS.RA_ID = PRODUITS.RA_ID
+//                      ) as Rayon,
+//                      (
+//                        SELECT FA_NOM
+//                        FROM CENTRALE_PRODUITS.dbo.FAMILLES
+//                        WHERE FAMILLES.FA_ID = PRODUITS.FA_ID
+//                      ) as Famille,
+//                      PR_REF,
+//                      PR_REF_FRS,
+//                      PR_EAN,
+//                      PR_NOM,
+//                      PR_DESCR_COURTE,
+//                      PR_DESCR_LONGUE,
+//                      PR_TRIPTYQUE,
+//                      PR_QTE_CMDE,
+//                      PR_CONDT,
+//                      PR_PRIX_PUBLIC,
+//                      PR_PRIX_CA,
+//                      PR_REMISE,
+//                      PR_PRIX_VC,
+//                      PR_TYPE_LIEN,
+//                      PR_LIEN,
+//                      PR_PHARE,
+//                      PR_STATUS,
+//                      PP_TYPE,
+//                      PP_FICHIER
+//                    FROM CENTRALE_PRODUITS.dbo.PRODUITS
+//                    INNER JOIN CENTRALE_PRODUITS.dbo.PRODUITS_PHOTOS ON PRODUITS.PR_ID = PRODUITS_PHOTOS.PR_ID";
+//            }
+//
+//            $conn = $connection->prepare($sql);
+//            $conn->execute();
+//            $result = $conn->fetchAll();
+//
+//            if (!isset($result)) {
+//                return new JsonResponse("Aucun produit trouvé", 200);
+//
+//            }
+//
+//            $data = $helper->array_utf8_encode($result);
+//
+//            $id = $helper->getIdFromApiKey($key);
+//
+////            $log->logAction($id[0]['APP_ID'], "get:produits");
+//            return new JsonResponse($data, 200);
+//        } else {
+//
+//            return new JsonResponse("Vous n'avez pas accès a ces ressources", 500);
+//
+//
+//        }
 
     }
 
@@ -358,6 +447,9 @@ class ProductController extends Controller
 
 
     }
+
+
+
 
 
 }

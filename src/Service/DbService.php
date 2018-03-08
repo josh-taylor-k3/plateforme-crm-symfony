@@ -28,7 +28,7 @@ class DbService
 
     public function getDetailById($id)
     {
-        $sql = "SELECT TOP 10 * FROM CENTRALE_ACHAT_v2.dbo.API_USER INNER JOIN CENTRALE_ACHAT_v2.dbo.API_DROITS ON API_USER.APP_ID = API_DROITS.APP_ID WHERE CENTRALE_ACHAT_v2.dbo.API_USER.APP_ID = :id";
+        $sql = "SELECT TOP 10 * FROM CENTRALE_ACHAT_v2.dbo.API_USER  WHERE CENTRALE_ACHAT_v2.dbo.API_USER.APP_ID = :id";
         $conn = $this->connection->prepare($sql);
         $conn->bindValue('id', $id);
         $conn->execute();
@@ -36,10 +36,15 @@ class DbService
     }
 
 
-    public function setDroitsById($id)
+    public function getRaisonSocFrs($id)
     {
-
-
+        $sql = "SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS  WHERE FO_ID = :id";
+        $conn = $this->connection->prepare($sql);
+        $conn->bindValue('id', $id);
+        $conn->execute();
+        return $conn->fetchAll();
     }
+
+
 
 }

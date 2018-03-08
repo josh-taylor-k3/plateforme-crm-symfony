@@ -33,19 +33,21 @@ class BaseController extends Controller
 
 
         $sql = "SELECT * FROM CENTRALE_ACHAT_v2.dbo.API_USER";
-
-
         $conn = $connection->prepare($sql);
-
-
-
         $conn->execute();
         $result = $conn->fetchAll();
+
+        $sqlFournisseur = "SELECT * FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS";
+        $connFournisseur = $connection->prepare($sqlFournisseur);
+        $connFournisseur->execute();
+        $fournisseur = $connFournisseur->fetchAll();
+
 
 
         try {
             return new Response($twig->render("Api/ListToken.html.twig", [
-                "list" => $result
+                "list" => $result,
+                "fournisseur" => $fournisseur
             ]));
         } catch (\Twig_Error_Loader $e) {
         } catch (\Twig_Error_Runtime $e) {
@@ -77,34 +79,65 @@ class BaseController extends Controller
     /**
      * @Route("/new", name="new_api_user")
      * @Method("POST")
+     * @throws \Exception
      */
     public function newApiUser(Request $request, Connection $connection, Environment $twig, HelperService $helper)
     {
 
         $app_name = $request->request->get('app_name');
+        $app_profil = $request->request->get('app_profil');
+        $selection_centrale = $request->request->get('selection_centrale');
+        $selection_fournisseur = $request->request->get('selection_fournisseur');
 
         $tokenApi = $helper->getToken(40);
 
 
 
+        switch ($app_profil){
+            case "FOURNISSEUR":
 
-        $sql = "INSERT INTO CENTRALE_ACHAT_v2.dbo.API_USER (AU_SECRET, AU_NAME, INS_DATE, INS_USER) VALUES (:token, :name, GETDATE(), :ins_user)";
+                $sql = "INSERT INTO CENTRALE_ACHAT_v2.dbo.API_USER (FO_ID, AU_SECRET, AU_NAME, AU_PROFIL, INS_DATE, INS_USER) VALUES (:fournisseur_id,:token, :name,:profil, GETDATE(), :ins_user)";
+
+                $conn = $connection->prepare($sql);
+                $conn->bindValue('token', $tokenApi);
+                $conn->bindValue('name', $app_name);
+                $conn->bindValue('profil', $app_profil);
+                $conn->bindValue('fournisseur_id', $selection_fournisseur);
+                $conn->bindValue('ins_user', "API_SITE");
 
 
-        $conn = $connection->prepare($sql);
-        $conn->bindValue('token', $tokenApi);
-        $conn->bindValue('name', $app_name);
-        $conn->bindValue('ins_user', "API_SITE");
+                $conn->execute();
+                $result = $conn->fetchAll();
+
+                break;
+            case "CENTRALE":
+                $sql = "INSERT INTO CENTRALE_ACHAT_v2.dbo.API_USER ( AU_SECRET, AU_NAME, AU_PROFIL, AU_DATABASE, INS_DATE, INS_USER) VALUES (:token, :name,:profil,:centrale,  GETDATE(), :ins_user)";
+
+                $conn = $connection->prepare($sql);
+                $conn->bindValue('token', $tokenApi);
+                $conn->bindValue('name', $app_name);
+                $conn->bindValue('profil', $app_profil);
+                $conn->bindValue('centrale', $selection_centrale);
+                $conn->bindValue('ins_user', "API_SITE");
 
 
-        $conn->execute();
-        $result = $conn->fetchAll();
+                $conn->execute();
+                $result = $conn->fetchAll();
+
+                break;
+        }
+
+
+
+
 
 
 
 
 
         return $this->redirectToRoute('list_api_user', array(), 301);
+
+//        return new Response('ok', 200);
     }
 
     /**
@@ -152,6 +185,16 @@ class BaseController extends Controller
 
         return new JsonResponse($data, 200);
 
+    }
+
+
+    /**
+     * @Route("/testAjax",name="testAjax" )
+     */
+    public function testAjax( Request $request, Connection $connection, Environment $twig )
+    {
+
+        return new Response( $twig->render('testAjax.html.twig'), 200 );
     }
 
 }

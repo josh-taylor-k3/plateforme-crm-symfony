@@ -2,19 +2,39 @@
 
 (function () {
 
-    var btn_save_droits_api = document.getElementById('btn_save_droits_api');
+
+
+
+    $('#app_profil').on('change', function (e) {
+
+        let choix = $(this).val();
+
+
+        if ( choix === "CENTRALE" )
+        {
+            $('#selection_centrale').show();
+        }else if(choix == "FOURNISSEUR"){
+
+            $('#selection_fournisseur').show();
+        }
+
+    });
+
+
+
+
+    let btn_save_droits_api = document.getElementById('btn_save_droits_api');
 
 
     btn_save_droits_api.addEventListener('click', function (ev) {
 
 
-
-        var clients = $('#checkbox_clients').is(':checked') ? 1 : 0;
-        var tickets = $('#checkbox_tickets').is(':checked') ? 1 : 0;
-        var fourn = $('#checkbox_fourn').is(':checked') ? 1 : 0;
-        var produits = $('#checkbox_produits').is(':checked') ? 1 : 0;
-        var url = "http://api.achatcentrale.fr/user/setDroits";
-        var id = $('#id_user_actual').html();
+        let clients = $('#checkbox_clients').is(':checked') ? 1 : 0;
+        let tickets = $('#checkbox_tickets').is(':checked') ? 1 : 0;
+        let fourn = $('#checkbox_fourn').is(':checked') ? 1 : 0;
+        let produits = $('#checkbox_produits').is(':checked') ? 1 : 0;
+        let url = "http://api.achatcentrale.fr/user/setDroits";
+        let id = $('#id_user_actual').html();
 
 
         console.log(clients);
@@ -42,16 +62,12 @@
             // La fonction à apeller si la requête aboutie
             success: function (data) {
                 console.log(data);
-
-
                 window.location.reload()
-
             },
 
             // La fonction à appeler si la requête n'a pas abouti
             error: function (data) {
                 console.log(data);
-
             }
 
         });
@@ -61,6 +77,9 @@
 
 
     })
+
+
+
 
 
 

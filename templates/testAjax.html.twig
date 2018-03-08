@@ -1,0 +1,51 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+
+
+    <button id="clickme"></button>
+
+
+    <script>
+
+        window.onload = function() {
+
+
+        $('#clickme').on('click', function () {
+
+            $.ajax({
+
+            type: "POST",
+            url: "http://localhost:8000/tickets/new",
+            headers: {
+                "X-ac-key":"hdmSTymnVdBm2r7xGL64Ie7hB6PQ1Hnd3jAAXF36"
+            },
+            data: {
+                produit: 456,
+                fournisseur: 32,
+                client: 34,
+            },
+
+            // La fonction à apeller si la requête aboutie
+            success: function (data) {
+                console.log(data);
+
+
+
+            },
+
+            // La fonction à appeler si la requête n'a pas abouti
+            error: function (data) {
+                console.log(data);
+
+            }
+
+        });
+        })
+        };
+
+
+    </script>
+{% endblock %}

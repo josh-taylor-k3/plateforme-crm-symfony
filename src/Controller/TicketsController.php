@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Security\ApiKeyAuth;
+use App\Service\DbService;
 use App\Service\HelperService;
 use App\Service\LogHsitory;
 use Doctrine\DBAL\Driver\Connection;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,89 +16,190 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TicketsController extends Controller
 {
+
+
     /**
-     * @Route("/ticket/{id}", name="ticket_byId")
+     * @Route("/tickets", name="tickets_all")
      */
-    public function ticketsById(Connection $connection, Request $request, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log, $id)
+    public function ticketsAll(Connection $connection,DbService $db, Request $request, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log)
     {
 
         header("Access-Control-Allow-Origin: *");
 
-
         $key = $request->headers->get('X-ac-key');
+        $grant = $auth->grant($key);
 
-        if (isset($key) && $auth->grant($key)) {
-            $limit = $request->query->get('limit');
+        switch ($grant){
+            case $grant['profil'] == "FOURNISSEUR":
+                $frsRaisonSoc = $db->getRaisonSocFrs($grant['fo_id']);
+                $sql = "SELECT * FROM CENTRALE_ACHAT.dbo.Vue_All_Tickets
+                        WHERE FO_RAISONSOC = :id_four";
+                $conn = $connection->prepare($sql);
+                $conn->bindValue('id_four', $frsRaisonSoc[0]['FO_RAISONSOC'] );
+                $conn->execute();
+                $result = $conn->fetchAll();
 
-            $sql = "
-        SELECT * FROM CENTRALE_ACHAT.dbo.Vue_All_Tickets
-        WHERE ME_ID = :id
-        ";
+                if (!empty($result)) {
+                    $data = $helper->array_utf8_encode($result);
+                    return new JsonResponse($data, 200);
+                }
+                return new JsonResponse("Aucun tickets trouvé ", 200);
+                break;
+
+            case $grant['profil'] == "CENTRALE":
+
+                $centrale = $helper->getCentraleFromId($grant['centrale']);
 
 
-            $conn = $connection->prepare($sql);
-            $conn->bindValue('id', $id);
-            $conn->execute();
-            $result = $conn->fetchAll();
 
-            if (!isset($result)) {
-                return new JsonResponse("Aucun produit trouvé", 200);
+                $sql = "SELECT * FROM ".$centrale.".dbo.Vue_All_Tickets";
+                $conn = $connection->prepare($sql);
+                $conn->execute();
+                $result = $conn->fetchAll();
 
-            }
-            $data = $helper->array_utf8_encode($result);
+                if (!empty($result)) {
+                    $data = $helper->array_utf8_encode($result);
+                    return new JsonResponse($data, 200);
+                }
+                return new JsonResponse("Aucun tickets trouvé ", 200);
 
-            return new JsonResponse($data, 200);
-        } else {
 
-            return new JsonResponse("Vous n'avez pas accès a ces ressources", 500);
 
+
+                break;
         }
+
+
+
+
+        return new JsonResponse('ok', 200);
+
+    }
+
+    /**
+     * @Route("/ticket/{id}", name="ticket_byId")
+     */
+    public function ticketsById(Connection $connection,DbService $db, Request $request, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log, $id)
+    {
+
+        header("Access-Control-Allow-Origin: *");
+        $key = $request->headers->get('X-ac-key');
+        $grant = $auth->grant($key);
+        switch ($grant){
+            case $grant['profil'] == "FOURNISSEUR":
+                $frsRaisonSoc = $db->getRaisonSocFrs($grant['fo_id']);
+                $sql = "SELECT * FROM CENTRALE_ACHAT.dbo.Vue_All_Tickets
+                        WHERE ME_ID = :id
+                        AND FO_RAISONSOC = :id_four";
+
+
+                $conn = $connection->prepare($sql);
+                $conn->bindValue('id', $id);
+                $conn->bindValue('id_four', $frsRaisonSoc[0]['FO_RAISONSOC'] );
+                $conn->execute();
+                $result = $conn->fetchAll();
+
+                if (!empty($result)) {
+
+                    $data = $helper->array_utf8_encode($result);
+
+                    return new JsonResponse($data, 200);
+                }
+                return new JsonResponse("Aucun tickets trouvé ", 200);
+
+
+                break;
+
+            case $grant['profil'] == "CENTRALE":
+
+                $centrale = $helper->getCentraleFromId($grant['centrale']);
+
+                $sql = "SELECT * FROM ".$centrale.".dbo.MESSAGE_ENTETE WHERE ME_ID = :id";
+                $conn = $connection->prepare($sql);
+                $conn->bindValue('id', $id);
+                $conn->execute();
+                $result = $conn->fetchAll();
+
+
+                if (!empty($result)) {
+                    $data = $helper->array_utf8_encode($result);
+                    return new JsonResponse($data, 200);
+                }
+                return new JsonResponse("Aucun tickets trouvé ", 200);
+
+                break;
+        }
+
+
+
+
+        return new JsonResponse('ok', 200);
+
+
 
     }
 
     /**
      * @Route("/tickets/client/{id}", name="ticket_client")
      */
-    public function TicketsByClients(Connection $connection, Request $request, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log, $id)
+    public function TicketsByClients(Connection $connection,DbService $db, Request $request, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log, $id)
     {
 
 
         header("Access-Control-Allow-Origin: *");
-
-
         $key = $request->headers->get('X-ac-key');
+        $grant = $auth->grant($key);
 
-        if (isset($key) && $auth->grant($key)) {
-            $limit = $request->query->get('limit');
-
-            $sql = "
-                    SELECT * FROM CENTRALE_ACHAT.dbo.Vue_All_Tickets
-                    WHERE CL_ID = :id
-                    ";
-
-
-            $conn = $connection->prepare($sql);
-            $conn->bindValue('id', $id);
-            $conn->execute();
-            $result = $conn->fetchAll();
-
-            if (!isset($result)) {
-                return new JsonResponse("Aucun produit trouvé", 200);
-
-            }
-
-
-            $data = $helper->array_utf8_encode($result);
+        switch ($grant){
+            case $grant['profil'] == "FOURNISSEUR":
 
 
 
-            return new JsonResponse($data, 200);
-        } else {
+                $frsRaisonSoc = $db->getRaisonSocFrs($grant['fo_id']);
+                $sql = "SELECT * FROM CENTRALE_ACHAT.dbo.Vue_All_Tickets
+                        WHERE CL_ID = :id
+                        AND FO_RAISONSOC = :id_four";
 
-            return new JsonResponse("Vous n'avez pas accès a ces ressources", 500);
+
+                $conn = $connection->prepare($sql);
+                $conn->bindValue('id', $id);
+                $conn->bindValue('id_four', $frsRaisonSoc[0]['FO_RAISONSOC'] );
+                $conn->execute();
+                $result = $conn->fetchAll();
+
+                if (!empty($result)) {
+
+                    $data = $helper->array_utf8_encode($result);
+
+                    return new JsonResponse($data, 200);
+                }
+                return new JsonResponse("Aucun tickets trouvé ", 200);
 
 
+                break;
+
+            case $grant['profil'] == "CENTRALE":
+
+                $centrale = $helper->getCentraleFromId($grant['centrale']);
+
+                $sql = "SELECT * FROM ".$centrale.".dbo.MESSAGE_ENTETE WHERE ME_ID = :id";
+                $conn = $connection->prepare($sql);
+                $conn->bindValue('id', $id);
+                $conn->execute();
+                $result = $conn->fetchAll();
+
+
+                if (!empty($result)) {
+                    $data = $helper->array_utf8_encode($result);
+                    return new JsonResponse($data, 200);
+                }
+                return new JsonResponse("Aucun tickets trouvé ", 200);
+
+                break;
         }
+
+
+        return new JsonResponse('ok', 200);
 
 
 
@@ -105,11 +208,10 @@ class TicketsController extends Controller
     }
 
 
-
     /**
-     * @Route("/ticket/new", name="ticket_new")
+     * @Route("/tickets/new", name="ticket_new")
      */
-    public function TicketsNew(Connection $connection, Request $request, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log)
+    public function TicketsNew(Connection $connection, Request $request, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log, $id)
     {
 
 
@@ -117,33 +219,35 @@ class TicketsController extends Controller
 
 
         $key = $request->headers->get('X-ac-key');
-        $centrale = $request->request->get('centrale');
+        $produit = $request->request->get('produit');
+        $fournisseur = $request->request->get('fournisseur');
+        $client = $request->request->get('client');
 
 
 
         $data = [
-          "centrale" => $centrale
+            "produit" => $produit,
+            "fournisseur" => $fournisseur,
+            "client" => $client,
         ];
 
 
-//        $sql = "
-//                    SELECT * FROM CENTRALE_ACHAT.dbo.Vue_All_Tickets
-//                    WHERE CL_ID = :id
-//                    ";
-//
-//
-//        $conn = $connection->prepare($sql);
-//        $conn->bindValue('id', $id);
-//        $conn->execute();
-//        $result = $conn->fetchAll();
-//
-//        if (!isset($result)) {
-//            return new JsonResponse("Aucun produit trouvé", 200);
-//
-//        }
-//
-//
-//        $data = $helper->array_utf8_encode($result);
+        $sql = "SELECT * FROM CENTRALE_ACHAT.dbo.Vue_All_Tickets
+                WHERE CL_ID = :id";
+
+
+        $conn = $connection->prepare($sql);
+        $conn->bindValue('id', $id);
+        $conn->execute();
+        $result = $conn->fetchAll();
+
+        if (!isset($result)) {
+            return new JsonResponse("Aucun produit trouvé", 200);
+
+        }
+
+
+        $data = $helper->array_utf8_encode($result);
 
 
 

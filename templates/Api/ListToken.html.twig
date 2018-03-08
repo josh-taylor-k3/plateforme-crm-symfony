@@ -48,7 +48,33 @@
                 <form action="{{  path('new_api_user') }}" method="post">
                     <div class="form-group">
                         <label for="exampleInputEmail1">Nom de l'application</label>
-                        <input type="text" class="form-control" name="app_name" id="InputApp" aria-describedby="AppHelp" placeholder="Nom d'application">
+                        <input type="text" class="form-control mb-2" name="app_name" id="InputApp" aria-describedby="AppHelp" placeholder="Nom d'application">
+
+                        <select id="app_profil" name="app_profil" class="custom-select mb-2" title="app_profil">
+                            <option selected>Choisir le profil</option>
+                            <option value="FOURNISSEUR">Fournisseur</option>
+                            <option value="CENTRALE">Centrale</option>
+                        </select>
+
+                        <select id="selection_centrale" name="selection_centrale" class="custom-select mb-2" style="display: none" title="selection_centrale">
+                            <option selected>Choix de la centrale</option>
+                            <option value="1">1 - ACHAT CENTRALE</option>
+                            <option value="2">2 - GCCP</option>
+                            <option value="3">3 - PROMUCF</option>
+                            <option value="4">4 - FUNECAP</option>
+                            <option value="5">5 - PFPL</option>
+                            <option value="6">6 - ROC-ECLERC</option>
+                        </select>
+
+
+                        <select id="selection_fournisseur" name="selection_fournisseur" class="custom-select mb-2" style="display: none" title="selection_centrale">
+                            <option selected>Choix du fournisseur</option>
+                            {% for four in fournisseur  %}
+                                <option value="{{ four['FO_ID'] }}">{{ four['FO_ID'] }} - {{ four['FO_RAISONSOC'] }}</option>
+
+                            {% endfor %}
+                        </select>
+
                     </div>
                     <button type="submit" class="btn btn-primary">Enregistrer</button>
                 </form>

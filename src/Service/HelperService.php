@@ -71,4 +71,31 @@ class HelperService
 
     }
 
+
+    public function getCentraleFromId($id)
+    {
+        switch ($id){
+
+            case 1:
+                return "CENTRALE_ACHAT";
+                break;
+            case 2:
+                return "CENTRALE_GCCP";
+                break;
+            case 3:
+                return "CENTRALE_PROMUCF";
+                break;
+            case 4:
+                return "CENTRALE_FUNECAP";
+                break;
+            case 5:
+                return "CENTRALE_PFPL";
+                break;
+            case 6:
+                return "CENTRALE_ROC_ECLERC";
+                break;
+
+        }
+    }
+
 }

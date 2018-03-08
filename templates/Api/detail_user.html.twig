@@ -19,38 +19,7 @@
 
         <div class="row ">
             <div class="col-6">
-                <h2>Droits de l'application</h2>
 
-                <small id="" class="form-text text-muted">Modifier les droits de cet application</small>
-                <div class="border pl-3 pt-3">
-                    <div class="row pb-3">
-                        <div class="col">
-                            <div class="custom-control custom-checkbox">
-                                <input id="checkbox_clients" type="checkbox" class="custom-control-input" {% if list['AD_CLIENTS'] == 1%}checked='checked'{% endif %}>
-                                <label class="custom-control-label" for="checkbox_clients">Clients</label>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="custom-control custom-checkbox">
-                                <input id="checkbox_fourn" type="checkbox" class="custom-control-input" {% if list['AD_FOURN'] == 1%}checked='checked'{% endif %} >
-                                <label class="custom-control-label" for="checkbox_fourn"> Fournisseur</label>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="custom-control custom-checkbox">
-                                <input id="checkbox_tickets" type="checkbox" class="custom-control-input" {% if list['AD_TICKETS'] == 1%}checked='checked'{% endif %}>
-                                <label class="custom-control-label" for="checkbox_tickets"> Tickets</label>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="custom-control custom-checkbox">
-                                <input id="checkbox_produits" type="checkbox" class="custom-control-input" {% if list['AD_PRODUITS'] == 1%}checked='checked'{% endif %} >
-                                <label class="custom-control-label" for="checkbox_produits"> Produits</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <a id="btn_save_droits_api" class="btn btn-success float-right mt-3" href="#" role="button">Enregistrer</a>
             </div>
             <div class="col-6">
 
