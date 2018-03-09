@@ -32,10 +32,51 @@ class ProductController extends Controller
         switch ($grant){
             case $grant['profil'] == "FOURNISSEUR":
                 $frsRaisonSoc = $db->getRaisonSocFrs($grant['fo_id']);
-                $sql = "SELECT * FROM CENTRALE_ACHAT.dbo.Vue_All_Tickets
-                        WHERE FO_RAISONSOC = :id_four";
+
+                $limit = $request->query->get('limit');
+
+
+                $sql = "SELECT TOP ". $limit."
+                          CENTRALE_PRODUITS.dbo.PRODUITS.PR_ID,
+                          SO_ID,
+                          (
+                            SELECT FO_RAISONSOC
+                            FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS
+                            WHERE FOURNISSEURS.FO_ID = PRODUITS.FO_ID
+                          ) as Fournisseur ,
+                          (
+                            SELECT RA_NOM
+                            FROM CENTRALE_PRODUITS.dbo.RAYONS
+                            WHERE RAYONS.RA_ID = PRODUITS.RA_ID
+                          ) as Rayon,
+                          (
+                            SELECT FA_NOM
+                            FROM CENTRALE_PRODUITS.dbo.FAMILLES
+                            WHERE FAMILLES.FA_ID = PRODUITS.FA_ID
+                          ) as Famille,
+                          PR_REF,
+                          PR_REF_FRS,
+                          PR_EAN,
+                          PR_NOM,
+                          PR_DESCR_COURTE,
+                          PR_DESCR_LONGUE,
+                          PR_TRIPTYQUE,
+                          PR_QTE_CMDE,
+                          PR_CONDT,
+                          PR_PRIX_PUBLIC,
+                          PR_PRIX_CA,
+                          PR_REMISE,
+                          PR_PRIX_VC,
+                          PR_TYPE_LIEN,
+                          PR_LIEN,
+                          PR_PHARE,
+                          PR_STATUS,
+                          PP_TYPE,
+                          PP_FICHIER
+                        FROM CENTRALE_PRODUITS.dbo.PRODUITS
+                        INNER JOIN CENTRALE_PRODUITS.dbo.PRODUITS_PHOTOS ON PRODUITS.PR_ID = PRODUITS_PHOTOS.PR_ID
+                        ";
                 $conn = $connection->prepare($sql);
-                $conn->bindValue('id_four', $frsRaisonSoc[0]['FO_RAISONSOC'] );
                 $conn->execute();
                 $result = $conn->fetchAll();
 
