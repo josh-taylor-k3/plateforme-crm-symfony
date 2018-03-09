@@ -9,10 +9,13 @@ class DbService
 
 
     private $connection;
+    private $helper;
 
-    public function __construct(Connection $connection)
+    public function __construct(Connection $connection, HelperService $helper)
     {
         $this->connection = $connection;
+        $this->helper = $helper;
+
     }
 
 
@@ -42,6 +45,21 @@ class DbService
         $conn = $this->connection->prepare($sql);
         $conn->bindValue('id', $id);
         $conn->execute();
+        return $conn->fetchAll();
+    }
+
+    public function getRaisonSocCl($idClient, $idCentrale)
+    {
+
+
+        $centrale = $this->helper->getCentraleFromId($idCentrale);
+
+
+        $sql = "SELECT CL_RAISONSOC FROM ".$centrale.".dbo.CLIENTS WHERE CL_ID = :id";
+        $conn = $this->connection->prepare($sql);
+        $conn->bindValue('id', $idClient);
+        $conn->execute();
+
         return $conn->fetchAll();
     }
 

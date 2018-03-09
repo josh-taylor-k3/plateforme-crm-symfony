@@ -34,7 +34,7 @@ class HistoriqueController extends Controller
 
                 $centrale = $helper->getCentraleFromId($grant['centrale']);
 
-                $sql = "SELECT (SELECT CL_RAISONSOC FROM CENTRALE_ACHAT.dbo.CLIENTS WHERE CL_ID = LO_IDENT_NUM) as Clients, LO_CODE, LO_DATE, LO_DESCR as Clients FROM CENTRALE_ACHAT.dbo.LOGS  WHERE LO_IDENT = 'CL_ID' AND LO_IDENT_NUM = :id";
+                $sql = "SELECT (SELECT CL_RAISONSOC FROM ".$centrale.".dbo.CLIENTS WHERE CL_ID = LO_IDENT_NUM) as Clients, LO_CODE, LO_DATE, LO_DESCR as Clients FROM CENTRALE_ACHAT.dbo.LOGS  WHERE LO_IDENT = 'CL_ID' AND LO_IDENT_NUM = :id";
                 $conn = $connection->prepare($sql);
                 $conn->bindValue('id', $client_id);
                 $conn->execute();
