@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Security\ApiKeyAuth;
+use App\Service\DbService;
 use App\Service\HelperService;
 use App\Service\LogHsitory;
 use Doctrine\DBAL\Connection;
@@ -20,7 +21,7 @@ class ProductController extends Controller
      * @Route("/produits", name="produits")
      * @Method("GET")
      */
-    public function produits(Connection $connection, Request $request, HelperService $helper, ApiKeyAuth $auth, LogHsitory $log)
+    public function produits(Connection $connection,DbService $db , Request $request, HelperService $helper, ApiKeyAuth $auth, LogHsitory $log)
     {
 
 
