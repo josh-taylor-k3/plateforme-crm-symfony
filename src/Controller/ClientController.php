@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Security\ApiKeyAuth;
+use App\Service\DbService;
 use App\Service\HelperService;
 use Doctrine\DBAL\Connection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -14,42 +15,68 @@ use Symfony\Component\HttpFoundation\Response;
 class ClientController extends Controller
 {
     /**
-     * @Route("/clients/{idCentrale}", name="clients")
+     * @Route("/clients", name="clients")
      */
-    public function getClients(Request $request , ApiKeyAuth $auth, Connection $connection, HelperService $helper, $idCentrale)
+    public function getClients(Request $request ,DbService $db, ApiKeyAuth $auth, Connection $connection, HelperService $helper)
     {
 
+
         header("Access-Control-Allow-Origin: *");
-
-
         $key = $request->headers->get('X-ac-key');
 
-        if (isset($key) && $auth->grant($key)) {
+        $limit = $request->query->get('limit');
 
-            $sql = "SELECT *
-                    FROM CENTRALE_ACHAT.dbo.Vue_All_Clients
-                    WHERE SO_ID = :id";
+        $grant = $auth->grant($key);
 
-            $conn = $connection->prepare($sql);
-            $conn->bindValue('id', $idCentrale);
-            $conn->execute();
-            $result = $conn->fetchAll();
-            if (!isset($result)) {
-                return new JsonResponse("Aucun produit trouvé", 200);
-            }
-            $data = $helper->array_utf8_encode($result);
-            $id = $helper->getIdFromApiKey($key);
-//            $log->logAction($id[0]['APP_ID'], "get:produits");
-            return new JsonResponse($data, 200);
-        } else {
-            return new JsonResponse("Vous n'avez pas accès a ces ressources", 500);
+        switch ($grant){
+            case $grant['profil'] == "FOURNISSEUR":
+                $frsRaisonSoc = $db->getRaisonSocFrs($grant['fo_id']);
+                $sql = "SELECT TOP ".$limit." * FROM CENTRALE_ACHAT.dbo.Vue_All_Clients";
+
+                $conn = $connection->prepare($sql);
+                $conn->execute();
+                $result = $conn->fetchAll();
+
+                if (!empty($result)) {
+
+                    $data = $helper->array_utf8_encode($result);
+
+                    return new JsonResponse($data, 200);
+                }
+                return new JsonResponse("Aucun tickets trouvé ", 200);
+
+
+                break;
+
+            case $grant['profil'] == "CENTRALE":
+
+                $centrale = $grant['centrale'];
+
+                $sql = "SELECT * FROM CENTRALE_ACHAT.dbo.Vue_All_Clients WHERE SO_ID = :id";
+                $conn = $connection->prepare($sql);
+                $conn->bindValue('id', $centrale);
+                $conn->execute();
+                $result = $conn->fetchAll();
+
+
+                if (!empty($result)) {
+                    $data = $helper->array_utf8_encode($result);
+                    return new JsonResponse($data, 200);
+                }
+                return new JsonResponse("Aucun clients trouvé ", 200);
+
+                break;
         }
+
+
+        return new JsonResponse('Vous n\'avez pas acces a ces ressources', 200);
+
 
     }
 
 
     /**
-     * @Route("/client/{id}", name="clients")
+     * @Route("/client/{id}", name="clients_by_id")
      */
     public function getClient(Request $request, ApiKeyAuth $auth, Connection $connection, HelperService $helper, $id)
     {
@@ -91,47 +118,102 @@ class ClientController extends Controller
     }
 
     /**
-     * @Route("/client/{idCentrale}/{id}/user", name="clients")
+     * @Route("/client/{id}/user", name="clients_user")
      */
-    public function getClientsUsers(Request $request, ApiKeyAuth $auth, Connection $connection, HelperService $helper, $id, $idCentrale)
+    public function getClientsUsers(Request $request,DbService $db , ApiKeyAuth $auth, Connection $connection, HelperService $helper, $id)
     {
 
+
         header("Access-Control-Allow-Origin: *");
-
-
         $key = $request->headers->get('X-ac-key');
-        $centrale = $request->query->get('centrale');
+
+        $limit = $request->query->get('limit');
+
+        $grant = $auth->grant($key);
+
+        switch ($grant){
+            case $grant['profil'] == "FOURNISSEUR":
+                $frsRaisonSoc = $db->getRaisonSocFrs($grant['fo_id']);
+                $sql = "SELECT CL_ID, CC_MAIL, CC_NOM, CC_PRENOM FROM CENTRALE_ACHAT.dbo.Vue_All_Clients";
+
+                $conn = $connection->prepare($sql);
+                $conn->execute();
+                $result = $conn->fetchAll();
+
+                if (!empty($result)) {
+
+                    $data = $helper->array_utf8_encode($result);
+
+                    return new JsonResponse($data, 200);
+                }
+                return new JsonResponse("Aucun tickets trouvé ", 200);
 
 
-        if (isset($key) && $auth->grant($key)) {
+                break;
 
-            $sql = "SELECT CC_MAIL, CC_NOM, CC_PRENOM
-                    FROM CENTRALE_ACHAT.dbo.Vue_All_Clients
-                    WHERE SO_ID = :idCentrale
-                    AND CL_ID = :id";
+            case $grant['profil'] == "CENTRALE":
 
-            $conn = $connection->prepare($sql);
-            $conn->bindValue('idCentrale', $idCentrale);
-            $conn->bindValue('id', $id);
-            $conn->execute();
-            $result = $conn->fetchAll();
-            if (!isset($result)) {
-                return new JsonResponse("Aucun produit trouvé", 200);
-            }
-            $data = $helper->array_utf8_encode($result);
-            $id = $helper->getIdFromApiKey($key);
-//            $log->logAction($id[0]['APP_ID'], "get:produits");
-            return new JsonResponse($data, 200);
-        } else {
-            return new JsonResponse("Vous n'avez pas accès a ces ressources", 500);
+                $centrale = $grant['centrale'];
+
+                $centrale = $helper->getCentraleFromId($grant['centrale']);
+
+                $sql = "SELECT * FROM ".$centrale.".dbo.CLIENTS_USERS WHERE CL_ID = :id";
+                $conn = $connection->prepare($sql);
+                $conn->bindValue('id', $id);
+                $conn->execute();
+                $result = $conn->fetchAll();
+
+
+                if (!empty($result)) {
+                    $data = $helper->array_utf8_encode($result);
+                    return new JsonResponse($data, 200);
+                }
+                return new JsonResponse("Aucun clients trouvé ", 200);
+
+                break;
         }
+
+
+        return new JsonResponse('Vous n\'avez pas acces a ces ressources', 200);
+
+
+//
+//        header("Access-Control-Allow-Origin: *");
+//
+//
+//        $key = $request->headers->get('X-ac-key');
+//        $centrale = $request->query->get('centrale');
+//
+//
+//        if (isset($key) && $auth->grant($key)) {
+//
+//            $sql = "SELECT CC_MAIL, CC_NOM, CC_PRENOM
+//                    FROM CENTRALE_ACHAT.dbo.Vue_All_Clients
+//                    WHERE SO_ID = :idCentrale
+//                    AND CL_ID = :id";
+//
+//            $conn = $connection->prepare($sql);
+//            $conn->bindValue('idCentrale', $idCentrale);
+//            $conn->bindValue('id', $id);
+//            $conn->execute();
+//            $result = $conn->fetchAll();
+//            if (!isset($result)) {
+//                return new JsonResponse("Aucun produit trouvé", 200);
+//            }
+//            $data = $helper->array_utf8_encode($result);
+//            $id = $helper->getIdFromApiKey($key);
+////            $log->logAction($id[0]['APP_ID'], "get:produits");
+//            return new JsonResponse($data, 200);
+//        } else {
+//            return new JsonResponse("Vous n'avez pas accès a ces ressources", 500);
+//        }
 
 
 
     }
 
     /**
-     * @Route("/client/{idCentrale}/{id}/regions", name="clients")
+     * @Route("/client/{idCentrale}/{id}/regions", name="clients_regions")
      */
     public function getClientsRegion(Request $request, ApiKeyAuth $auth, Connection $connection, HelperService $helper, $id, $idCentrale)
     {
