@@ -75,8 +75,10 @@ class ProductController extends Controller
                           PP_FICHIER
                         FROM CENTRALE_PRODUITS.dbo.PRODUITS
                         INNER JOIN CENTRALE_PRODUITS.dbo.PRODUITS_PHOTOS ON PRODUITS.PR_ID = PRODUITS_PHOTOS.PR_ID
+                        WHERE FO_ID = :id
                         ";
                 $conn = $connection->prepare($sql);
+                $conn->bindValue('id', $grant['fo_id']);
                 $conn->execute();
                 $result = $conn->fetchAll();
 
@@ -84,7 +86,7 @@ class ProductController extends Controller
                     $data = $helper->array_utf8_encode($result);
                     return new JsonResponse($data, 200);
                 }
-                return new JsonResponse("Aucun tickets trouvé ", 200);
+                return new JsonResponse("Aucun produits trouvé ", 200);
                 break;
 
             case $grant['profil'] == "CENTRALE":
