@@ -31,8 +31,12 @@ class TicketsController extends Controller
 
         switch ($grant){
             case $grant['profil'] == "FOURNISSEUR":
+
+                $limit = $request->query->get('limit');
+
+
                 $frsRaisonSoc = $db->getRaisonSocFrs($grant['fo_id']);
-                $sql = "SELECT * FROM CENTRALE_ACHAT.dbo.Vue_All_Tickets
+                $sql = "SELECT TOP ".$limit."  * FROM CENTRALE_ACHAT.dbo.Vue_All_Tickets
                         WHERE FO_RAISONSOC = :id_four";
                 $conn = $connection->prepare($sql);
                 $conn->bindValue('id_four', $frsRaisonSoc[0]['FO_RAISONSOC'] );
@@ -50,9 +54,10 @@ class TicketsController extends Controller
 
                 $centrale = $helper->getCentraleFromId($grant['centrale']);
 
+                $limit = $request->query->get('limit');
 
 
-                $sql = "SELECT * FROM ".$centrale.".dbo.Vue_All_Tickets";
+                $sql = "SELECT TOP ".$limit."  * FROM ".$centrale.".dbo.Vue_All_Tickets";
                 $conn = $connection->prepare($sql);
                 $conn->execute();
                 $result = $conn->fetchAll();

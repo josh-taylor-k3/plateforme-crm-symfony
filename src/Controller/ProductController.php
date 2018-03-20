@@ -340,8 +340,7 @@ class ProductController extends Controller
                 $conn->execute();
                 $result = $conn->fetchAll();
 
-
-                if ($result[0]['Fournisseur'] !== $frsRaisonSoc){
+                if ($result[0]['Fournisseur'] !== $frsRaisonSoc[0]['FO_RAISONSOC']){
                     return new JsonResponse("Vous n'avez pas accès a ces ressources", 200);
                 }
                 if (!empty($result)) {
