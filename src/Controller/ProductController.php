@@ -23,7 +23,7 @@ class ProductController extends Controller
      */
     public function produits(Connection $connection,DbService $db , Request $request, HelperService $helper, ApiKeyAuth $auth, LogHsitory $log)
     {
-
+        header("Access-Control-Allow-Origin: *");
 
 
         $key = $request->headers->get('X-ac-key');
@@ -278,7 +278,7 @@ class ProductController extends Controller
      * @Method("GET")
      *
      */
-    public function produit(Connection $connection, Request $request, $id, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log)
+    public function produit(Connection $connection,DbService $db, Request $request, $id, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log)
     {
 
 
@@ -286,9 +286,77 @@ class ProductController extends Controller
 
 
         $key = $request->headers->get('X-ac-key');
+        $grant = $auth->grant($key);
 
-        if (isset($key) && $auth->grant($key)) {
-            $sql = "SELECT 
+        switch ($grant){
+            case $grant['profil'] == "FOURNISSEUR":
+                $frsRaisonSoc = $db->getRaisonSocFrs($grant['fo_id']);
+
+
+
+                $sql = "SELECT 
+                          CENTRALE_PRODUITS.dbo.PRODUITS.PR_ID,
+                          SO_ID,
+                          (
+                            SELECT FO_RAISONSOC
+                            FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS
+                            WHERE FOURNISSEURS.FO_ID = PRODUITS.FO_ID
+                          ) as Fournisseur ,
+                          (
+                            SELECT RA_NOM
+                            FROM CENTRALE_PRODUITS.dbo.RAYONS
+                            WHERE RAYONS.RA_ID = PRODUITS.RA_ID
+                          ) as Rayon,
+                          (
+                            SELECT FA_NOM
+                            FROM CENTRALE_PRODUITS.dbo.FAMILLES
+                            WHERE FAMILLES.FA_ID = PRODUITS.FA_ID
+                          ) as Famille,
+                          PR_REF,
+                          PR_REF_FRS,
+                          PR_EAN,
+                          PR_NOM,
+                          PR_DESCR_COURTE,
+                          PR_DESCR_LONGUE,
+                          PR_TRIPTYQUE,
+                          PR_QTE_CMDE,
+                          PR_CONDT,
+                          PR_PRIX_PUBLIC,
+                          PR_PRIX_CA,
+                          PR_REMISE,
+                          PR_PRIX_VC,
+                          PR_TYPE_LIEN,
+                          PR_LIEN,
+                          PR_PHARE,
+                          PR_STATUS,
+                          PP_TYPE,
+                          PP_FICHIER
+                        FROM CENTRALE_PRODUITS.dbo.PRODUITS
+                        INNER JOIN CENTRALE_PRODUITS.dbo.PRODUITS_PHOTOS ON PRODUITS.PR_ID = PRODUITS_PHOTOS.PR_ID
+                        WHERE PRODUITS.PR_ID = :id
+                       ";
+                $conn = $connection->prepare($sql);
+                $conn->bindValue('id', $id);
+                $conn->execute();
+                $result = $conn->fetchAll();
+
+
+                if ($result[0]['Fournisseur'] !== $frsRaisonSoc){
+                    return new JsonResponse("Vous n'avez pas accès a ces ressources", 200);
+                }
+                if (!empty($result)) {
+                    $data = $helper->array_utf8_encode($result);
+                    return new JsonResponse($data, 200);
+                }
+                return new JsonResponse("Aucun produits trouvé ", 200);
+                break;
+
+            case $grant['profil'] == "CENTRALE":
+
+                $limit = $request->query->get('limit');
+
+
+                $sql = "SELECT 
                       PR_ID,
                       SO_ID,
                       (
@@ -327,32 +395,25 @@ class ProductController extends Controller
                     WHERE PR_ID = :id";
 
 
-            $conn = $connection->prepare($sql);
-            $conn->bindValue('id', $id);
+                $conn = $connection->prepare($sql);
+                $conn->bindValue('id', $id);
+                $conn->execute();
+                $result = $conn->fetchAll();
+
+                if (!empty($result)) {
+                    $data = $helper->array_utf8_encode($result);
+                    return new JsonResponse($data, 200);
+                }
+                return new JsonResponse("Aucun produits trouvé ", 200);
 
 
-            $conn->execute();
-            $result = $conn->fetchAll();
 
 
-            if (!isset($result)) {
-                return new JsonResponse("Aucun produit trouvé pour l'id " . $id, 200);
-
-            }
-
-            $data = $helper->array_utf8_encode($result[0]);
-
-
-            $id = $helper->getIdFromApiKey($key);
-
-            $log->logAction($id[0]['APP_ID'], "get:produit");
-
-            return new JsonResponse($data, 200);
-
-        } else {
-            return new JsonResponse("Vous n'avez pas accès a ces ressources", 500);
-
+                break;
         }
+
+
+
 
 
     }
