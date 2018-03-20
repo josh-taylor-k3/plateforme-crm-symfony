@@ -37,7 +37,8 @@ class TicketsController extends Controller
 
                 $frsRaisonSoc = $db->getRaisonSocFrs($grant['fo_id']);
                 $sql = "SELECT TOP ".$limit."  * FROM CENTRALE_ACHAT.dbo.Vue_All_Tickets
-                        WHERE FO_RAISONSOC = :id_four";
+                        WHERE FO_RAISONSOC = :id_four
+                        ORDER BY ME_DATE DESC";
                 $conn = $connection->prepare($sql);
                 $conn->bindValue('id_four', $frsRaisonSoc[0]['FO_RAISONSOC'] );
                 $conn->execute();
@@ -57,7 +58,8 @@ class TicketsController extends Controller
                 $limit = $request->query->get('limit');
 
 
-                $sql = "SELECT TOP ".$limit."  * FROM ".$centrale.".dbo.Vue_All_Tickets";
+                $sql = "SELECT TOP ".$limit."  * FROM ".$centrale.".dbo.Vue_All_Tickets
+                ORDER BY ME_DATE DESC";
                 $conn = $connection->prepare($sql);
                 $conn->execute();
                 $result = $conn->fetchAll();
