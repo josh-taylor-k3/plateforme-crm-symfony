@@ -35,7 +35,6 @@ class HelperService
     /**
      * @param $length
      * @return string
-     * @throws \Exception
      */
     public function getToken($length){
         $token = "";

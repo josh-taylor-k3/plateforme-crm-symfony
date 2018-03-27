@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use Doctrine\DBAL\Driver\Connection;
+use Doctrine\DBAL\Types\IntegerType;
 
 class DbService
 {
@@ -63,6 +64,50 @@ class DbService
         return $conn->fetchAll();
     }
 
+    public function isInCentrale($idClient, $centrale){
+
+
+        $centrale = $this->helper->getCentraleFromId($centrale);
+
+
+        $sql = "SELECT CL_ID FROM ".$centrale.".dbo.CLIENTS WHERE CL_ID = :id";
+        $conn = $this->connection->prepare($sql);
+        $conn->bindValue('id', $idClient);
+        $conn->execute();
+        $result = $conn->fetchAll();
+
+        return !empty($result) ? true : false;
+
+    }
+
+
+    public function getTicketsForFrs($idTicket){
+
+        $sql = "SELECT SO_ID FROM CENTRALE_ACHAT.dbo.Vue_All_Tickets
+                        WHERE ME_ID = :id";
+        $conn = $this->connection->prepare($sql);
+        $conn->bindValue('id', $idTicket );
+        $conn->execute();
+        $idCentrale = $conn->fetchAll()[0];
+
+
+        $centrale = $this->helper->getCentraleFromId($idCentrale['SO_ID']);
+
+
+        $sqlTicket = "SELECT * FROM ".$centrale.".dbo.MESSAGE_ENTETE WHERE ME_ID = :id";
+        $connTickets = $this->connection->prepare($sqlTicket);
+        $connTickets->bindValue('id', $idTicket );
+        $connTickets->execute();
+        $ticket = $connTickets->fetchAll()[0];
+
+
+        $data = [
+            "ticket" => $ticket,
+            "centrale" => $centrale
+        ];
+
+        return $data;
+    }
 
 
 }
