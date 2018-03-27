@@ -376,7 +376,7 @@ class TicketsController extends Controller
 
 
 
-                if (intval($result['CC_ID']) === intval($data['client_user']) && intval($result['FC_ID']) === intval($data['fournisseur_user'])){
+                if (intval($result['CC_ID']) === intval($data['client_user']) || intval($result['FC_ID']) === intval($data['fournisseur_user'])){
 
 
                     $sqlInsert = "INSERT INTO ".$centrale.".dbo.MESSAGE_DETAIL (ME_ID, CC_ID, MD_DATE, MD_CORPS, INS_DATE, INS_USER)
@@ -407,16 +407,6 @@ class TicketsController extends Controller
 
 
         return new JsonResponse('ok', 200);
-
-
-
-
-
-
-
-
-
-
 
     }
 
