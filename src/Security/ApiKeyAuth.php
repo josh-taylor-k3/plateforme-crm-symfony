@@ -51,6 +51,7 @@ class ApiKeyAuth
                 return $data;
             }
         }else {
+            dump($result);
             throw new Exception("Mauvaise clé api", 500);
         }
 

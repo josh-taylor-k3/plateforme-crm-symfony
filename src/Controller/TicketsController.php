@@ -299,11 +299,6 @@ class TicketsController extends Controller
 
                 $data = $helper->array_utf8_encode($result);
                 return new JsonResponse($data, 200);
-
-
-
-
-
                 break;
         }
         return new JsonResponse('ok', 200);
