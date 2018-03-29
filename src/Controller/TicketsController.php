@@ -222,8 +222,10 @@ class TicketsController extends Controller
     public function TicketsNew(Connection $connection,DbService $db, Request $request, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log)
     {
 
-
         header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Credentials: true ");
+        header("Access-Control-Allow-Methods: OPTIONS, GET, POST");
+        header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control, X-ac-key");
 
 
         $key = $request->headers->get('X-ac-key');
@@ -374,12 +376,13 @@ class TicketsController extends Controller
                 if (intval($result['CC_ID']) === intval($data['client_user']) || intval($result['FC_ID']) === intval($data['fournisseur_user'])){
 
 
-                    $sqlInsert = "INSERT INTO ".$centrale.".dbo.MESSAGE_DETAIL (ME_ID, CC_ID, MD_DATE, MD_CORPS, INS_DATE, INS_USER)
-    VALUES
-      (:me_id, :client_user,GETDATE(), :body, GETDATE(), 'API' )";
+                    $sqlInsert = "INSERT INTO ".$centrale.".dbo.MESSAGE_DETAIL (ME_ID, CC_ID, FC_ID, MD_DATE, MD_CORPS, INS_DATE, INS_USER)
+                                    VALUES
+                                  (:me_id, :client_user, :four_user,GETDATE(), :body, GETDATE(), 'API' )";
                     $connInsert = $connection->prepare($sqlInsert);
                     $connInsert->bindValue('me_id', $id );
                     $connInsert->bindValue('client_user', $data['client_user'] );
+                    $connInsert->bindValue('client_user', $data['fournisseur_user'] );
                     $connInsert->bindValue('body', $data['body'] );
                     $connInsert->execute();
                     $resultInsert = $connInsert->fetchAll();
