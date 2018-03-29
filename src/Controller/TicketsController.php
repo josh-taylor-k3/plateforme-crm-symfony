@@ -382,7 +382,7 @@ class TicketsController extends Controller
                     $connInsert = $connection->prepare($sqlInsert);
                     $connInsert->bindValue('me_id', $id );
                     $connInsert->bindValue('client_user', $data['client_user'] );
-                    $connInsert->bindValue('client_user', $data['fournisseur_user'] );
+                    $connInsert->bindValue('four_user', $data['fournisseur_user'] );
                     $connInsert->bindValue('body', $data['body'] );
                     $connInsert->execute();
                     $resultInsert = $connInsert->fetchAll();
