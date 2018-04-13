@@ -373,6 +373,7 @@ class TicketsController extends Controller
 
 
 
+
                 if (intval($result['CC_ID']) === intval($data['client_user']) || intval($result['FC_ID']) === intval($data['fournisseur_user'])){
 
 
