@@ -97,7 +97,20 @@ class HelperService
         }
     }
 
+    /*
+     * Returns an array with the $number of specified month
+     */
+    public function getArrayOfMonth($number){
 
 
+        $monthArraySource = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Decembre"];
+
+
+        return array_slice($monthArraySource, 0, $number);
+
+
+
+
+    }
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\HelperService;
 use Doctrine\DBAL\Driver\Connection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -11,8 +12,9 @@ class ConsommationController extends Controller
 {
     /**
      * @Route("/consommation/{id}/{start}/{end}/{fournisseur}", name="consommation_client")
+     * @throws \Exception
      */
-    public function consoClient(Connection $connection, $id, $start, $end, $fournisseur)
+    public function consoClient(Connection $connection, HelperService $helper,$id, $start, $end, $fournisseur)
     {
         header("Access-Control-Allow-Origin: *");
         header("Access-Control-Allow-Origin: *");
@@ -45,12 +47,14 @@ class ConsommationController extends Controller
 
         $total_prix_public = 0;
         $total_prix_centrale = 0;
-
+        $dataGraphPublic = [];
+        $dataGraphCentrale = [];
         for($i = 0; $i < count($result);$i++){
            $total_prix_public += $result[$i]["CLC_PRIX_PUBLIC"];
            $total_prix_centrale += $result[$i]["CLC_PRIX_CENTRALE"];
+           array_push($dataGraphPublic, $result[$i]['CLC_PRIX_PUBLIC']);
+           array_push($dataGraphCentrale, $result[$i]['CLC_PRIX_CENTRALE']);
         }
-
         $result = [
 
             "count" => count($result),
@@ -60,6 +64,12 @@ class ConsommationController extends Controller
                 "CLC_PRIX_PUBLIC" => $total_prix_public,
                 "CLC_PRIX_CENTRALE" => $total_prix_centrale,
                 "ECONOMIE" => $total_prix_public - $total_prix_centrale,
+
+            ],
+            "labels" => $helper->getArrayOfMonth(count($result) - 1),
+            "dataGraph" => [
+                "dataPublic" => $dataGraphPublic,
+                "dataCentrale" => $dataGraphCentrale
 
             ]
 
