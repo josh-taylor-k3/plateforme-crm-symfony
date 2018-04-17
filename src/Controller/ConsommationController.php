@@ -10,6 +10,18 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ConsommationController extends Controller
 {
+
+    /**
+     * @Route("/conso/index", name="conso_index")
+     */
+    public function consoIndex(){
+
+
+
+        return $this->render('conso/index.html.twig' );
+    }
+
+
     /**
      * @Route("/consommation/{id}/{start}/{end}/{fournisseur}", name="consommation_client")
      * @throws \Exception
@@ -79,4 +91,5 @@ class ConsommationController extends Controller
         return new JsonResponse($result, 200);
 
     }
+
 }
