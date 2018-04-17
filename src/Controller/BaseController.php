@@ -24,6 +24,9 @@ class BaseController extends Controller
         return $this->render('conso/index.html.twig' );
     }
 
+
+
+
     /**
      * @Route("/list", name="list_api_user")
      * @throws \Doctrine\DBAL\DBALException

@@ -56,17 +56,12 @@
 <script>
 
 
-    let url = "http://localhost:8000/consommation/51/2017-01-01/2017-04-01/2";
+    let url = "http://localhost:8000/consommation/51/2017-01-01/2017-06-01/2";
 
     $.ajax({
         dataType: "json",
         url: url,
         success: (data) => {
-
-
-
-            console.log(data);
-
 
             var ctx_chart_achat = document.getElementById("chart-achat").getContext('2d');
 

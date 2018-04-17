@@ -66,7 +66,7 @@ class ConsommationController extends Controller
                 "ECONOMIE" => $total_prix_public - $total_prix_centrale,
 
             ],
-            "labels" => $helper->getArrayOfMonth(count($result) - 1),
+            "labels" => $helper->getArrayOfMonth(count($result) ),
             "dataGraph" => [
                 "dataPublic" => $dataGraphPublic,
                 "dataCentrale" => $dataGraphCentrale
