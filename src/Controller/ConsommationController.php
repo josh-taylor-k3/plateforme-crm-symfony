@@ -14,11 +14,20 @@ class ConsommationController extends Controller
     /**
      * @Route("/conso/index", name="conso_index")
      */
-    public function consoIndex(){
+    public function consoIndex(Connection $connection){
+
+
+        $sql = "SELECT FO_RAISONSOC, FO_ID FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS";
+        $conn = $connection->prepare($sql);
+        $conn->execute();
+        $result = $conn->fetchAll();
 
 
 
-        return $this->render('conso/index.html.twig' );
+
+        return $this->render('conso/index.html.twig', [
+            "fournisseur" => $result
+        ]);
     }
 
 

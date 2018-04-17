@@ -15,14 +15,7 @@ use Twig\Environment;
 
 class BaseController extends Controller
 {
-    /**
-     * @Route("/", name="base")
-     */
-    public function index(Environment $twig)
-    {
-        // replace this line with your own code!
-        return $this->render('conso/index.html.twig' );
-    }
+
 
 
 
