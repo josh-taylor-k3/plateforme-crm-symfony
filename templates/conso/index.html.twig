@@ -26,7 +26,11 @@
                             <select class="custom-select my-1 mr-sm-2" id="selectFournisseur">
                                 <option selected>Choix du fournisseur</option>
 
-                                {% for fournisseur in fourn %}
+
+                                {% for fourn in fournisseur %}
+                                    
+
+
                                     <option value="{{ fourn['FO_ID'] }}">{{ fourn['FO_RAISONSOC'] }}</option>
                                 {% endfor %}
 

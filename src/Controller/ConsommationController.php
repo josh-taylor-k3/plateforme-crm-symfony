@@ -24,7 +24,6 @@ class ConsommationController extends Controller
 
 
 
-
         return $this->render('conso/index.html.twig', [
             "fournisseur" => $result
         ]);
