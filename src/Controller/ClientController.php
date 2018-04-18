@@ -256,4 +256,39 @@ class ClientController extends Controller
 
     }
 
+    /**
+     * @Route("/clientUser/{id}", name="clients_regions")
+     * IL FAUT PAS OUBLIER DE RAJOUTER LES CAS POUR CHAQUE CENTRALE
+     */
+    public function getClientIdFromClient(Request $request, ApiKeyAuth $auth, Connection $connection, HelperService $helper, $id)
+    {
+        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Credentials: true ");
+        header("Access-Control-Allow-Methods: OPTIONS, GET, POST");
+        header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control, X-ac-key");
+
+
+
+        $sql = "SELECT CL_ID FROM CENTRALE_ACHAT.dbo.CLIENTS_USERS WHERE CC_ID = :id ";
+
+        $conn = $connection->prepare($sql);
+        $conn->bindValue('id', $id);
+        $conn->execute();
+        $result = $conn->fetchAll();
+
+        if (!empty($result)) {
+
+            $data = $helper->array_utf8_encode($result);
+
+            return new JsonResponse($data[0], 200);
+        }
+        return new JsonResponse("Aucun client trouvé ", 200);
+
+
+
+
+
+
+    }
 }
