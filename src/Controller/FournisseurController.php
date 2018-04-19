@@ -133,4 +133,26 @@ class FournisseurController extends Controller
 
     }
 
+    /**
+     * @Route("/fournisseur/conso/all", name="fournisseur_conso")
+     */
+    public function getFournisseurFromConso(Request $request , ApiKeyAuth $auth, Connection $connection, HelperService $helper)
+    {
+
+
+        $sql = "SELECT FO_RAISONSOC, FO_ID
+                    FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS";
+
+        $conn = $connection->prepare($sql);
+        $conn->execute();
+        $result = $conn->fetchAll();
+        if (!isset($result)) {
+            return new JsonResponse("Aucun produit trouvé", 200);
+        }
+        $data = $helper->array_utf8_encode($result);
+//            $log->logAction($id[0]['APP_ID'], "get:produits");
+        return new JsonResponse($data, 200);
+
+    }
+
 }
