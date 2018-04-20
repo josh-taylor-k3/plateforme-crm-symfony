@@ -148,8 +148,9 @@ class FournisseurController extends Controller
         header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control, X-ac-key");
 
 
-        $sql = "SELECT FO_RAISONSOC, FO_ID
-                    FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS";
+        $sql = "SELECT DISTINCT FO_ID, FO_NOM_COM
+                        FROM CENTRALE_ACHAT.dbo.Vue_Produits_CRFF
+                        ORDER BY FO_NOM_COM";
 
         $conn = $connection->prepare($sql);
         $conn->execute();
