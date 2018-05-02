@@ -36,7 +36,7 @@ class ConsommationController extends Controller
     public function consoClient(Connection $connection, HelperService $helper,$id, $start, $end)
     {
         header('content-type: application/json; charset=utf-8');
-        header("access-control-allow-origin: *");
+        header("Access-Control-Allow-Origin: *");
 
 
 
