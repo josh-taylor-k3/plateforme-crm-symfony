@@ -39,7 +39,8 @@ class ConsommationController extends Controller
         header("Access-Control-Allow-Origin: *");
         header("Access-Control-Allow-Credentials: true ");
         header("Access-Control-Allow-Methods: OPTIONS, GET, POST");
-        header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, Cache-Control");
+        header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, X-ac-key");
+
 
 
         $sqlBruneau = "SELECT CLC_ID, CL_ID, CC_ID, FO_ID, CLC_DATE, CLC_PRIX_PUBLIC, CLC_PRIX_CENTRALE, INS_DATE, INS_USER , (
