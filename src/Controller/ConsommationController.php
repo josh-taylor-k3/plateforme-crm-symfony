@@ -31,18 +31,16 @@ class ConsommationController extends Controller
 
 
     /**
-     * @Route("/consommation/{id}/{start}/{end}/{fournisseur}", name="consommation_client")
+     * @Route("/consommation/{id}/{start}/{end}/", name="consommation_client")
      * @throws \Exception
      */
-    public function consoClient(Connection $connection, HelperService $helper,$id, $start, $end, $fournisseur)
+    public function consoClient(Connection $connection, HelperService $helper,$id, $start, $end)
     {
         header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Credentials: true ");
-        header("Access-Control-Allow-Methods: OPTIONS, GET, POST");
-        header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, Cache-Control");
+        header("Access-Control-Allow-Headers: Content-Type, User-Agent, Cache-Control");
 
 
-        $sql = "SELECT CLC_ID, CL_ID, CC_ID, FO_ID, CLC_DATE, CLC_PRIX_PUBLIC, CLC_PRIX_CENTRALE, INS_DATE, INS_USER , (
+        $sqlBruneau = "SELECT CLC_ID, CL_ID, CC_ID, FO_ID, CLC_DATE, CLC_PRIX_PUBLIC, CLC_PRIX_CENTRALE, INS_DATE, INS_USER , (
                   case month(CLC_DATE)
                   WHEN 1 THEN 'janvier'
                   WHEN 2 THEN 'février'
@@ -61,51 +59,102 @@ class ConsommationController extends Controller
                 FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
                 WHERE CLC_DATE BETWEEN :start AND :end
                       AND CL_ID = :id
-                      AND FO_ID = :fournisseur"
-                        ;
-
-
-        $conn = $connection->prepare($sql);
+                      AND FO_ID = 2";
+        $conn = $connection->prepare($sqlBruneau);
         $conn->bindValue('id', $id);
         $conn->bindValue('start', $start);
         $conn->bindValue('end', $end);
-        $conn->bindValue('fournisseur', $fournisseur);
         $conn->execute();
-        $result = $conn->fetchAll();
+        $resultBruneau = $conn->fetchAll();
 
-        if (empty($result))
+
+        $sqlBouygues = "SELECT CLC_ID, CL_ID, CC_ID, FO_ID, CLC_DATE, CLC_PRIX_PUBLIC, CLC_PRIX_CENTRALE, INS_DATE, INS_USER , (
+                  case month(CLC_DATE)
+                  WHEN 1 THEN 'janvier'
+                  WHEN 2 THEN 'février'
+                  WHEN 3 THEN 'mars'
+                  WHEN 4 THEN 'avril'
+                  WHEN 5 THEN 'mai'
+                  WHEN 6 THEN 'juin'
+                  WHEN 7 THEN 'juillet'
+                  WHEN 8 THEN 'août'
+                  WHEN 9 THEN 'septembre'
+                  WHEN 10 THEN 'octobre'
+                  WHEN 11 THEN 'novembre'
+                ELSE 'décembre'
+                    end 
+                ) as Month
+                FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
+                WHERE CLC_DATE BETWEEN :start AND :end
+                      AND CL_ID = :id
+                      AND FO_ID = 3";
+        $conn = $connection->prepare($sqlBouygues);
+        $conn->bindValue('id', $id);
+        $conn->bindValue('start', $start);
+        $conn->bindValue('end', $end);
+        $conn->execute();
+        $resultBouygues = $conn->fetchAll();
+
+
+
+
+        if (empty($resultBouygues) && empty($resultBruneau))
         {
             throw new \Exception('Aucun resultat');
         }
 
 
-        $total_prix_public = 0;
-        $total_prix_centrale = 0;
-        $dataGraphPublic = [];
-        $dataGraphCentrale = [];
+        $total_bruneau = 0;
+        $total_bouygues = 0;
+        $total_economie_bouygues = 0;
+        $total_economie_bruneau = 0;
+        $dataGraphBruneau = [];
+        $dataGraphBouygues= [];
+        $economie_bruneau = [];
+        $economie_bouygues = [];
         $labels = [];
 
-        for($i = 0; $i < count($result);$i++){
-           $total_prix_public += $result[$i]["CLC_PRIX_PUBLIC"];
-           $total_prix_centrale += $result[$i]["CLC_PRIX_CENTRALE"];
-           array_push($dataGraphPublic, $result[$i]['CLC_PRIX_PUBLIC']);
-           array_push($dataGraphCentrale, $result[$i]['CLC_PRIX_CENTRALE']);
-           array_push($labels, $result[$i]['Month']);
+        for($i = 0; $i < count($resultBruneau);$i++){
+
+
+            $total_bruneau += $resultBruneau[$i]['CLC_PRIX_CENTRALE'];
+            $total_bouygues += $resultBouygues[$i]['CLC_PRIX_CENTRALE'];
+            $total_economie_bouygues += $resultBruneau[$i]['CLC_PRIX_PUBLIC'] - $resultBruneau[$i]['CLC_PRIX_CENTRALE'];
+            $total_economie_bruneau += $resultBruneau[$i]['CLC_PRIX_PUBLIC'] - $resultBruneau[$i]['CLC_PRIX_CENTRALE'];
+            array_push($dataGraphBruneau, $resultBruneau[$i]['CLC_PRIX_CENTRALE']);
+            array_push($dataGraphBouygues, $resultBouygues[$i]['CLC_PRIX_CENTRALE']);
+            array_push($dataGraphBouygues, $resultBouygues[$i]['CLC_PRIX_CENTRALE']);
+            array_push($economie_bruneau, $resultBruneau[$i]['CLC_PRIX_PUBLIC'] - $resultBruneau[$i]['CLC_PRIX_CENTRALE']);
+            array_push($economie_bouygues, $resultBouygues[$i]['CLC_PRIX_PUBLIC'] - $resultBouygues[$i]['CLC_PRIX_CENTRALE']);
+            array_push($labels, $resultBruneau[$i]['Month']);
         }
+
+
+
         $result = [
-            "count" => count($result),
+            "count" => count($resultBruneau),
             "result" => "ok",
-            "data" => $result,
             "Total" => [
-                "CLC_PRIX_PUBLIC" => $total_prix_public,
-                "CLC_PRIX_CENTRALE" => $total_prix_centrale,
-                "ECONOMIE" => $total_prix_public - $total_prix_centrale,
+               "ca" => [
+                   "Bruneau" => $total_bruneau,
+                   "Bouygues" => $total_bouygues,
+               ],
+                "economie" =>[
+                    "Bruneau" => $total_economie_bruneau,
+                    "Bouygues" => $total_economie_bouygues,
+                ]
 
             ],
             "labels" => $labels,
             "dataGraph" => [
-                "dataPublic" => $dataGraphPublic,
-                "dataCentrale" => $dataGraphCentrale
+               "ca" => [
+                   "pricCentraleBruneau" => $dataGraphBruneau,
+                   "prixCentraleBouygues" => $dataGraphBouygues
+               ],
+                "economie" => [
+                    "economie_bruneau" => $economie_bruneau,
+                    "economie_bouygues" => $economie_bouygues,
+                ]
 
             ]
 
