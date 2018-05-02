@@ -35,10 +35,6 @@ class ConsommationController extends Controller
      */
     public function consoClient(Connection $connection, HelperService $helper,$id, $start, $end)
     {
-        header("Access-Control-Allow-Origin: http://secure.achatcentrale.fr/");
-        header("Access-Control-Allow-Credentials: true ");
-        header("Access-Control-Allow-Methods: GET, OPTIONS, POST");
-        header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, X-File-Size, X-ac-key");
 
         $sqlBruneau = "SELECT CLC_ID, CL_ID, CC_ID, FO_ID, CLC_DATE, CLC_PRIX_PUBLIC, CLC_PRIX_CENTRALE, INS_DATE, INS_USER , (
                   case month(CLC_DATE)
@@ -150,6 +146,7 @@ class ConsommationController extends Controller
 
         ];
 
+        header("Access-Control-Allow-Origin: http://secure.achatcentrale.fr/");
 
 
         return new JsonResponse($result, 200);
