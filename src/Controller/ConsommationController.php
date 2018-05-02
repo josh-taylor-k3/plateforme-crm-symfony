@@ -31,8 +31,7 @@ class ConsommationController extends Controller
 
 
     /**
-     * @Route("/consommation/{id}/{start}/{end}/", name="consommation_client")
-     * @throws \Exception
+     * @Route("/consommation/{id}/{start}/{end}/", name="consommation_client", methods={"GET"})
      */
     public function consoClient(Connection $connection, HelperService $helper,$id, $start, $end)
     {
