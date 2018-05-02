@@ -39,7 +39,7 @@ class ConsommationController extends Controller
         header("Access-Control-Allow-Origin: *");
         header("Access-Control-Allow-Credentials: true ");
         header("Access-Control-Allow-Methods: OPTIONS, GET, POST");
-        header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, Cache-Control, X-ac-key");
+        header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, Cache-Control");
 
 
         $sql = "SELECT CLC_ID, CL_ID, CC_ID, FO_ID, CLC_DATE, CLC_PRIX_PUBLIC, CLC_PRIX_CENTRALE, INS_DATE, INS_USER , (
@@ -113,6 +113,38 @@ class ConsommationController extends Controller
 
 
         return new JsonResponse($result, 200);
+
+    }
+
+
+    /**
+     * @Route("/consommation/years", name="conso_years")
+     */
+    public function consoYears(Connection $connection, HelperService $helper){
+
+
+
+        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Credentials: true ");
+        header("Access-Control-Allow-Methods: OPTIONS, GET, POST");
+        header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, Cache-Control");
+
+        $sql = "SELECT DISTINCT year(CLC_DATE) as date
+                FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
+                ORDER BY date desc";
+
+
+
+        $conn = $connection->prepare($sql);
+        $conn->execute();
+        $result = $conn->fetchAll();
+
+        $data = $result;
+
+
+
+
+        return new JsonResponse($data, 200);
 
     }
 

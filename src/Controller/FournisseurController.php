@@ -105,7 +105,6 @@ class FournisseurController extends Controller
 
     }
 
-
     /**
      * @Route("/fournisseur/{id}/products", name="fournisseur_products")
      */
