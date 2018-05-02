@@ -163,8 +163,15 @@ class ConsommationController extends Controller
 
         ];
 
+        $response = new JsonResponse();
 
-        return new JsonResponse($result, 200);
+        $response->setContent($result);
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Content-Type', 'application/json');
+        $response->setStatusCode(200);
+
+
+        return $response;
 
     }
 
