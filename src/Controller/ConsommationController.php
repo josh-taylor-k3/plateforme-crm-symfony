@@ -37,9 +37,10 @@ class ConsommationController extends Controller
     public function consoClient(Connection $connection, HelperService $helper,$id, $start, $end)
     {
         header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Origin: *");
         header("Access-Control-Allow-Credentials: true ");
         header("Access-Control-Allow-Methods: OPTIONS, GET, POST");
-        header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, X-ac-key");
+        header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control, X-ac-key");
 
 
 
@@ -163,15 +164,9 @@ class ConsommationController extends Controller
 
         ];
 
-        $response = new JsonResponse();
-
-        $response->setContent($result);
-        $response->headers->set('Access-Control-Allow-Origin', '*');
-        $response->headers->set('Content-Type', 'application/json');
-        $response->setStatusCode(200);
 
 
-        return $response;
+        return new JsonResponse($result, 200);
 
     }
 
