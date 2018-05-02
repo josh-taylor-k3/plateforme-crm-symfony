@@ -7,6 +7,7 @@ use Doctrine\DBAL\Driver\Connection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class ConsommationController extends Controller
 {
@@ -66,8 +67,6 @@ class ConsommationController extends Controller
         $conn->bindValue('end', $end);
         $conn->execute();
         $resultBruneau = $conn->fetchAll();
-
-
         $sqlBouygues = "SELECT CLC_ID, CL_ID, CC_ID, FO_ID, CLC_DATE, CLC_PRIX_PUBLIC, CLC_PRIX_CENTRALE, INS_DATE, INS_USER , (
                   case month(CLC_DATE)
                   WHEN 1 THEN 'janvier'
@@ -94,16 +93,10 @@ class ConsommationController extends Controller
         $conn->bindValue('end', $end);
         $conn->execute();
         $resultBouygues = $conn->fetchAll();
-
-
-
-
         if (empty($resultBouygues) && empty($resultBruneau))
         {
             throw new \Exception('Aucun resultat');
         }
-
-
         $total_bruneau = 0;
         $total_bouygues = 0;
         $total_economie_bouygues = 0;
@@ -128,8 +121,6 @@ class ConsommationController extends Controller
             array_push($economie_bouygues, $resultBouygues[$i]['CLC_PRIX_PUBLIC'] - $resultBouygues[$i]['CLC_PRIX_CENTRALE']);
             array_push($labels, $resultBruneau[$i]['Month']);
         }
-
-
 
         $result = [
             "count" => count($resultBruneau),
@@ -160,9 +151,7 @@ class ConsommationController extends Controller
 
         ];
 
-
-
-        return new JsonResponse($result, 200);
+        return $this->json($result);
 
     }
 
