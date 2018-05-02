@@ -31,7 +31,7 @@ class ConsommationController extends Controller
 
 
     /**
-     * @Route("/consommation/{id}/{start}/{end}/", name="consommation_client", methods={"GET"})
+     * @Route("/consommation/{id}/{start}/{end}/", name="consommation_client")
      */
     public function consoClient(Connection $connection, HelperService $helper,$id, $start, $end)
     {
@@ -40,7 +40,6 @@ class ConsommationController extends Controller
 
         header("Access-Control-Allow-Origin: *");
         header("Access-Control-Allow-Credentials: true ");
-        header("Access-Control-Allow-Methods: OPTIONS, GET, POST");
         header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control, X-ac-key");
 
 
