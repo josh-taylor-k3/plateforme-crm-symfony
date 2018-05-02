@@ -118,7 +118,6 @@ class ConsommationController extends Controller
             $total_economie_bruneau += $resultBruneau[$i]['CLC_PRIX_PUBLIC'] - $resultBruneau[$i]['CLC_PRIX_CENTRALE'];
             array_push($dataGraphBruneau, $resultBruneau[$i]['CLC_PRIX_CENTRALE']);
             array_push($dataGraphBouygues, $resultBouygues[$i]['CLC_PRIX_CENTRALE']);
-            array_push($dataGraphBouygues, $resultBouygues[$i]['CLC_PRIX_CENTRALE']);
             array_push($economie_bruneau, $resultBruneau[$i]['CLC_PRIX_PUBLIC'] - $resultBruneau[$i]['CLC_PRIX_CENTRALE']);
             array_push($economie_bouygues, $resultBouygues[$i]['CLC_PRIX_PUBLIC'] - $resultBouygues[$i]['CLC_PRIX_CENTRALE']);
             array_push($labels, $resultBruneau[$i]['Month']);
