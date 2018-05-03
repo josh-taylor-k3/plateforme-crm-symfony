@@ -103,6 +103,8 @@ class ConsommationController extends Controller
         $total_bouygues = 0;
         $total_economie_bouygues = 0;
         $total_economie_bruneau = 0;
+        $eco_total_bruneau = 0;
+        $eco_total_toshiba = 0;
         $dataGraphBruneau = [];
         $dataGraphBouygues= [];
         $economie_bruneau = [];
@@ -146,6 +148,13 @@ class ConsommationController extends Controller
                 "economie" => [
                     "economie_bruneau" => $economie_bruneau,
                     "economie_bouygues" => $economie_bouygues,
+                    "total_fourn_eco" => [
+                        "labels" => ["Bruneau", "Bouygues"],
+                        "data" => [
+                            "Bruneau" => array_sum($economie_bruneau),
+                            "Bouygues" => array_sum($economie_bouygues),
+                        ]
+                    ]
                 ]
 
             ]
@@ -190,5 +199,6 @@ class ConsommationController extends Controller
         return new JsonResponse($data, 200);
 
     }
+
 
 }
