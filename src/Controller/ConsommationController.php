@@ -95,20 +95,48 @@ class ConsommationController extends Controller
         $conn->bindValue('end', $end);
         $conn->execute();
         $resultBouygues = $conn->fetchAll();
-        if (empty($resultBouygues) && empty($resultBruneau))
+        $sqlToshiba = "SELECT CLC_ID, CL_ID, CC_ID, FO_ID, CLC_DATE, CLC_PRIX_PUBLIC, CLC_PRIX_CENTRALE, INS_DATE, INS_USER , (
+                  case month(CLC_DATE)
+                  WHEN 1 THEN 'janvier'
+                  WHEN 2 THEN 'février'
+                  WHEN 3 THEN 'mars'
+                  WHEN 4 THEN 'avril'
+                  WHEN 5 THEN 'mai'
+                  WHEN 6 THEN 'juin'
+                  WHEN 7 THEN 'juillet'
+                  WHEN 8 THEN 'août'
+                  WHEN 9 THEN 'septembre'
+                  WHEN 10 THEN 'octobre'
+                  WHEN 11 THEN 'novembre'
+                ELSE 'décembre'
+                    end 
+                ) as Month
+                FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
+                WHERE CLC_DATE BETWEEN :start AND :end
+                      AND CL_ID = :id
+                      AND FO_ID = 27";
+        $conn = $connection->prepare($sqlToshiba);
+        $conn->bindValue('id', $id);
+        $conn->bindValue('start', $start);
+        $conn->bindValue('end', $end);
+        $conn->execute();
+        $resultToshiba = $conn->fetchAll();
+        if (empty($resultBouygues) && empty($resultBruneau) && empty($resultToshiba))
         {
             throw new \Exception('Aucun resultat');
         }
         $total_bruneau = 0;
         $total_bouygues = 0;
+        $total_toshiba = 0;
         $total_economie_bouygues = 0;
         $total_economie_bruneau = 0;
-        $eco_total_bruneau = 0;
-        $eco_total_toshiba = 0;
+        $total_economie_toshiba = 0;
         $dataGraphBruneau = [];
-        $dataGraphBouygues= [];
+        $dataGraphBouygues = [];
+        $dataGraphToshiba = [];
         $economie_bruneau = [];
         $economie_bouygues = [];
+        $economie_toshiba = [];
         $labels = [];
 
         for($i = 0; $i < count($resultBruneau);$i++){
@@ -116,12 +144,16 @@ class ConsommationController extends Controller
 
             $total_bruneau += $resultBruneau[$i]['CLC_PRIX_CENTRALE'];
             $total_bouygues += $resultBouygues[$i]['CLC_PRIX_CENTRALE'];
+            $total_bouygues += $resultToshiba[$i]['CLC_PRIX_CENTRALE'];
             $total_economie_bouygues += $resultBruneau[$i]['CLC_PRIX_PUBLIC'] - $resultBruneau[$i]['CLC_PRIX_CENTRALE'];
             $total_economie_bruneau += $resultBruneau[$i]['CLC_PRIX_PUBLIC'] - $resultBruneau[$i]['CLC_PRIX_CENTRALE'];
+            $total_economie_bruneau += $resultToshiba[$i]['CLC_PRIX_PUBLIC'] - $resultToshiba[$i]['CLC_PRIX_CENTRALE'];
             array_push($dataGraphBruneau, $resultBruneau[$i]['CLC_PRIX_CENTRALE']);
             array_push($dataGraphBouygues, $resultBouygues[$i]['CLC_PRIX_CENTRALE']);
+            array_push($dataGraphToshiba, $resultToshiba[$i]['CLC_PRIX_CENTRALE']);
             array_push($economie_bruneau, $resultBruneau[$i]['CLC_PRIX_PUBLIC'] - $resultBruneau[$i]['CLC_PRIX_CENTRALE']);
             array_push($economie_bouygues, $resultBouygues[$i]['CLC_PRIX_PUBLIC'] - $resultBouygues[$i]['CLC_PRIX_CENTRALE']);
+            array_push($economie_toshiba, $resultToshiba[$i]['CLC_PRIX_PUBLIC'] - $resultToshiba[$i]['CLC_PRIX_CENTRALE']);
             array_push($labels, $resultBruneau[$i]['Month']);
         }
 
@@ -132,10 +164,12 @@ class ConsommationController extends Controller
                "ca" => [
                    "Bruneau" => $total_bruneau,
                    "Bouygues" => $total_bouygues,
+                   "Toshiba" => $total_toshiba,
                ],
                 "economie" =>[
                     "Bruneau" => $total_economie_bruneau,
                     "Bouygues" => $total_economie_bouygues,
+                    "Toshiba" => $total_economie_toshiba,
                 ]
 
             ],
@@ -143,16 +177,19 @@ class ConsommationController extends Controller
             "dataGraph" => [
                "ca" => [
                    "pricCentraleBruneau" => $dataGraphBruneau,
-                   "prixCentraleBouygues" => $dataGraphBouygues
+                   "prixCentraleBouygues" => $dataGraphBouygues,
+                   "prixCentraleToshiba" => $dataGraphToshiba,
                ],
                 "economie" => [
                     "economie_bruneau" => $economie_bruneau,
                     "economie_bouygues" => $economie_bouygues,
+                    "economie_toshiba" => $economie_toshiba,
                     "total_fourn_eco" => [
-                        "labels" => ["Bruneau", "Bouygues"],
+                        "labels" => ["Bruneau", "Bouygues", "Toshiba"],
                         "data" => [
                             "Bruneau" => array_sum($economie_bruneau),
                             "Bouygues" => array_sum($economie_bouygues),
+                            "Toshiba" => array_sum($economie_toshiba),
                         ]
                     ]
                 ]
