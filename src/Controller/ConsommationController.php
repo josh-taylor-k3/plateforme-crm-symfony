@@ -53,11 +53,16 @@ class ConsommationController extends Controller
         $conn->execute();
         $listFourn = $conn->fetchAll();
 
+
         $arrayFoId = array();
+        $arrayRaisonSoc = array();
+
 
         foreach ($listFourn as $fourn){
             array_push($arrayFoId, $fourn['FO_ID']);
+            array_push($arrayRaisonSoc, $fourn['FO_RAISONSOC']);
         }
+
 
         $data = [
             "count" => 0,
@@ -65,23 +70,22 @@ class ConsommationController extends Controller
             "Total" => [
                 "ca" =>[],
                 "economie" => [],
-
             ],
-            "labels" => [
-
-            ],
+            "labels" => [],
+            "conso" =>[
+                "BRUNEAU" =>[
+                    "ca" => [],
+                    "eco" => [],
+                ],
+                "TOSHIBA" =>[
+                    "ca" => [],
+                    "eco" => [],
+                ],
+            ]
         ];
 
 
-        foreach ($arrayFoId as $fo_id){
-
-            $data += [
-                $fourn['FO_RAISONSOC'] => [
-                    "CA" => [],
-                    "ECO" => [],
-                ]
-            ];
-
+        foreach ($arrayFoId as $key => $fo_id){
 
             $sql = "SELECT CLC_ID, CL_ID, CC_ID, FO_ID, CLC_DATE, CLC_PRIX_PUBLIC, CLC_PRIX_CENTRALE, INS_DATE, INS_USER , (
                           case month(CLC_DATE)
@@ -112,25 +116,30 @@ class ConsommationController extends Controller
             $conn->bindValue('end', $end);
             $conn->execute();
             $resultConso = $conn->fetchAll();
-            $ca = [];
-            $eco = [];
-            foreach ($resultConso as $conso){
 
-                array_push($ca,$conso['CLC_PRIX_CENTRALE']);
-                array_push($eco,$conso['CLC_PRIX_PUBLIC'] - $conso['CLC_PRIX_CENTRALE']);
-                array_push($data['labels'], $conso['Month']);
+            $ca = 0;
+            $eco = 0;
+
+            foreach ($resultConso as $ley => $conso){
+
+
+                array_push($data["conso"][$arrayRaisonSoc[$key]]["ca"], $conso['CLC_PRIX_CENTRALE'] );
+                array_push($data["conso"][$arrayRaisonSoc[$key]]["eco"], $conso['CLC_PRIX_PUBLIC'] - $conso['CLC_PRIX_CENTRALE']  );
+
+                if( $key >= 1 ){
+                    array_push($data["labels"], $conso['Month']);
+
+                }
+
+
             }
 
+                $ca = array_sum($data['conso']['BRUNEAU']['ca']) + array_sum($data['conso']['TOSHIBA']['ca']);
+                $eco = array_sum($data['conso']['BRUNEAU']['eco']) + array_sum($data['conso']['TOSHIBA']['eco']);
 
-            array_push($data[$fourn['FO_RAISONSOC']]['CA'], $ca);
-            array_push($data[$fourn['FO_RAISONSOC']]['ECO'], $eco);
-            array_push($data["Total"]["ca"],array_sum($data[$fourn['FO_RAISONSOC']]['CA'][0]));
-            array_push($data["Total"]["economie"],array_sum($data[$fourn['FO_RAISONSOC']]['ECO'][0]));
+                $data['Total']["ca"] = $ca;
 
-            $data["count"] = count($resultConso);
-
-
-
+                $data['Total']["economie"] = $eco;
         }
 
         return new JsonResponse($data, 200);
