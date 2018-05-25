@@ -30,6 +30,7 @@ class ConsommationController extends Controller
     }
 
 
+
     /**
      * @Route("/consommation/{id}/{start}/{end}/", name="consommation_client")
      */
@@ -43,165 +44,96 @@ class ConsommationController extends Controller
         header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control, X-ac-key");
 
 
-        $sqlBruneau = "SELECT CLC_ID, CL_ID, CC_ID, FO_ID, CLC_DATE, CLC_PRIX_PUBLIC, CLC_PRIX_CENTRALE, INS_DATE, INS_USER , (
-                  case month(CLC_DATE)
-                  WHEN 1 THEN 'janvier'
-                  WHEN 2 THEN 'février'
-                  WHEN 3 THEN 'mars'
-                  WHEN 4 THEN 'avril'
-                  WHEN 5 THEN 'mai'
-                  WHEN 6 THEN 'juin'
-                  WHEN 7 THEN 'juillet'
-                  WHEN 8 THEN 'août'
-                  WHEN 9 THEN 'septembre'
-                  WHEN 10 THEN 'octobre'
-                  WHEN 11 THEN 'novembre'
-                ELSE 'décembre'
-                    end 
-                ) as Month
-                FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
-                WHERE CLC_DATE BETWEEN :start AND :end
-                      AND CL_ID = :id
-                      AND FO_ID = 2";
-        $conn = $connection->prepare($sqlBruneau);
-        $conn->bindValue('id', $id);
-        $conn->bindValue('start', $start);
-        $conn->bindValue('end', $end);
-        $conn->execute();
-        $resultBruneau = $conn->fetchAll();
-        $sqlBouygues = "SELECT CLC_ID, CL_ID, CC_ID, FO_ID, CLC_DATE, CLC_PRIX_PUBLIC, CLC_PRIX_CENTRALE, INS_DATE, INS_USER , (
-                  case month(CLC_DATE)
-                  WHEN 1 THEN 'janvier'
-                  WHEN 2 THEN 'février'
-                  WHEN 3 THEN 'mars'
-                  WHEN 4 THEN 'avril'
-                  WHEN 5 THEN 'mai'
-                  WHEN 6 THEN 'juin'
-                  WHEN 7 THEN 'juillet'
-                  WHEN 8 THEN 'août'
-                  WHEN 9 THEN 'septembre'
-                  WHEN 10 THEN 'octobre'
-                  WHEN 11 THEN 'novembre'
-                ELSE 'décembre'
-                    end 
-                ) as Month
-                FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
-                WHERE CLC_DATE BETWEEN :start AND :end
-                      AND CL_ID = :id
-                      AND FO_ID = 3";
-        $conn = $connection->prepare($sqlBouygues);
-        $conn->bindValue('id', $id);
-        $conn->bindValue('start', $start);
-        $conn->bindValue('end', $end);
-        $conn->execute();
-        $resultBouygues = $conn->fetchAll();
-        $sqlToshiba = "SELECT CLC_ID, CL_ID, CC_ID, FO_ID, CLC_DATE, CLC_PRIX_PUBLIC, CLC_PRIX_CENTRALE, INS_DATE, INS_USER , (
-                  case month(CLC_DATE)
-                  WHEN 1 THEN 'janvier'
-                  WHEN 2 THEN 'février'
-                  WHEN 3 THEN 'mars'
-                  WHEN 4 THEN 'avril'
-                  WHEN 5 THEN 'mai'
-                  WHEN 6 THEN 'juin'
-                  WHEN 7 THEN 'juillet'
-                  WHEN 8 THEN 'août'
-                  WHEN 9 THEN 'septembre'
-                  WHEN 10 THEN 'octobre'
-                  WHEN 11 THEN 'novembre'
-                ELSE 'décembre'
-                    end 
-                ) as Month
-                FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
-                WHERE CLC_DATE BETWEEN :start AND :end
-                      AND CL_ID = :id
-                      AND FO_ID = 27";
-        $conn = $connection->prepare($sqlToshiba);
-        $conn->bindValue('id', $id);
-        $conn->bindValue('start', $start);
-        $conn->bindValue('end', $end);
-        $conn->execute();
-        $resultToshiba = $conn->fetchAll();
-        if (empty($resultBouygues) && empty($resultBruneau) && empty($resultToshiba))
-        {
-            throw new \Exception('Aucun resultat');
-        }
-        $total_bruneau = 0;
-        $total_bouygues = 0;
-        $total_toshiba = 0;
-        $total_economie_bouygues = 0;
-        $total_economie_bruneau = 0;
-        $total_economie_toshiba = 0;
-        $dataGraphBruneau = [];
-        $dataGraphBouygues = [];
-        $dataGraphToshiba = [];
-        $economie_bruneau = [];
-        $economie_bouygues = [];
-        $economie_toshiba = [];
-        $labels = [];
-
-        for($i = 0; $i < count($resultBruneau);$i++){
+        $sql = "SELECT DISTINCT CENTRALE_ACHAT.dbo.CLIENTS_CONSO.FO_ID, FO_RAISONSOC FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
+                INNER JOIN CENTRALE_PRODUITS.dbo.FOURNISSEURS ON CLIENTS_CONSO.FO_ID = FOURNISSEURS.FO_ID";
 
 
-            $total_bruneau += $resultBruneau[$i]['CLC_PRIX_CENTRALE'];
-            $total_bouygues += $resultBouygues[$i]['CLC_PRIX_CENTRALE'];
-            $total_bouygues += $resultToshiba[$i]['CLC_PRIX_CENTRALE'];
-            $total_economie_bouygues += $resultBruneau[$i]['CLC_PRIX_PUBLIC'] - $resultBruneau[$i]['CLC_PRIX_CENTRALE'];
-            $total_economie_bruneau += $resultBruneau[$i]['CLC_PRIX_PUBLIC'] - $resultBruneau[$i]['CLC_PRIX_CENTRALE'];
-            $total_economie_bruneau += $resultToshiba[$i]['CLC_PRIX_PUBLIC'] - $resultToshiba[$i]['CLC_PRIX_CENTRALE'];
-            array_push($dataGraphBruneau, $resultBruneau[$i]['CLC_PRIX_CENTRALE']);
-            array_push($dataGraphBouygues, $resultBouygues[$i]['CLC_PRIX_CENTRALE']);
-            array_push($dataGraphToshiba, $resultToshiba[$i]['CLC_PRIX_CENTRALE']);
-            array_push($economie_bruneau, $resultBruneau[$i]['CLC_PRIX_PUBLIC'] - $resultBruneau[$i]['CLC_PRIX_CENTRALE']);
-            array_push($economie_bouygues, $resultBouygues[$i]['CLC_PRIX_PUBLIC'] - $resultBouygues[$i]['CLC_PRIX_CENTRALE']);
-            array_push($economie_toshiba, $resultToshiba[$i]['CLC_PRIX_PUBLIC'] - $resultToshiba[$i]['CLC_PRIX_CENTRALE']);
-            array_push($labels, $resultBruneau[$i]['Month']);
+
+        $conn = $connection->prepare($sql);
+        $conn->execute();
+        $listFourn = $conn->fetchAll();
+
+        $arrayFoId = array();
+
+        foreach ($listFourn as $fourn){
+            array_push($arrayFoId, $fourn['FO_ID']);
         }
 
-        $result = [
-            "count" => count($resultBruneau),
+        $data = [
+            "count" => 0,
             "result" => "ok",
             "Total" => [
-               "ca" => [
-                   "Bruneau" => $total_bruneau,
-                   "Bouygues" => $total_bouygues,
-                   "Toshiba" => $total_toshiba,
-               ],
-                "economie" =>[
-                    "Bruneau" => $total_economie_bruneau,
-                    "Bouygues" => $total_economie_bouygues,
-                    "Toshiba" => $total_economie_toshiba,
-                ]
+                "ca" =>[],
+                "economie" => [],
 
             ],
-            "labels" => $labels,
-            "dataGraph" => [
-               "ca" => [
-                   "pricCentraleBruneau" => $dataGraphBruneau,
-                   "prixCentraleBouygues" => $dataGraphBouygues,
-                   "prixCentraleToshiba" => $dataGraphToshiba,
-               ],
-                "economie" => [
-                    "economie_bruneau" => $economie_bruneau,
-                    "economie_bouygues" => $economie_bouygues,
-                    "economie_toshiba" => $economie_toshiba,
-                    "total_fourn_eco" => [
-                        "labels" => ["Bruneau", "Bouygues", "Toshiba"],
-                        "data" => [
-                            "Bruneau" => array_sum($economie_bruneau),
-                            "Bouygues" => array_sum($economie_bouygues),
-                            "Toshiba" => array_sum($economie_toshiba),
-                        ]
-                    ]
-                ]
+            "labels" => [
 
-            ]
-
+            ],
         ];
 
 
+        foreach ($arrayFoId as $fo_id){
+
+            $data += [
+                $fourn['FO_RAISONSOC'] => [
+                    "CA" => [],
+                    "ECO" => [],
+                ]
+            ];
 
 
-        return new JsonResponse($result, 200);
+            $sql = "SELECT CLC_ID, CL_ID, CC_ID, FO_ID, CLC_DATE, CLC_PRIX_PUBLIC, CLC_PRIX_CENTRALE, INS_DATE, INS_USER , (
+                          case month(CLC_DATE)
+                          WHEN 1 THEN 'janvier'
+                          WHEN 2 THEN 'février'
+                          WHEN 3 THEN 'mars'
+                          WHEN 4 THEN 'avril'
+                          WHEN 5 THEN 'mai'
+                          WHEN 6 THEN 'juin'
+                          WHEN 7 THEN 'juillet'
+                          WHEN 8 THEN 'août'
+                          WHEN 9 THEN 'septembre'
+                          WHEN 10 THEN 'octobre'
+                          WHEN 11 THEN 'novembre'
+                          ELSE 'décembre'
+                          end
+                        ) as Month
+                    FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
+                    WHERE CLC_DATE BETWEEN :start AND :end
+                          AND CL_ID = :id
+                          AND FO_ID = :fournisseur";
+
+
+            $conn = $connection->prepare($sql);
+            $conn->bindValue('id', $id);
+            $conn->bindValue('fournisseur', $fo_id);
+            $conn->bindValue('start', $start);
+            $conn->bindValue('end', $end);
+            $conn->execute();
+            $resultConso = $conn->fetchAll();
+            $ca = [];
+            $eco = [];
+            foreach ($resultConso as $conso){
+
+                array_push($ca,$conso['CLC_PRIX_CENTRALE']);
+                array_push($eco,$conso['CLC_PRIX_PUBLIC'] - $conso['CLC_PRIX_CENTRALE']);
+                array_push($data['labels'], $conso['Month']);
+            }
+
+
+            array_push($data[$fourn['FO_RAISONSOC']]['CA'], $ca);
+            array_push($data[$fourn['FO_RAISONSOC']]['ECO'], $eco);
+            array_push($data["Total"]["ca"],array_sum($data[$fourn['FO_RAISONSOC']]['CA'][0]));
+            array_push($data["Total"]["economie"],array_sum($data[$fourn['FO_RAISONSOC']]['ECO'][0]));
+
+            $data["count"] = count($resultConso);
+
+
+
+        }
+
+        return new JsonResponse($data, 200);
 
     }
 
