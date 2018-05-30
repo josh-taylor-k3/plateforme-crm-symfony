@@ -154,18 +154,14 @@ class ConsommationController extends Controller
     public function consoClientNew(Connection $connection, HelperService $helper, $id, $start, $end)
     {
 
-        $data = [
-            "count" => 0,
-            "result" => "ok",
-            "Total" => [
-                "ca" =>[],
-                "economie" => [],
-            ],
-            "labels" => [],
-            "conso" =>[
+        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Credentials: true ");
+        header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control, X-ac-key");
 
-            ]
-        ];
+
+
+
+
 
 
 
@@ -178,6 +174,20 @@ class ConsommationController extends Controller
         $conn = $connection->prepare($sqlFourn);
         $conn->execute();
         $ListFourn = $conn->fetchAll();
+
+        $data = [
+            "count" => count($ListFourn),
+            "result" => "ok",
+            "Total" => [
+                "ca" =>[],
+                "economie" => [],
+            ],
+            "labels" => [],
+            "conso" =>[
+
+            ]
+        ];
+
 
         $ca_total = 0;
 
