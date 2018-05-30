@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Service\HelperService;
+use Carbon\Carbon;
 use Doctrine\DBAL\Driver\Connection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -144,6 +145,199 @@ class ConsommationController extends Controller
 
         return new JsonResponse($data, 200);
 
+    }
+
+
+    /**
+     * @Route("v2/consommation/{id}/{start}/{end}/", name="consommation_client_test")
+     */
+    public function consoClientNew(Connection $connection, HelperService $helper, $id, $start, $end)
+    {
+
+        $data = [
+            "count" => 0,
+            "result" => "ok",
+            "Total" => [
+                "ca" =>[],
+                "economie" => [],
+            ],
+            "labels" => [],
+            "conso" =>[
+
+            ]
+        ];
+
+
+
+        // on obtient la liste des fournisseurs ayant des conso dans la table conso
+        $sqlFourn = "SELECT DISTINCT
+                      FO_ID,
+                      (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_ACHAT.dbo.CLIENTS_CONSO.FO_ID GROUP BY FO_RAISONSOC) as FO_RAISONSOC
+                    FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO";
+
+        $conn = $connection->prepare($sqlFourn);
+        $conn->execute();
+        $ListFourn = $conn->fetchAll();
+
+        $ca_total = 0;
+
+        $eco_total = 0;
+
+
+        foreach ($ListFourn as $fourn){
+
+
+
+            $sqlConso = "SELECT
+                          CLC_ID,
+                          CL_ID,
+                          CC_ID,
+                          FO_ID,
+                          CLC_DATE,
+                          CLC_PRIX_PUBLIC,
+                          CLC_PRIX_CENTRALE,
+                          INS_DATE,
+                          INS_USER ,
+                          (case month(CLC_DATE)
+                                WHEN 1 THEN 'janvier'
+                                WHEN 2 THEN 'février'
+                                WHEN 3 THEN 'mars'
+                                WHEN 4 THEN 'avril'
+                                WHEN 5 THEN 'mai'
+                                WHEN 6 THEN 'juin'
+                                WHEN 7 THEN 'juillet'
+                                WHEN 8 THEN 'août'
+                                WHEN 9 THEN 'septembre'
+                                WHEN 10 THEN 'octobre'
+                                WHEN 11 THEN 'novembre'
+                                ELSE 'décembre'
+                           end) 
+                            as Month
+                        FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
+                        WHERE CLC_DATE BETWEEN :start AND :end
+                              AND CL_ID = :id
+                              AND FO_ID = :fournisseur";
+
+
+            $conn = $connection->prepare($sqlConso);
+            $conn->bindValue('id', $id);
+            $conn->bindValue('fournisseur', $fourn['FO_ID']);
+            $conn->bindValue('start', $start);
+            $conn->bindValue('end', $end);
+            $conn->execute();
+            $conso = $conn->fetchAll();
+
+            $cons_ca = [];
+            $cons_eco = [];
+
+            foreach ($conso as $cons){
+
+                array_push($cons_ca, $cons["CLC_PRIX_CENTRALE"]);
+
+                array_push($cons_eco, $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"]);
+
+                $ca_total += $cons["CLC_PRIX_CENTRALE"];
+                $eco_total += $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
+
+
+            }
+                $tpl = Array($fourn['FO_RAISONSOC'] => [
+                        "CA" => $cons_ca,
+                        "ECO" => $cons_eco,
+                    ]);
+            array_push($data["conso"], $tpl);
+
+
+            $data['Total']['ca'] = $ca_total;
+            $data['Total']['economie'] = $eco_total;
+
+
+        }
+
+
+
+
+        $months = $helper->get_months( $start, $end );
+
+
+        foreach($months as $mois){
+
+
+            array_push($data['labels'], $mois);
+
+        }
+
+
+
+//        //On cherche les consos de la table clients_conso
+//        $sqlClientConso = "SELECT (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE FOURNISSEURS.FO_ID = CLIENTS_CONSO.FO_ID) as Fournisseur  ,*  FROM CENTRALE_ACHAT..CLIENTS_CONSO WHERE CL_ID = :id AND CLC_DATE BETWEEN :start AND :end";
+//
+//        $conn = $connection->prepare($sqlClientConso);
+//        $conn->bindValue(":id", $id);
+//        $conn->bindValue(":start", $start);
+//        $conn->bindValue(":end", $end);
+//        $conn->execute();
+//        $resultClientConso = $conn->fetchAll();
+//
+//
+//        //on cherche les consos de la vue
+//        $sqlVueClient = "SELECT  CL_ID, CL_RAISONSOC, ME_DATE, Vue_Remontee_Filets.FO_ID, FO_RAISONSOC, PR_PRIX_CA, PR_PRIX_PUBLIC FROM CENTRALE_ACHAT.dbo.Vue_Remontee_Filets INNER JOIN CENTRALE_PRODUITS.dbo.PRODUITS ON CENTRALE_PRODUITS.dbo.PRODUITS.PR_ID = Vue_Remontee_Filets.PR_ID WHERE CL_ID = :id AND ME_DATE BETWEEN :start AND :end";
+//        $conn = $connection->prepare($sqlVueClient);
+//        $conn->bindValue(":id", $id);
+//        $conn->bindValue(":start", $start);
+//        $conn->bindValue(":end", $end);
+//        $conn->execute();
+//        $resultVueClient = $conn->fetchAll();
+//
+//
+//
+//
+//        $list_fourn = [];
+//
+//        foreach ($resultClientConso as $resConso)
+//        {
+//
+//            $isFound = array_search($resConso["Fournisseur"], $list_fourn);
+//
+//
+//
+//            $tpl = [
+//                $resConso["Fournisseur"] => [
+//                    "CA" => 0,
+//                    "ECO" => 0
+//                ]
+//            ];
+//
+//            if($isFound === false){
+//                array_push($list_fourn, $tpl);
+//
+//            }
+//
+//
+//
+//        }
+//
+//        foreach ($resultVueClient as $resVue)
+//        {
+//            $isFound = array_search($resVue["FO_RAISONSOC"], $list_fourn);
+//
+//
+//            $tpl = [
+//                $resVue["FO_RAISONSOC"] => [
+//                    "CA" => 0,
+//                    "ECO" => 0
+//                ]
+//            ];
+//
+//            if($isFound === false){
+//                array_push($list_fourn, $tpl);
+//
+//            }
+//
+//        }
+
+
+        return new JsonResponse($data, 200);
     }
 
 

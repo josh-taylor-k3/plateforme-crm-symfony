@@ -113,4 +113,31 @@ class HelperService
 
     }
 
+    public function get_months($date1, $date2) {
+        $time1  = strtotime($date1);
+        $time2  = strtotime($date2);
+        $my     = date('n-Y', $time2);
+        $mesi = array("Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Aout","Septembre","Octobre","Novembre","Decembre");
+
+        //$months = array(date('F', $time1));
+        $months = array();
+        $f      = '';
+
+        while($time1 < $time2) {
+            if(date('n-Y', $time1) != $f) {
+                $f = date('n-Y', $time1);
+                if(date('n-Y', $time1) != $my && ($time1 < $time2)) {
+                    $str_mese=$mesi[(date('n', $time1)-1)];
+                    $months[] = $str_mese;
+                }
+            }
+            $time1 = strtotime((date('Y-n-d', $time1).' +15days'));
+        }
+
+        $str_mese=$mesi[(date('n', $time2)-1)];
+        $months[] = $str_mese;
+        return $months;
+    }
+
+
 }
