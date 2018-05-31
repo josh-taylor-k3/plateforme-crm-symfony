@@ -8,6 +8,7 @@ use Doctrine\DBAL\Driver\Connection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Flex\Response;
 
 class ConsommationController extends Controller
 {
@@ -135,12 +136,12 @@ class ConsommationController extends Controller
 
             }
 
-                $ca = array_sum($data['conso']['BRUNEAU']['ca']) + array_sum($data['conso']['TOSHIBA']['ca']);
-                $eco = array_sum($data['conso']['BRUNEAU']['eco']) + array_sum($data['conso']['TOSHIBA']['eco']);
+            $ca = array_sum($data['conso']['BRUNEAU']['ca']) + array_sum($data['conso']['TOSHIBA']['ca']);
+            $eco = array_sum($data['conso']['BRUNEAU']['eco']) + array_sum($data['conso']['TOSHIBA']['eco']);
 
-                $data['Total']["ca"] = $ca;
+            $data['Total']["ca"] = $ca;
 
-                $data['Total']["economie"] = $eco;
+            $data['Total']["economie"] = $eco;
         }
 
         return new JsonResponse($data, 200);
@@ -149,9 +150,9 @@ class ConsommationController extends Controller
 
 
     /**
-     * @Route("v2/consommation/{id}/{start}/{end}/", name="consommation_client_test")
+     * @Route("v2/consommation/{id}/{start}/{end}/", name="consommation_client_v2")
      */
-    public function consoClientNew(Connection $connection, HelperService $helper, $id, $start, $end)
+    public function consoClientV2(Connection $connection, HelperService $helper, $id, $start, $end)
     {
 
         header("Access-Control-Allow-Origin: *");
@@ -251,10 +252,10 @@ class ConsommationController extends Controller
 
 
             }
-                $tpl = Array($fourn['FO_RAISONSOC'] => [
-                        "CA" => $cons_ca,
-                        "ECO" => $cons_eco,
-                    ]);
+            $tpl = Array($fourn['FO_RAISONSOC'] => [
+                "CA" => $cons_ca,
+                "ECO" => $cons_eco,
+            ]);
             array_push($data["conso"], $tpl);
 
 
@@ -379,6 +380,142 @@ class ConsommationController extends Controller
 
 
         return new JsonResponse($data, 200);
+
+    }
+
+
+    /**
+     * @Route("/consommation/years/{id}/{year}", name="consommation_client_year")
+     */
+    public function consoForTheYear(Connection $connection, HelperService $helper, $id, $year)
+    {
+
+        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Credentials: true ");
+        header("Access-Control-Allow-Methods: OPTIONS, GET, POST");
+        header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, Cache-Control");
+
+
+        $resultData = "";
+
+
+
+        $sqlFourn = "SELECT DISTINCT
+                      FO_ID,
+                      (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_ACHAT.dbo.CLIENTS_CONSO.FO_ID GROUP BY FO_RAISONSOC) as FO_RAISONSOC
+                    FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO";
+
+
+        $conn = $connection->prepare($sqlFourn);
+        $conn->execute();
+        $fournisseur = $conn->fetchAll();
+
+
+
+        $sqlMonth = "SELECT
+                      (case month(CLC_DATE)
+                       WHEN 1 THEN 'Jan'
+                       WHEN 2 THEN 'Fév'
+                       WHEN 3 THEN 'Mar'
+                       WHEN 4 THEN 'Avr'
+                       WHEN 5 THEN 'Mai'
+                       WHEN 6 THEN 'Jun'
+                       WHEN 7 THEN 'Jul'
+                       WHEN 8 THEN 'Aoû'
+                       WHEN 9 THEN 'Sep'
+                       WHEN 10 THEN 'Oct'
+                       WHEN 11 THEN 'Nov'
+                       ELSE 'Déc'
+                       end
+                      ) as Month FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
+                    WHERE CL_ID = :id
+                          AND year(CLC_DATE) = :date
+                    group by MONTH(CLC_DATE)";
+
+        $conn = $connection->prepare($sqlMonth);
+        $conn->bindValue('id', $id);
+        $conn->bindValue('date', $year);
+        $conn->execute();
+        $month = $conn->fetchAll();
+
+        $list_month = [];
+
+        $tplMoisTemp = "";
+        foreach ($month as $mois){
+            array_push($list_month, $mois["Month"]);
+            $tplMoisTemp .= "<th>". $mois["Month"] ."</th>";
+        }
+
+
+
+        $tplDataFinal = "";
+        foreach ($fournisseur as $fourn){
+
+
+
+            $sqlMonth = "SELECT CLC_PRIX_CENTRALE, CLC_PRIX_PUBLIC FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO WHERE CL_ID = :id AND FO_ID = :fourn AND year(CLC_DATE) = :date";
+
+            $conn = $connection->prepare($sqlMonth);
+            $conn->bindValue('id', $id);
+            $conn->bindValue('fourn', $fourn["FO_ID"]);
+            $conn->bindValue('date', $year);
+            $conn->execute();
+            $conso = $conn->fetchAll();
+
+
+            $tplTempCa = "";
+            $tplTempEco = "";
+
+
+            foreach ($conso as $cons){
+                $tplTempCa .= "<td>".$cons["CLC_PRIX_CENTRALE"] ." €</td>";
+                $eco = $cons["CLC_PRIX_PUBLIC"] - $cons["CLC_PRIX_CENTRALE"];
+                $tplTempEco .= "<td>".$eco." €</td>";
+            }
+
+            $tplMois = "<tr>
+            <th>Fournisseur</th>
+            <th></th>
+            ". $tplMoisTemp ."
+            </tr>";
+
+
+
+            $tplData = "<tr>
+            <td rowspan=\"2\">".$fourn["FO_RAISONSOC"]."</td>
+            <td>Montant d'achat</td>".
+                $tplTempCa
+                ."</tr>
+        <tr>
+            <td>Economies</td>".
+                $tplTempCa
+                ."
+        </tr>";
+
+            $tplDataFinal .= $tplData;
+        }
+
+
+
+
+
+        $tplFinal = " <table id=\"table_conso\" class=\"table compact table-striped table-bordered\" style=\"width: 90%;    margin: 0 auto;\">
+        <thead>
+        ".$tplMois."
+        </thead>
+        <tbody>
+        ". $tplDataFinal ."
+        </tbody>
+        <tfoot>
+         ".$tplMois."
+        </tfoot>
+    </table>";
+
+
+
+        return new JsonResponse($tplFinal, 200);
+
+
 
     }
 
