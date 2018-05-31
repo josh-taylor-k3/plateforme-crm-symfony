@@ -475,7 +475,7 @@ class ConsommationController extends Controller
                 $tplTempEco .= "<td>".$eco." €</td>";
             }
 
-            $tplMois = "<tr style='font-size: 15pt'>
+            $tplMois = "<tr style='font-size: 13pt'>
             <th>Fournisseur</th>
             <th></th>
             ". $tplMoisTemp ."
