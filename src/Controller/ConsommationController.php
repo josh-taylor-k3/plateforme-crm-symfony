@@ -475,7 +475,7 @@ class ConsommationController extends Controller
                 $tplTempEco .= "<td>".$eco." €</td>";
             }
 
-            $tplMois = "<tr>
+            $tplMois = "<tr style='font-size: 9pt'>
             <th>Fournisseur</th>
             <th></th>
             ". $tplMoisTemp ."
@@ -483,7 +483,7 @@ class ConsommationController extends Controller
 
 
 
-            $tplData = "<tr>
+            $tplData = "<tr style='font-size: 9pt'>
             <td rowspan=\"2\">".$fourn["FO_RAISONSOC"]."</td>
             <td>Montant d'achat</td>".
                 $tplTempCa
@@ -501,7 +501,7 @@ class ConsommationController extends Controller
 
 
 
-        $tplFinal = " <table id=\"table_conso\" class=\"table compact table-striped table-bordered\" style=\"width: 90%;    margin: 0 auto;\">
+        $tplFinal = " <table id=\"table_conso\" class=\"table compact table-striped table-bordered\" style=\"width: 95%;    margin: 0 auto;\">
         <thead>
         ".$tplMois."
         </thead>
