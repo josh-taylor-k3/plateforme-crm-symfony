@@ -249,14 +249,14 @@ class ConsommationController extends Controller
 
                 $ca_total += $cons["CLC_PRIX_CENTRALE"];
                 $eco_total += $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
-
-
             }
             $tpl = Array($fourn['FO_RAISONSOC'] => [
 
                 "id" => $fourn['FO_ID'],
                 "CA" => $cons_ca,
                 "ECO" => $cons_eco,
+                "total_ca" => array_sum($cons_ca),
+                "total_eco" => array_sum($cons_eco)
             ]);
             array_push($data["conso"], $tpl);
 
