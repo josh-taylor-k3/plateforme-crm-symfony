@@ -485,7 +485,7 @@ class ConsommationController extends Controller
 
             $tplData = "<tr style='font-size: 9pt'>
             <td rowspan=\"2\">".$fourn["FO_RAISONSOC"]."</td>
-            <td>Montant d'achat</td>".
+            <td>Mes achats</td>".
                 $tplTempCa
                 ."</tr>
         <tr style='font-size: 9pt'>
