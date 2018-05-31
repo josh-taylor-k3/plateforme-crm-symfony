@@ -253,6 +253,8 @@ class ConsommationController extends Controller
 
             }
             $tpl = Array($fourn['FO_RAISONSOC'] => [
+
+                "id" => $fourn['FO_ID'],
                 "CA" => $cons_ca,
                 "ECO" => $cons_eco,
             ]);
