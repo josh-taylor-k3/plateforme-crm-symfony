@@ -508,9 +508,7 @@ class ConsommationController extends Controller
         <tbody>
         ". $tplDataFinal ."
         </tbody>
-        <tfoot>
-         ".$tplMois."
-        </tfoot>
+       
     </table>";
 
 
