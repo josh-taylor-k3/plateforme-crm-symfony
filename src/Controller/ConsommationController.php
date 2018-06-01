@@ -32,7 +32,6 @@ class ConsommationController extends Controller
     }
 
 
-
     /**
      * @Route("/consommation/{id}/{start}/{end}/", name="consommation_client")
      */
@@ -204,22 +203,23 @@ class ConsommationController extends Controller
                           INS_DATE,
                           INS_USER ,
                           (case month(CLC_DATE)
-                                WHEN 1 THEN 'janvier'
-                                WHEN 2 THEN 'février'
-                                WHEN 3 THEN 'mars'
-                                WHEN 4 THEN 'avril'
-                                WHEN 5 THEN 'mai'
-                                WHEN 6 THEN 'juin'
-                                WHEN 7 THEN 'juillet'
-                                WHEN 8 THEN 'août'
-                                WHEN 9 THEN 'septembre'
-                                WHEN 10 THEN 'octobre'
-                                WHEN 11 THEN 'novembre'
-                                ELSE 'décembre'
-                           end) 
+                           WHEN 1 THEN 'janvier'
+                           WHEN 2 THEN 'février'
+                           WHEN 3 THEN 'mars'
+                           WHEN 4 THEN 'avril'
+                           WHEN 5 THEN 'mai'
+                           WHEN 6 THEN 'juin'
+                           WHEN 7 THEN 'juillet'
+                           WHEN 8 THEN 'août'
+                           WHEN 9 THEN 'septembre'
+                           WHEN 10 THEN 'octobre'
+                           WHEN 11 THEN 'novembre'
+                           ELSE 'décembre'
+                           end)
                             as Month
                         FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
-                        WHERE CLC_DATE BETWEEN :start AND :end
+                        WHERE month(CLC_DATE) BETWEEN month(:start) AND month(:end)
+                              AND year(CLC_DATE) BETWEEN year(:start) AND year(:end)
                               AND CL_ID = :id
                               AND FO_ID = :fournisseur";
 
@@ -233,7 +233,7 @@ class ConsommationController extends Controller
             $conso = $conn->fetchAll();
 
 
-
+            dump($conso);
 
             $cons_ca = [];
             $cons_eco = [];
@@ -253,13 +253,9 @@ class ConsommationController extends Controller
 
 
             if(count($ListFourn) ==  $key + 1){
-
-
-                    if (array_sum($cons_ca) == 0 && array_sum($cons_ca) == 0){
-                        return new JsonResponse("none", 200);
-                    }
-
-
+                if (array_sum($cons_ca) == 0 && array_sum($cons_ca) == 0){
+                    return new JsonResponse("none", 200);
+                }
             }
 
 
