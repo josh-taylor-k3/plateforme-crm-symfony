@@ -232,7 +232,6 @@ class ConsommationController extends Controller
             $conso = $conn->fetchAll();
 
 
-            dump($conso);
 
             $cons_ca = [];
             $cons_eco = [];
