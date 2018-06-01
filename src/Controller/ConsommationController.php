@@ -469,10 +469,13 @@ class ConsommationController extends Controller
             $tplTempEco = "";
 
 
-            foreach ($conso as $cons){
+            foreach ($conso as $key=>$cons){
+
                 $tplTempCa .= "<td>".$cons["CLC_PRIX_CENTRALE"] ." €</td>";
                 $eco = $cons["CLC_PRIX_PUBLIC"] - $cons["CLC_PRIX_CENTRALE"];
                 $tplTempEco .= "<td>".$eco." €</td>";
+
+
             }
 
             $tplMois = "<tr style='font-size: 13pt'>
