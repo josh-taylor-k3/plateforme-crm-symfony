@@ -388,7 +388,7 @@ class ConsommationController extends Controller
         if (empty($month)){
 
 
-            return new JsonResponse("Pas de conso pour l'année concerné", 200);
+            return new JsonResponse("none", 200);
 
 
         }
@@ -431,8 +431,8 @@ class ConsommationController extends Controller
                 $tplTempEco .= "<td>".$eco." € (<b>". $helper->Pourcentage($eco,$cons["CLC_PRIX_PUBLIC"] )  ."%</b>)</td>";
 
 
-
             }
+
 
             $tplMois = "<tr style='font-size: 13pt'>
             <th>Fournisseur</th>
