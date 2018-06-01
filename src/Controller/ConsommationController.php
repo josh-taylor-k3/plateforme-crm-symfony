@@ -476,6 +476,7 @@ class ConsommationController extends Controller
                 $tplTempEco .= "<td>".$eco." €</td>";
 
 
+
             }
 
             $tplMois = "<tr style='font-size: 13pt'>
@@ -493,7 +494,7 @@ class ConsommationController extends Controller
                 ."</tr>
         <tr style='font-size: 9pt'>
             <td>Economies</td>".
-                $tplTempCa
+                $tplTempEco
                 ."
         </tr>";
 
