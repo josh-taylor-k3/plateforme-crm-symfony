@@ -422,6 +422,9 @@ class ConsommationController extends Controller
 
             $tplTempCa = "";
             $tplTempEco = "";
+            $total_eco = 0;
+            $total_ca = 0;
+
 
 
             foreach ($conso as $key=>$cons){
@@ -431,9 +434,13 @@ class ConsommationController extends Controller
                 $tplTempEco .= "<td>".$eco." € (<b>". $helper->Pourcentage($eco,$cons["CLC_PRIX_PUBLIC"] )  ."%</b>)</td>";
 
 
+                $total_ca .= $cons["CLC_PRIX_CENTRALE"];
+
+
+
             }
 
-
+            dump($total_ca);
             $tplMois = "<tr style='font-size: 13pt'>
             <th>Fournisseur</th>
             <th></th>
