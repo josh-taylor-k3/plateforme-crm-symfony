@@ -160,12 +160,6 @@ class ConsommationController extends Controller
         header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control, X-ac-key");
 
 
-
-
-
-
-
-
         // on obtient la liste des fournisseurs ayant des conso dans la table conso
         $sqlFourn = "SELECT DISTINCT
                       FO_ID,
@@ -240,7 +234,8 @@ class ConsommationController extends Controller
 
 
 
-            if (empty($cons)){
+            if (empty($conso)){
+
                 return new JsonResponse("none", 200);
             }
 
@@ -250,7 +245,6 @@ class ConsommationController extends Controller
 
             foreach ($conso as $cons){
 
-                dump($cons);
 
                 array_push($cons_ca, $cons["CLC_PRIX_CENTRALE"]);
 
@@ -338,7 +332,7 @@ class ConsommationController extends Controller
         header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, Cache-Control");
 
 
-        $resultData = "";
+
 
 
 
