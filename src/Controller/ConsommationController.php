@@ -189,7 +189,7 @@ class ConsommationController extends Controller
         $eco_total = 0;
 
 
-        foreach ($ListFourn as $fourn){
+        foreach ($ListFourn as $key => $fourn){
 
 
 
@@ -234,16 +234,13 @@ class ConsommationController extends Controller
 
 
 
-            if (empty($conso)){
-
-                return new JsonResponse("none", 200);
-            }
-
 
             $cons_ca = [];
             $cons_eco = [];
 
             foreach ($conso as $cons){
+
+
 
 
                 array_push($cons_ca, $cons["CLC_PRIX_CENTRALE"]);
@@ -253,6 +250,19 @@ class ConsommationController extends Controller
                 $ca_total += $cons["CLC_PRIX_CENTRALE"];
                 $eco_total += $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
             }
+
+
+            if(count($ListFourn) ==  $key + 1){
+
+
+                    if (array_sum($cons_ca) == 0 && array_sum($cons_ca) == 0){
+                        return new JsonResponse("none", 200);
+                    }
+
+
+            }
+
+
             $tpl = Array($fourn['FO_RAISONSOC'] => [
 
                 "id" => $fourn['FO_ID'],
