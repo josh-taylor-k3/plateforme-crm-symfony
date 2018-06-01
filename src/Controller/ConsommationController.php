@@ -203,23 +203,22 @@ class ConsommationController extends Controller
                           INS_DATE,
                           INS_USER ,
                           (case month(CLC_DATE)
-                           WHEN 1 THEN 'janvier'
-                           WHEN 2 THEN 'février'
-                           WHEN 3 THEN 'mars'
-                           WHEN 4 THEN 'avril'
-                           WHEN 5 THEN 'mai'
-                           WHEN 6 THEN 'juin'
-                           WHEN 7 THEN 'juillet'
-                           WHEN 8 THEN 'août'
-                           WHEN 9 THEN 'septembre'
-                           WHEN 10 THEN 'octobre'
-                           WHEN 11 THEN 'novembre'
-                           ELSE 'décembre'
-                           end)
+                                WHEN 1 THEN 'janvier'
+                                WHEN 2 THEN 'février'
+                                WHEN 3 THEN 'mars'
+                                WHEN 4 THEN 'avril'
+                                WHEN 5 THEN 'mai'
+                                WHEN 6 THEN 'juin'
+                                WHEN 7 THEN 'juillet'
+                                WHEN 8 THEN 'août'
+                                WHEN 9 THEN 'septembre'
+                                WHEN 10 THEN 'octobre'
+                                WHEN 11 THEN 'novembre'
+                                ELSE 'décembre'
+                           end) 
                             as Month
                         FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
-                        WHERE month(CLC_DATE) BETWEEN month(:start) AND month(:end)
-                              AND year(CLC_DATE) BETWEEN year(:start) AND year(:end)
+                        WHERE CLC_DATE BETWEEN :start AND :end
                               AND CL_ID = :id
                               AND FO_ID = :fournisseur";
 
@@ -253,9 +252,9 @@ class ConsommationController extends Controller
 
 
             if(count($ListFourn) ==  $key + 1){
-                if (array_sum($cons_ca) == 0 && array_sum($cons_ca) == 0){
-                    return new JsonResponse("none", 200);
-                }
+                    if (array_sum($cons_ca) == 0 && array_sum($cons_ca) == 0){
+                        return new JsonResponse("none", 200);
+                    }
             }
 
 
