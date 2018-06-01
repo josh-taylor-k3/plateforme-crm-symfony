@@ -141,7 +141,7 @@ class HelperService
 
 
     public function Pourcentage($Nombre, $Total) {
-        return $Nombre * 100 / $Total;
+        return round($Nombre * 100 / $Total);
     }
 
 }
