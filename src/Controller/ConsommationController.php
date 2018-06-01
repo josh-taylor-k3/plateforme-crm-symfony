@@ -434,14 +434,21 @@ class ConsommationController extends Controller
                 $tplTempEco .= "<td>".$eco." € (<b>". $helper->Pourcentage($eco,$cons["CLC_PRIX_PUBLIC"] )  ."%</b>)</td>";
 
 
-                dump($cons["CLC_PRIX_CENTRALE"]);
-                $total_ca .= intval($cons["CLC_PRIX_CENTRALE"]);
+                $total_ca = $total_ca +  intval($cons["CLC_PRIX_CENTRALE"]);
+                $total_eco = $total_eco + $eco;
 
 
 
             }
 
-            dump($total_ca);
+
+            if($total_eco == 0 && $total_ca == 0){
+
+                return new JsonResponse("none", 200);
+
+            }
+
+
             $tplMois = "<tr style='font-size: 13pt'>
             <th>Fournisseur</th>
             <th></th>
