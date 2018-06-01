@@ -428,7 +428,7 @@ class ConsommationController extends Controller
 
                 $tplTempCa .= "<td>".$cons["CLC_PRIX_CENTRALE"] ." €</td>";
                 $eco = $cons["CLC_PRIX_PUBLIC"] - $cons["CLC_PRIX_CENTRALE"];
-                $tplTempEco .= "<td>".$eco." € (". $helper->Pourcentage($eco,$cons["CLC_PRIX_PUBLIC"] )  ."%)</td>";
+                $tplTempEco .= "<td>".$eco." € (<b>". $helper->Pourcentage($eco,$cons["CLC_PRIX_PUBLIC"] )  ."%</b>)</td>";
 
 
 
