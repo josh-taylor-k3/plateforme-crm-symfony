@@ -238,10 +238,19 @@ class ConsommationController extends Controller
             $conn->execute();
             $conso = $conn->fetchAll();
 
+
+
+            if (empty($cons)){
+                return new JsonResponse("none", 200);
+            }
+
+
             $cons_ca = [];
             $cons_eco = [];
 
             foreach ($conso as $cons){
+
+                dump($cons);
 
                 array_push($cons_ca, $cons["CLC_PRIX_CENTRALE"]);
 
@@ -279,75 +288,6 @@ class ConsommationController extends Controller
             array_push($data['labels'], $mois);
 
         }
-
-
-
-//        //On cherche les consos de la table clients_conso
-//        $sqlClientConso = "SELECT (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE FOURNISSEURS.FO_ID = CLIENTS_CONSO.FO_ID) as Fournisseur  ,*  FROM CENTRALE_ACHAT..CLIENTS_CONSO WHERE CL_ID = :id AND CLC_DATE BETWEEN :start AND :end";
-//
-//        $conn = $connection->prepare($sqlClientConso);
-//        $conn->bindValue(":id", $id);
-//        $conn->bindValue(":start", $start);
-//        $conn->bindValue(":end", $end);
-//        $conn->execute();
-//        $resultClientConso = $conn->fetchAll();
-//
-//
-//        //on cherche les consos de la vue
-//        $sqlVueClient = "SELECT  CL_ID, CL_RAISONSOC, ME_DATE, Vue_Remontee_Filets.FO_ID, FO_RAISONSOC, PR_PRIX_CA, PR_PRIX_PUBLIC FROM CENTRALE_ACHAT.dbo.Vue_Remontee_Filets INNER JOIN CENTRALE_PRODUITS.dbo.PRODUITS ON CENTRALE_PRODUITS.dbo.PRODUITS.PR_ID = Vue_Remontee_Filets.PR_ID WHERE CL_ID = :id AND ME_DATE BETWEEN :start AND :end";
-//        $conn = $connection->prepare($sqlVueClient);
-//        $conn->bindValue(":id", $id);
-//        $conn->bindValue(":start", $start);
-//        $conn->bindValue(":end", $end);
-//        $conn->execute();
-//        $resultVueClient = $conn->fetchAll();
-//
-//
-//
-//
-//        $list_fourn = [];
-//
-//        foreach ($resultClientConso as $resConso)
-//        {
-//
-//            $isFound = array_search($resConso["Fournisseur"], $list_fourn);
-//
-//
-//
-//            $tpl = [
-//                $resConso["Fournisseur"] => [
-//                    "CA" => 0,
-//                    "ECO" => 0
-//                ]
-//            ];
-//
-//            if($isFound === false){
-//                array_push($list_fourn, $tpl);
-//
-//            }
-//
-//
-//
-//        }
-//
-//        foreach ($resultVueClient as $resVue)
-//        {
-//            $isFound = array_search($resVue["FO_RAISONSOC"], $list_fourn);
-//
-//
-//            $tpl = [
-//                $resVue["FO_RAISONSOC"] => [
-//                    "CA" => 0,
-//                    "ECO" => 0
-//                ]
-//            ];
-//
-//            if($isFound === false){
-//                array_push($list_fourn, $tpl);
-//
-//            }
-//
-//        }
 
 
         return new JsonResponse($data, 200);
@@ -439,6 +379,17 @@ class ConsommationController extends Controller
         $conn->bindValue('date', $year);
         $conn->execute();
         $month = $conn->fetchAll();
+
+
+        if (empty($month)){
+
+
+            return new JsonResponse("Pas de conso pour l'année concerné", 200);
+
+
+        }
+
+
 
         $list_month = [];
 
