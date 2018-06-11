@@ -190,8 +190,6 @@ class ConsommationController extends Controller
 
         foreach ($ListFourn as $key => $fourn){
 
-
-
             $sqlConso = "SELECT
                           CLC_ID,
                           CL_ID,
@@ -231,26 +229,17 @@ class ConsommationController extends Controller
             $conn->execute();
             $conso = $conn->fetchAll();
 
-
-
             $cons_ca = [];
             $cons_eco = [];
 
             foreach ($conso as $cons){
-
-
-
-
-                array_push($cons_ca, $cons["CLC_PRIX_CENTRALE"]);
-
                 array_push($cons_eco, $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"]);
 
                 $ca_total += $cons["CLC_PRIX_CENTRALE"];
                 $eco_total += $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
             }
 
-
-            if(count($ListFourn) ==  $key + 1){
+            if(count($ListFourn) ==  0){
                     if (array_sum($cons_ca) == 0 && array_sum($cons_ca) == 0){
                         return new JsonResponse("none", 200);
                     }
