@@ -416,7 +416,7 @@ class ConsommationController extends Controller
 
 
             $tplTempCa .= "<td>".$total_ca ." €</td>";
-            $tplTempEco .= "<td>".$total_eco." € (<b>". $helper->Pourcentage($total_eco, $total_ca )  ."%</b>)</td>";
+            $tplTempEco .= "<td>".$total_eco." € (<b>". $helper->Pourcentage($total_eco, $total_ca + $total_eco)  ."%</b>)</td>";
 
 
             $tplMois = "<tr style='font-size: 13pt'>
@@ -444,14 +444,13 @@ class ConsommationController extends Controller
 
 
 
-        $tplFinal = " <table id=\"table_conso\" class=\"table compact table-striped table-bordered\" style=\"width: 95%;    margin: 0 auto;\">
+        $tplFinal = " <table id=\"table_conso\" class=\"table compact table-striped table-bordered\" style=\"width: 95%;margin: 0 auto;\">
         <thead>
         ".$tplMois."
         </thead>
         <tbody>
         ". $tplDataFinal ."
         </tbody>
-       
     </table>";
 
         return new JsonResponse($tplFinal, 200);
