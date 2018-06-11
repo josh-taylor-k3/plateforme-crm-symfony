@@ -417,6 +417,7 @@ class ConsommationController extends Controller
             <th>Fournisseur</th>
             <th></th>
             ". $tplMoisTemp ."
+            <th>Total</th>
             </tr>";
 
 
