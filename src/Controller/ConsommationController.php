@@ -420,7 +420,7 @@ class ConsommationController extends Controller
 
 
             $tplMois = "<tr style='font-size: 13pt'>
-            <th>Fournisseur</th>
+            <th></th>
             <th></th>
             ". $tplMoisTemp ."
             <th>Total</th>
