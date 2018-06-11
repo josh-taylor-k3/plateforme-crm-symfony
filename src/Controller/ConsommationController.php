@@ -423,7 +423,7 @@ class ConsommationController extends Controller
             <th></th>
             <th></th>
             ". $tplMoisTemp ."
-            <th>Total</th>
+            <th style=\"background-color: #D3D3D3;\" >Total</th>
             </tr>";
 
 
