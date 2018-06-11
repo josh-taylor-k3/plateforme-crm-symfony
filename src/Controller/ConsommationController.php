@@ -390,6 +390,8 @@ class ConsommationController extends Controller
             $conso = $conn->fetchAll();
 
 
+            $tempCa = 0;
+            $tempEco = 0;
             $tplTempCa = "";
             $tplTempEco = "";
             $total_eco = 0;
@@ -401,16 +403,20 @@ class ConsommationController extends Controller
                 $eco = $cons["CLC_PRIX_PUBLIC"] - $cons["CLC_PRIX_CENTRALE"];
                 $tplTempEco .= "<td>".$eco." € (<b>". $helper->Pourcentage($eco,$cons["CLC_PRIX_PUBLIC"] )  ."%</b>)</td>";
 
+                $tempCa = $tempCa +  $cons["CLC_PRIX_CENTRALE"];
+
 
                 $total_ca = $total_ca +  intval($cons["CLC_PRIX_CENTRALE"]);
                 $total_eco = $total_eco + $eco;
 
 
 
+
             }
 
 
-
+            $tplTempCa .= "<td>".$total_ca ." €</td>";
+            $tplTempEco .= "<td>".$total_eco." € (<b>". $helper->Pourcentage($total_eco,$cons["CLC_PRIX_PUBLIC"] )  ."%</b>)</td>";
 
 
             $tplMois = "<tr style='font-size: 13pt'>
@@ -438,8 +444,6 @@ class ConsommationController extends Controller
 
 
 
-
-
         $tplFinal = " <table id=\"table_conso\" class=\"table compact table-striped table-bordered\" style=\"width: 95%;    margin: 0 auto;\">
         <thead>
         ".$tplMois."
@@ -450,11 +454,7 @@ class ConsommationController extends Controller
        
     </table>";
 
-
-
         return new JsonResponse($tplFinal, 200);
-
-
 
     }
 
