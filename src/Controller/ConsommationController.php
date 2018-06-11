@@ -433,7 +433,7 @@ class ConsommationController extends Controller
             <td>Mes achats</td>".
                 $tplTempCa
                 ."</tr>
-        <tr style='font-size: 9pt'>
+        <tr style='font-size: 7pt'>
             <td>Economies</td>".
                 $tplTempEco
                 ."
