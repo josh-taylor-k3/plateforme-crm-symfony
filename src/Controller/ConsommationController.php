@@ -324,22 +324,14 @@ class ConsommationController extends Controller
         header("Access-Control-Allow-Methods: OPTIONS, GET, POST");
         header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, Cache-Control");
 
-
-
-
-
-
         $sqlFourn = "SELECT DISTINCT
                       FO_ID,
                       (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_ACHAT.dbo.CLIENTS_CONSO.FO_ID GROUP BY FO_RAISONSOC) as FO_RAISONSOC
                     FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO";
 
-
         $conn = $connection->prepare($sqlFourn);
         $conn->execute();
         $fournisseur = $conn->fetchAll();
-
-
 
         $sqlMonth = "SELECT
                       (case month(CLC_DATE)
@@ -368,12 +360,9 @@ class ConsommationController extends Controller
         $month = $conn->fetchAll();
 
 
-        if (empty($month)){
 
-
+        if (count($month) == 0){
             return new JsonResponse("none", 200);
-
-
         }
 
 
@@ -391,8 +380,6 @@ class ConsommationController extends Controller
         $tplDataFinal = "";
         foreach ($fournisseur as $fourn){
 
-
-
             $sqlMonth = "SELECT CLC_PRIX_CENTRALE, CLC_PRIX_PUBLIC FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO WHERE CL_ID = :id AND FO_ID = :fourn AND year(CLC_DATE) = :date";
 
             $conn = $connection->prepare($sqlMonth);
@@ -407,8 +394,6 @@ class ConsommationController extends Controller
             $tplTempEco = "";
             $total_eco = 0;
             $total_ca = 0;
-
-
 
             foreach ($conso as $key=>$cons){
 
@@ -425,11 +410,7 @@ class ConsommationController extends Controller
             }
 
 
-            if($total_eco == 0 && $total_ca == 0){
 
-                return new JsonResponse("none", 200);
-
-            }
 
 
             $tplMois = "<tr style='font-size: 13pt'>
