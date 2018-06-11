@@ -416,7 +416,7 @@ class ConsommationController extends Controller
 
 
             $tplTempCa .= "<td>".$total_ca ." €</td>";
-            $tplTempEco .= "<td>".$total_eco." € (<b>". $helper->Pourcentage($total_eco,$cons["CLC_PRIX_PUBLIC"] )  ."%</b>)</td>";
+            $tplTempEco .= "<td>".$total_eco." € (<b>". $helper->Pourcentage($total_eco, $total_ca )  ."%</b>)</td>";
 
 
             $tplMois = "<tr style='font-size: 13pt'>
