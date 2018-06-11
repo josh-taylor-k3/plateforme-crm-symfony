@@ -147,7 +147,7 @@ class HelperService
             return 0;
         }
 
-        return "- " .round($Nombre * 100 / $Total);
+        return "-" .round($Nombre * 100 / $Total);
     }
 
 }
