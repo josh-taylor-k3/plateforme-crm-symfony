@@ -8,7 +8,6 @@ use Doctrine\DBAL\Driver\Connection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Flex\Response;
 
 class ConsommationController extends Controller
 {
@@ -16,14 +15,14 @@ class ConsommationController extends Controller
     /**
      * @Route("/conso/index", name="conso_index")
      */
-    public function consoIndex(Connection $connection){
+    public function consoIndex(Connection $connection)
+    {
 
 
         $sql = "SELECT FO_RAISONSOC, FO_ID FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS";
         $conn = $connection->prepare($sql);
         $conn->execute();
         $result = $conn->fetchAll();
-
 
 
         return $this->render('conso/index.html.twig', [
@@ -35,9 +34,8 @@ class ConsommationController extends Controller
     /**
      * @Route("/consommation/{id}/{start}/{end}/", name="consommation_client")
      */
-    public function consoClient(Connection $connection, HelperService $helper,$id, $start, $end)
+    public function consoClient(Connection $connection, HelperService $helper, $id, $start, $end)
     {
-
 
 
         header("Access-Control-Allow-Origin: *");
@@ -49,7 +47,6 @@ class ConsommationController extends Controller
                 INNER JOIN CENTRALE_PRODUITS.dbo.FOURNISSEURS ON CLIENTS_CONSO.FO_ID = FOURNISSEURS.FO_ID";
 
 
-
         $conn = $connection->prepare($sql);
         $conn->execute();
         $listFourn = $conn->fetchAll();
@@ -59,7 +56,7 @@ class ConsommationController extends Controller
         $arrayRaisonSoc = array();
 
 
-        foreach ($listFourn as $fourn){
+        foreach ($listFourn as $fourn) {
             array_push($arrayFoId, $fourn['FO_ID']);
             array_push($arrayRaisonSoc, $fourn['FO_RAISONSOC']);
         }
@@ -69,16 +66,16 @@ class ConsommationController extends Controller
             "count" => 0,
             "result" => "ok",
             "Total" => [
-                "ca" =>[],
+                "ca" => [],
                 "economie" => [],
             ],
             "labels" => [],
-            "conso" =>[
-                "BRUNEAU" =>[
+            "conso" => [
+                "BRUNEAU" => [
                     "ca" => [],
                     "eco" => [],
                 ],
-                "TOSHIBA" =>[
+                "TOSHIBA" => [
                     "ca" => [],
                     "eco" => [],
                 ],
@@ -86,7 +83,7 @@ class ConsommationController extends Controller
         ];
 
 
-        foreach ($arrayFoId as $key => $fo_id){
+        foreach ($arrayFoId as $key => $fo_id) {
 
             $sql = "SELECT CLC_ID, CL_ID, CC_ID, FO_ID, CLC_DATE, CLC_PRIX_PUBLIC, CLC_PRIX_CENTRALE, INS_DATE, INS_USER , (
                           case month(CLC_DATE)
@@ -121,13 +118,13 @@ class ConsommationController extends Controller
             $ca = 0;
             $eco = 0;
 
-            foreach ($resultConso as $ley => $conso){
+            foreach ($resultConso as $ley => $conso) {
 
 
-                array_push($data["conso"][$arrayRaisonSoc[$key]]["ca"], $conso['CLC_PRIX_CENTRALE'] );
-                array_push($data["conso"][$arrayRaisonSoc[$key]]["eco"], $conso['CLC_PRIX_PUBLIC'] - $conso['CLC_PRIX_CENTRALE']  );
+                array_push($data["conso"][$arrayRaisonSoc[$key]]["ca"], $conso['CLC_PRIX_CENTRALE']);
+                array_push($data["conso"][$arrayRaisonSoc[$key]]["eco"], $conso['CLC_PRIX_PUBLIC'] - $conso['CLC_PRIX_CENTRALE']);
 
-                if( $key >= 1 ){
+                if ($key >= 1) {
                     array_push($data["labels"], $conso['Month']);
 
                 }
@@ -173,11 +170,11 @@ class ConsommationController extends Controller
             "count" => count($ListFourn),
             "result" => "ok",
             "Total" => [
-                "ca" =>[],
+                "ca" => [],
                 "economie" => [],
             ],
             "labels" => [],
-            "conso" =>[
+            "conso" => [
 
             ]
         ];
@@ -188,7 +185,7 @@ class ConsommationController extends Controller
         $eco_total = 0;
 
 
-        foreach ($ListFourn as $key => $fourn){
+        foreach ($ListFourn as $key => $fourn) {
 
             $sqlConso = "SELECT
                           CLC_ID,
@@ -232,17 +229,17 @@ class ConsommationController extends Controller
             $cons_ca = [];
             $cons_eco = [];
 
-            foreach ($conso as $cons){
+            foreach ($conso as $cons) {
                 array_push($cons_eco, $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"]);
 
                 $ca_total += $cons["CLC_PRIX_CENTRALE"];
                 $eco_total += $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
             }
 
-            if(count($ListFourn) ==  0){
-                    if (array_sum($cons_ca) == 0 && array_sum($cons_ca) == 0){
-                        return new JsonResponse("none", 200);
-                    }
+            if (count($ListFourn) == 0) {
+                if (array_sum($cons_ca) == 0 && array_sum($cons_ca) == 0) {
+                    return new JsonResponse("none", 200);
+                }
             }
 
 
@@ -264,12 +261,10 @@ class ConsommationController extends Controller
         }
 
 
+        $months = $helper->get_months($start, $end);
 
 
-        $months = $helper->get_months( $start, $end );
-
-
-        foreach($months as $mois){
+        foreach ($months as $mois) {
 
 
             array_push($data['labels'], $mois);
@@ -284,8 +279,8 @@ class ConsommationController extends Controller
     /**
      * @Route("/consommation/years", name="conso_years")
      */
-    public function consoYears(Connection $connection, HelperService $helper){
-
+    public function consoYears(Connection $connection, HelperService $helper)
+    {
 
 
         header("Access-Control-Allow-Origin: *");
@@ -298,14 +293,11 @@ class ConsommationController extends Controller
                 ORDER BY date desc";
 
 
-
         $conn = $connection->prepare($sql);
         $conn->execute();
         $result = $conn->fetchAll();
 
         $data = $result;
-
-
 
 
         return new JsonResponse($data, 200);
@@ -360,25 +352,22 @@ class ConsommationController extends Controller
         $month = $conn->fetchAll();
 
 
-
-        if (count($month) == 0){
+        if (count($month) == 0) {
             return new JsonResponse("none", 200);
         }
-
 
 
         $list_month = [];
 
         $tplMoisTemp = "";
-        foreach ($month as $mois){
+        foreach ($month as $mois) {
             array_push($list_month, $mois["Month"]);
-            $tplMoisTemp .= "<th>". $mois["Month"] ."</th>";
+            $tplMoisTemp .= "<th>" . $mois["Month"] . "</th>";
         }
 
 
-
         $tplDataFinal = "";
-        foreach ($fournisseur as $fourn){
+        foreach ($fournisseur as $fourn) {
 
             $sqlMonth = "SELECT CLC_PRIX_CENTRALE, CLC_PRIX_PUBLIC FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO WHERE CL_ID = :id AND FO_ID = :fourn AND year(CLC_DATE) = :date";
 
@@ -397,59 +386,55 @@ class ConsommationController extends Controller
             $total_eco = 0;
             $total_ca = 0;
 
-            foreach ($conso as $key=>$cons){
+            foreach ($conso as $key => $cons) {
 
-                $tplTempCa .= "<td>".$cons["CLC_PRIX_CENTRALE"] ." €</td>";
+                $tplTempCa .= "<td>" . $cons["CLC_PRIX_CENTRALE"] . " €</td>";
                 $eco = $cons["CLC_PRIX_PUBLIC"] - $cons["CLC_PRIX_CENTRALE"];
-                $tplTempEco .= "<td>".$eco." € (<b>". $helper->Pourcentage($eco,$cons["CLC_PRIX_PUBLIC"] )  ."%</b>)</td>";
+                $tplTempEco .= "<td>" . $eco . " € (<b>" . $helper->Pourcentage($eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
 
-                $tempCa = $tempCa +  $cons["CLC_PRIX_CENTRALE"];
+                $tempCa = $tempCa + $cons["CLC_PRIX_CENTRALE"];
 
 
-                $total_ca = $total_ca +  intval($cons["CLC_PRIX_CENTRALE"]);
+                $total_ca = $total_ca + intval($cons["CLC_PRIX_CENTRALE"]);
                 $total_eco = $total_eco + $eco;
-
-
 
 
             }
 
 
-            $tplTempCa .= "<td>".$total_ca ." €</td>";
-            $tplTempEco .= "<td>".$total_eco." € (<b>". $helper->Pourcentage($total_eco, $total_ca + $total_eco)  ."%</b>)</td>";
+            $tplTempCa .= "<td>" . $total_ca . " €</td>";
+            $tplTempEco .= "<td>" . $total_eco . " € (<b>" . $helper->Pourcentage($total_eco, $total_ca + $total_eco) . "%</b>)</td>";
 
 
             $tplMois = "<tr style='font-size: 13pt'>
             <th></th>
             <th></th>
-            ". $tplMoisTemp ."
+            " . $tplMoisTemp . "
             <th style=\"background-color: #a8a8a8;\" >Total</th>
             </tr>";
 
 
-
             $tplData = "<tr style='font-size: 9pt'>
-            <td rowspan=\"2\">".$fourn["FO_RAISONSOC"]."</td>
-            <td>Mes achats</td>".
+            <td rowspan=\"2\">" . $fourn["FO_RAISONSOC"] . "</td>
+            <td>Mes achats</td>" .
                 $tplTempCa
-                ."</tr>
+                . "</tr>
         <tr style='font-size: 9pt'>
-            <td>Economies</td>".
+            <td>Mes gains</td>" .
                 $tplTempEco
-                ."
+                . "
         </tr>";
 
             $tplDataFinal .= $tplData;
         }
 
 
-
         $tplFinal = " <table id=\"table_conso\" class=\"table compact table-striped table-bordered\" style=\"width: 95%;margin: 0 auto;\">
         <thead>
-        ".$tplMois."
+        " . $tplMois . "
         </thead>
         <tbody>
-        ". $tplDataFinal ."
+        " . $tplDataFinal . "
         </tbody>
     </table>";
 
