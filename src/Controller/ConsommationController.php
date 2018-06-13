@@ -311,11 +311,14 @@ class ConsommationController extends Controller
     public function consoForTheYear(Connection $connection, HelperService $helper, $id, $year)
     {
 
+        //header pour résoudre problème CORS ?
         header("Access-Control-Allow-Origin: *");
         header("Access-Control-Allow-Credentials: true ");
         header("Access-Control-Allow-Methods: OPTIONS, GET, POST");
         header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, Cache-Control");
 
+
+        //requete sql pour obtenir tout les fournisseurs contenu dans la table conso
         $sqlFourn = "SELECT DISTINCT
                       FO_ID,
                       (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_ACHAT.dbo.CLIENTS_CONSO.FO_ID GROUP BY FO_RAISONSOC) as FO_RAISONSOC
@@ -325,6 +328,8 @@ class ConsommationController extends Controller
         $conn->execute();
         $fournisseur = $conn->fetchAll();
 
+
+        //requete sql pour obtenir tout les mois stocké pour l'année :date
         $sqlMonth = "SELECT
                       (case month(CLC_DATE)
                        WHEN 1 THEN 'Jan'
@@ -352,26 +357,38 @@ class ConsommationController extends Controller
         $month = $conn->fetchAll();
 
 
+        //Si on a aucun mois de disponible on retourne "none"
         if (count($month) == 0) {
             return new JsonResponse("none", 200);
         }
 
 
+        //On cherche a obtenir les mois pour avoir les noms de colones
+
+        // variable pour contenir les mois
         $list_month = [];
 
+        // tpl des colonnes
         $tplMoisTemp = "";
+
         foreach ($month as $mois) {
+            //on ajoute chaque mois dans le tableau
             array_push($list_month, $mois["Month"]);
+            // on ajoute au tpl les th avec mois
             $tplMoisTemp .= "<th>" . $mois["Month"] . "</th>";
         }
 
 
+
+        //tpl final du tableau
         $tplDataFinal = "";
+
+        // pour chaque fournisseur on va chercher les données
         foreach ($fournisseur as $fourn) {
 
-            $sqlMonth = "SELECT CLC_PRIX_CENTRALE, CLC_PRIX_PUBLIC FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO WHERE CL_ID = :id AND FO_ID = :fourn AND year(CLC_DATE) = :date";
-
-            $conn = $connection->prepare($sqlMonth);
+            //requete sql pour avoir les conso pour chaque mois pour chaque fournisseur
+            $sqlConso = "SELECT CLC_PRIX_CENTRALE, CLC_PRIX_PUBLIC FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO WHERE CL_ID = :id AND FO_ID = :fourn AND year(CLC_DATE) = :date";
+            $conn = $connection->prepare($sqlConso);
             $conn->bindValue('id', $id);
             $conn->bindValue('fourn', $fourn["FO_ID"]);
             $conn->bindValue('date', $year);
@@ -379,22 +396,33 @@ class ConsommationController extends Controller
             $conso = $conn->fetchAll();
 
 
-            $tempCa = 0;
-            $tempEco = 0;
+
+            // variable temporaire tpl pour le chiffre d'affaire
             $tplTempCa = "";
+            // variable temporaire tpl pour les économies
             $tplTempEco = "";
+
+            // variable contenant le total d'économies
             $total_eco = 0;
+            // variable contenant le total chiffre d'affaire
             $total_ca = 0;
 
             foreach ($conso as $key => $cons) {
 
+                // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
                 $tplTempCa .= "<td>" . $cons["CLC_PRIX_CENTRALE"] . " €</td>";
+
+                // On obtient le total d"économies
                 $eco = $cons["CLC_PRIX_PUBLIC"] - $cons["CLC_PRIX_CENTRALE"];
+
+                //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
                 $tplTempEco .= "<td>" . $eco . " € (<b>" . $helper->Pourcentage($eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
 
-                $tempCa = $tempCa + $cons["CLC_PRIX_CENTRALE"];
 
 
+
+
+                // on obtient le total de chiffre
                 $total_ca = $total_ca + intval($cons["CLC_PRIX_CENTRALE"]);
                 $total_eco = $total_eco + $eco;
 
