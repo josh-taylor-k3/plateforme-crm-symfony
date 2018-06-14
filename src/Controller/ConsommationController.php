@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Service\HelperService;
-use Carbon\Carbon;
 use Doctrine\DBAL\Driver\Connection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -43,104 +42,110 @@ class ConsommationController extends Controller
         header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control, X-ac-key");
 
 
-        $sql = "SELECT DISTINCT CENTRALE_ACHAT.dbo.CLIENTS_CONSO.FO_ID, FO_RAISONSOC FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
-                INNER JOIN CENTRALE_PRODUITS.dbo.FOURNISSEURS ON CLIENTS_CONSO.FO_ID = FOURNISSEURS.FO_ID";
-
-
-        $conn = $connection->prepare($sql);
-        $conn->execute();
-        $listFourn = $conn->fetchAll();
-
-
-        $arrayFoId = array();
-        $arrayRaisonSoc = array();
-
-
-        foreach ($listFourn as $fourn) {
-            array_push($arrayFoId, $fourn['FO_ID']);
-            array_push($arrayRaisonSoc, $fourn['FO_RAISONSOC']);
-        }
-
-
         $data = [
-            "count" => 0,
-            "result" => "ok",
-            "Total" => [
-                "ca" => [],
-                "economie" => [],
+            "graph" => [
+                "Total" => [
+                    "eco" =>[],
+                    "ca" =>[],
+                ],
+                "labels" => []
             ],
-            "labels" => [],
-            "conso" => [
-                "BRUNEAU" => [
-                    "ca" => [],
-                    "eco" => [],
-                ],
-                "TOSHIBA" => [
-                    "ca" => [],
-                    "eco" => [],
-                ],
-            ]
+            "table" => []
         ];
 
 
-        foreach ($arrayFoId as $key => $fo_id) {
+        // on obtient la liste des fournisseurs ayant des conso dans la table conso
+        $sqlFourn = "SELECT DISTINCT
+                      FO_ID,
+                      (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_ACHAT.dbo.CLIENTS_CONSO.FO_ID GROUP BY FO_RAISONSOC) as FO_RAISONSOC
+                    FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO";
+        $conn = $connection->prepare($sqlFourn);
+        $conn->execute();
+        $ListFourn = $conn->fetchAll();
 
-            $sql = "SELECT CLC_ID, CL_ID, CC_ID, FO_ID, CLC_DATE, CLC_PRIX_PUBLIC, CLC_PRIX_CENTRALE, INS_DATE, INS_USER , (
-                          case month(CLC_DATE)
-                          WHEN 1 THEN 'janvier'
-                          WHEN 2 THEN 'février'
-                          WHEN 3 THEN 'mars'
-                          WHEN 4 THEN 'avril'
-                          WHEN 5 THEN 'mai'
-                          WHEN 6 THEN 'juin'
-                          WHEN 7 THEN 'juillet'
-                          WHEN 8 THEN 'août'
-                          WHEN 9 THEN 'septembre'
-                          WHEN 10 THEN 'octobre'
-                          WHEN 11 THEN 'novembre'
-                          ELSE 'décembre'
-                          end
-                        ) as Month
-                    FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
-                    WHERE CLC_DATE BETWEEN :start AND :end
-                          AND CL_ID = :id
-                          AND FO_ID = :fournisseur";
+        // chiffre d'affaires et eco total
+        $ca_total = 0;
+        $eco_total = 0;
 
+        // Pour chaque fournisseurs stocké dans la base on extrait sa consommation respective
+        foreach ($ListFourn as $key => $fourn) {
 
-            $conn = $connection->prepare($sql);
+            $sqlConso = "SELECT
+                          CLC_ID,
+                          CL_ID,
+                          CC_ID,
+                          FO_ID,
+                          CLC_DATE,
+                          CLC_PRIX_PUBLIC,
+                          CLC_PRIX_CENTRALE,
+                          INS_DATE,
+                          INS_USER ,
+                          (case month(CLC_DATE)
+                                WHEN 1 THEN 'janvier'
+                                WHEN 2 THEN 'février'
+                                WHEN 3 THEN 'mars'
+                                WHEN 4 THEN 'avril'
+                                WHEN 5 THEN 'mai'
+                                WHEN 6 THEN 'juin'
+                                WHEN 7 THEN 'juillet'
+                                WHEN 8 THEN 'août'
+                                WHEN 9 THEN 'septembre'
+                                WHEN 10 THEN 'octobre'
+                                WHEN 11 THEN 'novembre'
+                                ELSE 'décembre'
+                           end) 
+                            as Month
+                        FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
+                        WHERE CLC_DATE BETWEEN :start AND :end
+                              AND CL_ID = :id
+                              AND FO_ID = :fournisseur";
+            $conn = $connection->prepare($sqlConso);
             $conn->bindValue('id', $id);
-            $conn->bindValue('fournisseur', $fo_id);
+            $conn->bindValue('fournisseur', $fourn['FO_ID']);
             $conn->bindValue('start', $start);
             $conn->bindValue('end', $end);
             $conn->execute();
-            $resultConso = $conn->fetchAll();
-
-            $ca = 0;
-            $eco = 0;
-
-            foreach ($resultConso as $ley => $conso) {
+            $conso = $conn->fetchAll();
 
 
-                array_push($data["conso"][$arrayRaisonSoc[$key]]["ca"], $conso['CLC_PRIX_CENTRALE']);
-                array_push($data["conso"][$arrayRaisonSoc[$key]]["eco"], $conso['CLC_PRIX_PUBLIC'] - $conso['CLC_PRIX_CENTRALE']);
 
-                if ($key >= 1) {
-                    array_push($data["labels"], $conso['Month']);
+            $cons_ca = [];
+            $cons_eco = [];
 
-                }
+            foreach ($conso as $keyConso => $cons) {
+                //Graph
 
+                array_push($cons_eco, $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"]);
+                array_push($cons_ca, $cons["CLC_PRIX_CENTRALE"]);
+
+                $ca_total += $cons["CLC_PRIX_CENTRALE"];
+                $eco_total += $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
 
             }
 
-            $ca = array_sum($data['conso']['BRUNEAU']['ca']) + array_sum($data['conso']['TOSHIBA']['ca']);
-            $eco = array_sum($data['conso']['BRUNEAU']['eco']) + array_sum($data['conso']['TOSHIBA']['eco']);
+            $tpl = Array($fourn['FO_RAISONSOC'] => [
+                "id" => $fourn['FO_ID'],
+                "CA" => $cons_ca,
+                "ECO" => $cons_eco,
+                "total_ca" => array_sum($cons_ca),
+                "total_eco" => array_sum($cons_eco)
+            ]);
+            array_push($data["graph"], $tpl);
 
-            $data['Total']["ca"] = $ca;
 
-            $data['Total']["economie"] = $eco;
+
+        }
+
+        array_push($data["graph"]["Total"]["ca"], $ca_total);
+        array_push($data["graph"]["Total"]["eco"], $eco_total);
+
+        $months = $helper->get_months($start, $end);
+        foreach ($months as $mois) {
+            array_push($data["graph"]['labels'], $mois);
         }
 
         return new JsonResponse($data, 200);
+
 
     }
 
@@ -379,13 +384,13 @@ class ConsommationController extends Controller
         }
 
 
-
         //tpl final du tableau
         $tplDataFinal = "";
 
         // pour chaque fournisseur on va chercher les données
         foreach ($fournisseur as $fourn) {
 
+            dump($fourn);
             //requete sql pour avoir les conso pour chaque mois pour chaque fournisseur
             $sqlConso = "SELECT CLC_PRIX_CENTRALE, CLC_PRIX_PUBLIC FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO WHERE CL_ID = :id AND FO_ID = :fourn AND year(CLC_DATE) = :date";
             $conn = $connection->prepare($sqlConso);
@@ -394,7 +399,6 @@ class ConsommationController extends Controller
             $conn->bindValue('date', $year);
             $conn->execute();
             $conso = $conn->fetchAll();
-
 
 
             // variable temporaire tpl pour le chiffre d'affaire
@@ -408,6 +412,7 @@ class ConsommationController extends Controller
             $total_ca = 0;
 
             foreach ($conso as $key => $cons) {
+                dump($cons);
 
                 // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
                 $tplTempCa .= "<td>" . $cons["CLC_PRIX_CENTRALE"] . " €</td>";
@@ -418,21 +423,23 @@ class ConsommationController extends Controller
                 //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
                 $tplTempEco .= "<td>" . $eco . " € (<b>" . $helper->Pourcentage($eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
 
-
-
-
-
-                // on obtient le total de chiffre
+                // on obtient le total de chiffre d'afffaire
                 $total_ca = $total_ca + intval($cons["CLC_PRIX_CENTRALE"]);
+
+                // on obtient le total d'économies
                 $total_eco = $total_eco + $eco;
 
 
             }
 
 
+            // on ajoute a la derniere colonne le total CA
             $tplTempCa .= "<td>" . $total_ca . " €</td>";
+            // on ajoute a la derniere colonne le total ECO
             $tplTempEco .= "<td>" . $total_eco . " € (<b>" . $helper->Pourcentage($total_eco, $total_ca + $total_eco) . "%</b>)</td>";
 
+
+            // on génère le tableau
 
             $tplMois = "<tr style='font-size: 13pt'>
             <th></th>
@@ -453,6 +460,7 @@ class ConsommationController extends Controller
                 . "
         </tr>";
 
+            // on ajoute au tpl final les rangées pour pour chaque fournisseurs
             $tplDataFinal .= $tplData;
         }
 
