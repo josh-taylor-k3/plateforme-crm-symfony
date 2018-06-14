@@ -44,6 +44,7 @@ class ConsommationController extends Controller
 
         $data = [
             "graph" => [
+                "count" => 0,
                 "Total" => [
                     "eco" =>[],
                     "ca" =>[],
@@ -62,6 +63,8 @@ class ConsommationController extends Controller
         $conn = $connection->prepare($sqlFourn);
         $conn->execute();
         $ListFourn = $conn->fetchAll();
+
+        $data["graph"]["count"] = count($ListFourn);
 
         // chiffre d'affaires et eco total
         $ca_total = 0;
@@ -114,7 +117,6 @@ class ConsommationController extends Controller
 
             foreach ($conso as $keyConso => $cons) {
                 //Graph
-
                 array_push($cons_eco, $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"]);
                 array_push($cons_ca, $cons["CLC_PRIX_CENTRALE"]);
 
@@ -131,9 +133,6 @@ class ConsommationController extends Controller
                 "total_eco" => array_sum($cons_eco)
             ]);
             array_push($data["graph"], $tpl);
-
-
-
         }
 
         array_push($data["graph"]["Total"]["ca"], $ca_total);
