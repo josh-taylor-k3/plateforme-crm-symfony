@@ -257,10 +257,10 @@ class ClientController extends Controller
     }
 
     /**
-     * @Route("/clientUser/{id}", name="clients_regions")
-     * IL FAUT PAS OUBLIER DE RAJOUTER LES CAS POUR CHAQUE CENTRALE
+     * @Route("/clientUser/{id}/{centrale}", name="clients_regions")
+     * IL FAUT PAS OUBLIER DE RAJOUTER LES CAS POUR CHAQUE CENTRALE, pour l'instant uniquement AC et FUN
      */
-    public function getClientIdFromClient(Request $request, ApiKeyAuth $auth, Connection $connection, HelperService $helper, $id)
+    public function getClientIdFromClient(Request $request, ApiKeyAuth $auth, Connection $connection, HelperService $helper, $id, $centrale)
     {
         header("Access-Control-Allow-Origin: *");
         header("Access-Control-Allow-Origin: *");
@@ -270,20 +270,49 @@ class ClientController extends Controller
 
 
 
-        $sql = "SELECT CL_ID FROM CENTRALE_ACHAT.dbo.CLIENTS_USERS WHERE CC_ID = :id ";
+        switch ($centrale){
 
-        $conn = $connection->prepare($sql);
-        $conn->bindValue('id', $id);
-        $conn->execute();
-        $result = $conn->fetchAll();
 
-        if (!empty($result)) {
+            case 1:
+                $sql = "SELECT CL_ID FROM CENTRALE_ACHAT.dbo.CLIENTS_USERS WHERE CC_ID = :id ";
 
-            $data = $helper->array_utf8_encode($result);
+                $conn = $connection->prepare($sql);
+                $conn->bindValue('id', $id);
+                $conn->execute();
+                $result = $conn->fetchAll();
 
-            return new JsonResponse($data[0], 200);
+                if (!empty($result)) {
+
+                    $data = $helper->array_utf8_encode($result);
+
+                    return new JsonResponse($data[0], 200);
+                }
+
+
+                return new JsonResponse("Aucun client trouvé ", 200);
+
+                break;
+            case 4:
+                $sql = "SELECT CL_ID FROM CENTRALE_FUNECAP.dbo.CLIENTS_USERS WHERE CC_ID = :id ";
+
+                $conn = $connection->prepare($sql);
+                $conn->bindValue('id', $id);
+                $conn->execute();
+                $result = $conn->fetchAll();
+
+                if (!empty($result)) {
+
+                    $data = $helper->array_utf8_encode($result);
+
+                    return new JsonResponse($data[0], 200);
+                }
+
+
+                return new JsonResponse("Aucun client trouvé ", 200);
+                break;
+
+
         }
-        return new JsonResponse("Aucun client trouvé ", 200);
 
 
 
