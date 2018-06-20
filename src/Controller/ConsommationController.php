@@ -233,8 +233,7 @@ class ConsommationController extends Controller
                                 array_push($cons_eco, $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"]);
                                 array_push($cons_ca, $cons["CLC_PRIX_CENTRALE"]);
 
-                                $ca_total += $cons["CLC_PRIX_CENTRALE"];
-                                $eco_total += $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
+
                             }
                         }
                     }
@@ -247,6 +246,9 @@ class ConsommationController extends Controller
                         "total_ca" => array_sum($cons_ca),
                         "total_eco" => array_sum($cons_eco)
                     ]);
+
+                    $ca_total += array_sum($cons_ca);
+                    $eco_total += array_sum($cons_eco);
                     array_push($data["graph"], $tpl);
 
 
@@ -254,6 +256,7 @@ class ConsommationController extends Controller
 
                 array_push($data["graph"]["Total"]["ca"], $ca_total);
                 array_push($data["graph"]["Total"]["eco"], $eco_total);
+
 
 
                 return new JsonResponse($data, 200);
@@ -265,138 +268,6 @@ class ConsommationController extends Controller
 
 
     }
-
-
-    /**
-     * @Route("v2/consommation/{id}/{start}/{end}/", name="consommation_client_v2")
-     */
-    public function consoClientV2(Connection $connection, HelperService $helper, $id, $start, $end)
-    {
-
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Credentials: true ");
-        header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control, X-ac-key");
-
-
-        // on obtient la liste des fournisseurs ayant des conso dans la table conso
-        $sqlFourn = "SELECT DISTINCT
-                      FO_ID,
-                      (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_ACHAT.dbo.CLIENTS_CONSO.FO_ID GROUP BY FO_RAISONSOC) as FO_RAISONSOC
-                    FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO";
-
-        $conn = $connection->prepare($sqlFourn);
-        $conn->execute();
-        $ListFourn = $conn->fetchAll();
-
-        $data = [
-            "count" => count($ListFourn),
-            "result" => "ok",
-            "Total" => [
-                "ca" => [],
-                "economie" => [],
-            ],
-            "labels" => [],
-            "conso" => [
-
-            ]
-        ];
-
-
-        $ca_total = 0;
-
-        $eco_total = 0;
-
-
-        foreach ($ListFourn as $key => $fourn) {
-
-            $sqlConso = "SELECT
-                          CLC_ID,
-                          CL_ID,
-                          CC_ID,
-                          FO_ID,
-                          CLC_DATE,
-                          CLC_PRIX_PUBLIC,
-                          CLC_PRIX_CENTRALE,
-                          INS_DATE,
-                          INS_USER ,
-                          (case month(CLC_DATE)
-                                WHEN 1 THEN 'janvier'
-                                WHEN 2 THEN 'février'
-                                WHEN 3 THEN 'mars'
-                                WHEN 4 THEN 'avril'
-                                WHEN 5 THEN 'mai'
-                                WHEN 6 THEN 'juin'
-                                WHEN 7 THEN 'juillet'
-                                WHEN 8 THEN 'août'
-                                WHEN 9 THEN 'septembre'
-                                WHEN 10 THEN 'octobre'
-                                WHEN 11 THEN 'novembre'
-                                ELSE 'décembre'
-                           end) 
-                            as Month
-                        FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
-                        WHERE CLC_DATE BETWEEN :start AND :end
-                              AND CL_ID = :id
-                              AND FO_ID = :fournisseur";
-
-
-            $conn = $connection->prepare($sqlConso);
-            $conn->bindValue('id', $id);
-            $conn->bindValue('fournisseur', $fourn['FO_ID']);
-            $conn->bindValue('start', $start);
-            $conn->bindValue('end', $end);
-            $conn->execute();
-            $conso = $conn->fetchAll();
-
-            $cons_ca = [];
-            $cons_eco = [];
-
-            foreach ($conso as $cons) {
-                array_push($cons_eco, $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"]);
-
-                $ca_total += $cons["CLC_PRIX_CENTRALE"];
-                $eco_total += $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
-            }
-
-            if (count($ListFourn) == 0) {
-                if (array_sum($cons_ca) == 0 && array_sum($cons_ca) == 0) {
-                    return new JsonResponse("none", 200);
-                }
-            }
-
-
-            $tpl = Array($fourn['FO_RAISONSOC'] => [
-
-                "id" => $fourn['FO_ID'],
-                "CA" => $cons_ca,
-                "ECO" => $cons_eco,
-                "total_ca" => array_sum($cons_ca),
-                "total_eco" => array_sum($cons_eco)
-            ]);
-            array_push($data["conso"], $tpl);
-
-
-            $data['Total']['ca'] = $ca_total;
-            $data['Total']['economie'] = $eco_total;
-
-
-        }
-
-
-        $months = $helper->get_months($start, $end);
-
-
-        foreach ($months as $mois) {
-
-
-            array_push($data['labels'], $mois);
-
-        }
-
-
-        return new JsonResponse($data, 200);
-    }
-
 
     /**
      * @Route("/consommation/years", name="conso_years")
