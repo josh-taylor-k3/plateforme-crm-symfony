@@ -294,7 +294,7 @@ class ClientController extends Controller
                 break;
                 //GCCP
             case 2:
-                $sql = "SELECT CL_ID FROM CENTRALE_GCCPE.dbo.CLIENTS_USERS WHERE CC_ID = :id ";
+                $sql = "SELECT CL_ID FROM CENTRALE_GCCP.dbo.CLIENTS_USERS WHERE CC_ID = :id ";
 
                 $conn = $connection->prepare($sql);
                 $conn->bindValue('id', $id);
