@@ -228,15 +228,38 @@ class ConsommationController extends Controller
                     for ($i = 0;$i < $month;$i++) {
                         array_push($cons_eco, 0);
                         array_push($cons_ca, 0);
-                        foreach ($conso as $keyCons => $cons) {
-                            if($months[$i] == $cons["Month"]){
-                                array_push($cons_eco, $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"]);
-                                array_push($cons_ca, $cons["CLC_PRIX_CENTRALE"]);
-
-
-                            }
-                        }
                     }
+
+
+
+
+                    for ($i = 0; $i < $month;$i++){
+
+
+
+                        foreach ($conso as $keyCons => $cons) {
+
+
+                            if ($cons['Month'] == $months[$i]){
+                                $cons_eco[$i] = $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
+                                $cons_ca[$i] = $cons["CLC_PRIX_CENTRALE"];
+                            }
+
+//                        dump($months[$i]);
+//
+//                        if($months[$i] == $cons["Month"]){
+//                            array_push($cons_eco, $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"]);
+//                            array_push($cons_ca, $cons["CLC_PRIX_CENTRALE"]);
+//
+//
+//                        }else {
+
+//                        }
+                        }
+
+
+                    }
+
 
 
                     $tpl = Array($helper->array_utf8_encode($fourn['FO_RAISONSOC']) => [
