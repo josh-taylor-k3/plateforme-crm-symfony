@@ -132,23 +132,21 @@ class ConsommationController extends Controller
                     $cons_eco = [];
 
                     // on initialise a 0
-                    for ($i = 0;$i < $month;$i++) {
+                    for ($i = 0; $i < $month; $i++) {
                         array_push($cons_eco, 0);
                         array_push($cons_ca, 0);
                     }
 
 
-
                     //on remplace les 0 par les vraies valeur
-                    for ($i = 0; $i < $month;$i++){
+                    for ($i = 0; $i < $month; $i++) {
                         foreach ($conso as $keyCons => $cons) {
-                            if ($cons['Month'] == $months[$i]){
+                            if ($cons['Month'] == $months[$i]) {
                                 $cons_eco[$i] = $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
                                 $cons_ca[$i] = $cons["CLC_PRIX_CENTRALE"];
                             }
                         }
                     }
-
 
 
                     $tpl = Array($helper->array_utf8_encode($fourn['FO_RAISONSOC']) => [
@@ -170,8 +168,223 @@ class ConsommationController extends Controller
                 array_push($data["graph"]["Total"]["eco"], $eco_total);
 
 
+                return new JsonResponse($data, 200);
+            //GCCP
+            case 2:
+
+                $sqlFourn = "SELECT DISTINCT FO_ID,
+                      (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_GCCP.dbo.CLIENTS_CONSO.FO_ID GROUP BY FO_RAISONSOC) as FO_RAISONSOC
+                    FROM CENTRALE_GCCP.dbo.CLIENTS_CONSO WHERE CL_ID = :id AND CLC_DATE BETWEEN :start AND :end";
+
+                $conn = $connection->prepare($sqlFourn);
+                $conn->bindValue(':id', $id);
+                $conn->bindValue('start', $start);
+                $conn->bindValue('end', $end);
+                $conn->execute();
+                $ListFourn = $conn->fetchAll();
+
+
+                $data["graph"]["count"] = count($ListFourn);
+
+                // chiffre d'affaires et eco total
+                $ca_total = 0;
+                $eco_total = 0;
+
+
+                foreach ($ListFourn as $key => $fourn) {
+                    $sqlConso = "SELECT
+                          CLC_ID,
+                          CL_ID,
+                          CC_ID,
+                          FO_ID,
+                          CLC_DATE,
+                          CLC_PRIX_PUBLIC,
+                          CLC_PRIX_CENTRALE,
+                          INS_DATE,
+                          INS_USER ,
+                          (case month(CLC_DATE)
+                                WHEN 1 THEN 'Janvier'
+                                WHEN 2 THEN 'Février'
+                                WHEN 3 THEN 'Mars'
+                                WHEN 4 THEN 'Avril'
+                                WHEN 5 THEN 'Mai'
+                                WHEN 6 THEN 'Juin'
+                                WHEN 7 THEN 'Juillet'
+                                WHEN 8 THEN 'Août'
+                                WHEN 9 THEN 'Septembre'
+                                WHEN 10 THEN 'Octobre'
+                                WHEN 11 THEN 'Novembre'
+                                ELSE 'Décembre'
+                           end) 
+                            as Month,
+                            (month(CLC_DATE)) 
+                            as Month_number
+                        FROM CENTRALE_GCCP.dbo.CLIENTS_CONSO
+                        WHERE CLC_DATE BETWEEN :start AND :end
+                              AND CL_ID = :id
+                              AND FO_ID = :fournisseur";
+
+
+                    $conn = $connection->prepare($sqlConso);
+                    $conn->bindValue('id', $id);
+                    $conn->bindValue('fournisseur', $fourn['FO_ID']);
+                    $conn->bindValue('start', $start);
+                    $conn->bindValue('end', $end);
+                    $conn->execute();
+                    $conso = $conn->fetchAll();
+
+
+                    $cons_ca = [];
+                    $cons_eco = [];
+
+                    // on initialise a 0
+                    for ($i = 0; $i < $month; $i++) {
+                        array_push($cons_eco, 0);
+                        array_push($cons_ca, 0);
+                    }
+
+
+                    //on remplace les 0 par les vraies valeur
+                    for ($i = 0; $i < $month; $i++) {
+                        foreach ($conso as $keyCons => $cons) {
+                            if ($cons['Month'] == $months[$i]) {
+                                $cons_eco[$i] = $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
+                                $cons_ca[$i] = $cons["CLC_PRIX_CENTRALE"];
+                            }
+                        }
+                    }
+
+
+                    $tpl = Array($helper->array_utf8_encode($fourn['FO_RAISONSOC']) => [
+                        "id" => $fourn['FO_ID'],
+                        "CA" => $cons_ca,
+                        "ECO" => $cons_eco,
+                        "total_ca" => array_sum($cons_ca),
+                        "total_eco" => array_sum($cons_eco)
+                    ]);
+
+                    $ca_total += array_sum($cons_ca);
+                    $eco_total += array_sum($cons_eco);
+                    array_push($data["graph"], $tpl);
+
+
+                }
+
+                array_push($data["graph"]["Total"]["ca"], $ca_total);
+                array_push($data["graph"]["Total"]["eco"], $eco_total);
+
 
                 return new JsonResponse($data, 200);
+
+                break;
+            //naldeo
+            case 3:
+
+                $sqlFourn = "SELECT DISTINCT FO_ID,
+                      (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_NALDEO.dbo.CLIENTS_CONSO.FO_ID GROUP BY FO_RAISONSOC) as FO_RAISONSOC
+                    FROM CENTRALE_NALDEO.dbo.CLIENTS_CONSO WHERE CL_ID = :id AND CLC_DATE BETWEEN :start AND :end";
+
+                $conn = $connection->prepare($sqlFourn);
+                $conn->bindValue(':id', $id);
+                $conn->bindValue('start', $start);
+                $conn->bindValue('end', $end);
+                $conn->execute();
+                $ListFourn = $conn->fetchAll();
+
+
+                $data["graph"]["count"] = count($ListFourn);
+
+                // chiffre d'affaires et eco total
+                $ca_total = 0;
+                $eco_total = 0;
+
+
+                foreach ($ListFourn as $key => $fourn) {
+                    $sqlConso = "SELECT
+                          CLC_ID,
+                          CL_ID,
+                          CC_ID,
+                          FO_ID,
+                          CLC_DATE,
+                          CLC_PRIX_PUBLIC,
+                          CLC_PRIX_CENTRALE,
+                          INS_DATE,
+                          INS_USER ,
+                          (case month(CLC_DATE)
+                                WHEN 1 THEN 'Janvier'
+                                WHEN 2 THEN 'Février'
+                                WHEN 3 THEN 'Mars'
+                                WHEN 4 THEN 'Avril'
+                                WHEN 5 THEN 'Mai'
+                                WHEN 6 THEN 'Juin'
+                                WHEN 7 THEN 'Juillet'
+                                WHEN 8 THEN 'Août'
+                                WHEN 9 THEN 'Septembre'
+                                WHEN 10 THEN 'Octobre'
+                                WHEN 11 THEN 'Novembre'
+                                ELSE 'Décembre'
+                           end) 
+                            as Month,
+                            (month(CLC_DATE)) 
+                            as Month_number
+                        FROM CENTRALE_NALDEO.dbo.CLIENTS_CONSO
+                        WHERE CLC_DATE BETWEEN :start AND :end
+                              AND CL_ID = :id
+                              AND FO_ID = :fournisseur";
+
+
+                    $conn = $connection->prepare($sqlConso);
+                    $conn->bindValue('id', $id);
+                    $conn->bindValue('fournisseur', $fourn['FO_ID']);
+                    $conn->bindValue('start', $start);
+                    $conn->bindValue('end', $end);
+                    $conn->execute();
+                    $conso = $conn->fetchAll();
+
+
+                    $cons_ca = [];
+                    $cons_eco = [];
+
+                    // on initialise a 0
+                    for ($i = 0; $i < $month; $i++) {
+                        array_push($cons_eco, 0);
+                        array_push($cons_ca, 0);
+                    }
+
+
+                    //on remplace les 0 par les vraies valeur
+                    for ($i = 0; $i < $month; $i++) {
+                        foreach ($conso as $keyCons => $cons) {
+                            if ($cons['Month'] == $months[$i]) {
+                                $cons_eco[$i] = $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
+                                $cons_ca[$i] = $cons["CLC_PRIX_CENTRALE"];
+                            }
+                        }
+                    }
+
+
+                    $tpl = Array($helper->array_utf8_encode($fourn['FO_RAISONSOC']) => [
+                        "id" => $fourn['FO_ID'],
+                        "CA" => $cons_ca,
+                        "ECO" => $cons_eco,
+                        "total_ca" => array_sum($cons_ca),
+                        "total_eco" => array_sum($cons_eco)
+                    ]);
+
+                    $ca_total += array_sum($cons_ca);
+                    $eco_total += array_sum($cons_eco);
+                    array_push($data["graph"], $tpl);
+
+
+                }
+
+                array_push($data["graph"]["Total"]["ca"], $ca_total);
+                array_push($data["graph"]["Total"]["eco"], $eco_total);
+
+
+                return new JsonResponse($data, 200);
+
+                break;
             //funecap
             case 4:
 
@@ -241,23 +454,21 @@ class ConsommationController extends Controller
                     $cons_eco = [];
 
                     // on initialise a 0
-                    for ($i = 0;$i < $month;$i++) {
+                    for ($i = 0; $i < $month; $i++) {
                         array_push($cons_eco, 0);
                         array_push($cons_ca, 0);
                     }
 
 
-
                     //on remplace les 0 par les vraies valeur
-                    for ($i = 0; $i < $month;$i++){
+                    for ($i = 0; $i < $month; $i++) {
                         foreach ($conso as $keyCons => $cons) {
-                            if ($cons['Month'] == $months[$i]){
+                            if ($cons['Month'] == $months[$i]) {
                                 $cons_eco[$i] = $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
                                 $cons_ca[$i] = $cons["CLC_PRIX_CENTRALE"];
                             }
                         }
                     }
-
 
 
                     $tpl = Array($helper->array_utf8_encode($fourn['FO_RAISONSOC']) => [
@@ -278,6 +489,221 @@ class ConsommationController extends Controller
                 array_push($data["graph"]["Total"]["ca"], $ca_total);
                 array_push($data["graph"]["Total"]["eco"], $eco_total);
 
+
+                return new JsonResponse($data, 200);
+
+                break;
+                //PFPL
+            case 5:
+
+                $sqlFourn = "SELECT DISTINCT FO_ID,
+                      (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_PFPL.dbo.CLIENTS_CONSO.FO_ID GROUP BY FO_RAISONSOC) as FO_RAISONSOC
+                    FROM CENTRALE_PFPL.dbo.CLIENTS_CONSO WHERE CL_ID = :id AND CLC_DATE BETWEEN :start AND :end";
+
+                $conn = $connection->prepare($sqlFourn);
+                $conn->bindValue(':id', $id);
+                $conn->bindValue('start', $start);
+                $conn->bindValue('end', $end);
+                $conn->execute();
+                $ListFourn = $conn->fetchAll();
+
+
+                $data["graph"]["count"] = count($ListFourn);
+
+                // chiffre d'affaires et eco total
+                $ca_total = 0;
+                $eco_total = 0;
+
+
+                foreach ($ListFourn as $key => $fourn) {
+                    $sqlConso = "SELECT
+                          CLC_ID,
+                          CL_ID,
+                          CC_ID,
+                          FO_ID,
+                          CLC_DATE,
+                          CLC_PRIX_PUBLIC,
+                          CLC_PRIX_CENTRALE,
+                          INS_DATE,
+                          INS_USER ,
+                          (case month(CLC_DATE)
+                                WHEN 1 THEN 'Janvier'
+                                WHEN 2 THEN 'Février'
+                                WHEN 3 THEN 'Mars'
+                                WHEN 4 THEN 'Avril'
+                                WHEN 5 THEN 'Mai'
+                                WHEN 6 THEN 'Juin'
+                                WHEN 7 THEN 'Juillet'
+                                WHEN 8 THEN 'Août'
+                                WHEN 9 THEN 'Septembre'
+                                WHEN 10 THEN 'Octobre'
+                                WHEN 11 THEN 'Novembre'
+                                ELSE 'Décembre'
+                           end) 
+                            as Month,
+                            (month(CLC_DATE)) 
+                            as Month_number
+                        FROM CENTRALE_PFPL.dbo.CLIENTS_CONSO
+                        WHERE CLC_DATE BETWEEN :start AND :end
+                              AND CL_ID = :id
+                              AND FO_ID = :fournisseur";
+
+
+                    $conn = $connection->prepare($sqlConso);
+                    $conn->bindValue('id', $id);
+                    $conn->bindValue('fournisseur', $fourn['FO_ID']);
+                    $conn->bindValue('start', $start);
+                    $conn->bindValue('end', $end);
+                    $conn->execute();
+                    $conso = $conn->fetchAll();
+
+
+                    $cons_ca = [];
+                    $cons_eco = [];
+
+                    // on initialise a 0
+                    for ($i = 0; $i < $month; $i++) {
+                        array_push($cons_eco, 0);
+                        array_push($cons_ca, 0);
+                    }
+
+
+                    //on remplace les 0 par les vraies valeur
+                    for ($i = 0; $i < $month; $i++) {
+                        foreach ($conso as $keyCons => $cons) {
+                            if ($cons['Month'] == $months[$i]) {
+                                $cons_eco[$i] = $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
+                                $cons_ca[$i] = $cons["CLC_PRIX_CENTRALE"];
+                            }
+                        }
+                    }
+
+
+                    $tpl = Array($helper->array_utf8_encode($fourn['FO_RAISONSOC']) => [
+                        "id" => $fourn['FO_ID'],
+                        "CA" => $cons_ca,
+                        "ECO" => $cons_eco,
+                        "total_ca" => array_sum($cons_ca),
+                        "total_eco" => array_sum($cons_eco)
+                    ]);
+
+                    $ca_total += array_sum($cons_ca);
+                    $eco_total += array_sum($cons_eco);
+                    array_push($data["graph"], $tpl);
+
+
+                }
+
+                array_push($data["graph"]["Total"]["ca"], $ca_total);
+                array_push($data["graph"]["Total"]["eco"], $eco_total);
+
+
+                return new JsonResponse($data, 200);
+
+                break;
+            //ROC
+            case 6:
+
+                $sqlFourn = "SELECT DISTINCT FO_ID,
+                      (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_ROC_ECLERC.dbo.CLIENTS_CONSO.FO_ID GROUP BY FO_RAISONSOC) as FO_RAISONSOC
+                    FROM CENTRALE_ROC_ECLERC.dbo.CLIENTS_CONSO WHERE CL_ID = :id AND CLC_DATE BETWEEN :start AND :end";
+
+                $conn = $connection->prepare($sqlFourn);
+                $conn->bindValue(':id', $id);
+                $conn->bindValue('start', $start);
+                $conn->bindValue('end', $end);
+                $conn->execute();
+                $ListFourn = $conn->fetchAll();
+
+
+                $data["graph"]["count"] = count($ListFourn);
+
+                // chiffre d'affaires et eco total
+                $ca_total = 0;
+                $eco_total = 0;
+
+
+                foreach ($ListFourn as $key => $fourn) {
+                    $sqlConso = "SELECT
+                          CLC_ID,
+                          CL_ID,
+                          CC_ID,
+                          FO_ID,
+                          CLC_DATE,
+                          CLC_PRIX_PUBLIC,
+                          CLC_PRIX_CENTRALE,
+                          INS_DATE,
+                          INS_USER ,
+                          (case month(CLC_DATE)
+                                WHEN 1 THEN 'Janvier'
+                                WHEN 2 THEN 'Février'
+                                WHEN 3 THEN 'Mars'
+                                WHEN 4 THEN 'Avril'
+                                WHEN 5 THEN 'Mai'
+                                WHEN 6 THEN 'Juin'
+                                WHEN 7 THEN 'Juillet'
+                                WHEN 8 THEN 'Août'
+                                WHEN 9 THEN 'Septembre'
+                                WHEN 10 THEN 'Octobre'
+                                WHEN 11 THEN 'Novembre'
+                                ELSE 'Décembre'
+                           end) 
+                            as Month,
+                            (month(CLC_DATE)) 
+                            as Month_number
+                        FROM CENTRALE_ROC_ECLERC.dbo.CLIENTS_CONSO
+                        WHERE CLC_DATE BETWEEN :start AND :end
+                              AND CL_ID = :id
+                              AND FO_ID = :fournisseur";
+
+
+                    $conn = $connection->prepare($sqlConso);
+                    $conn->bindValue('id', $id);
+                    $conn->bindValue('fournisseur', $fourn['FO_ID']);
+                    $conn->bindValue('start', $start);
+                    $conn->bindValue('end', $end);
+                    $conn->execute();
+                    $conso = $conn->fetchAll();
+
+
+                    $cons_ca = [];
+                    $cons_eco = [];
+
+                    // on initialise a 0
+                    for ($i = 0; $i < $month; $i++) {
+                        array_push($cons_eco, 0);
+                        array_push($cons_ca, 0);
+                    }
+
+
+                    //on remplace les 0 par les vraies valeur
+                    for ($i = 0; $i < $month; $i++) {
+                        foreach ($conso as $keyCons => $cons) {
+                            if ($cons['Month'] == $months[$i]) {
+                                $cons_eco[$i] = $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
+                                $cons_ca[$i] = $cons["CLC_PRIX_CENTRALE"];
+                            }
+                        }
+                    }
+
+
+                    $tpl = Array($helper->array_utf8_encode($fourn['FO_RAISONSOC']) => [
+                        "id" => $fourn['FO_ID'],
+                        "CA" => $cons_ca,
+                        "ECO" => $cons_eco,
+                        "total_ca" => array_sum($cons_ca),
+                        "total_eco" => array_sum($cons_eco)
+                    ]);
+
+                    $ca_total += array_sum($cons_ca);
+                    $eco_total += array_sum($cons_eco);
+                    array_push($data["graph"], $tpl);
+
+
+                }
+
+                array_push($data["graph"]["Total"]["ca"], $ca_total);
+                array_push($data["graph"]["Total"]["eco"], $eco_total);
 
 
                 return new JsonResponse($data, 200);
