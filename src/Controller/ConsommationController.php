@@ -240,7 +240,7 @@ class ConsommationController extends Controller
                     }
 
 
-                    $tpl = Array($fourn['FO_RAISONSOC'] => [
+                    $tpl = Array($helper->array_utf8_encode($fourn['FO_RAISONSOC']) => [
                         "id" => $fourn['FO_ID'],
                         "CA" => $cons_ca,
                         "ECO" => $cons_eco,
