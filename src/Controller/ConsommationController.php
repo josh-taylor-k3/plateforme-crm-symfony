@@ -518,6 +518,7 @@ class ConsommationController extends Controller
                     for ($i = 0; $i < $month; $i++) {
 
                         $tplTempCa .= "<td>0</td>";
+                        $tplTempEco .= "<td>0</td>";
 
 
                         foreach ($conso as $keyCons => $cons){
@@ -531,18 +532,18 @@ class ConsommationController extends Controller
                                 //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
                                 $tplTempEco .= "<td>" . $eco . " € (<b>" . $helper->Pourcentage($eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
 
+
+                                $total_ca = $total_ca + intval($cons["CLC_PRIX_CENTRALE"]);
+
+                                $total_eco = $total_eco + $eco;
                             }
 
 
                         }
 
-                        $eco = $cons["CLC_PRIX_PUBLIC"] - $cons["CLC_PRIX_CENTRALE"];
 
-                        $tplTempEco .= "<td>" . $eco . " € (<b>" . $helper->Pourcentage($eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
 
-                        $total_ca = $total_ca + intval($cons["CLC_PRIX_CENTRALE"]);
 
-                        $total_eco = $total_eco + $eco;
 
                     }
 
@@ -598,6 +599,7 @@ class ConsommationController extends Controller
                         $tplTempEco
                         . "
         </tr>";
+                    dump($tplData);
 
                     // on ajoute au tpl final les rangées pour pour chaque fournisseurs
                     $tplDataFinal .= $tplData;
