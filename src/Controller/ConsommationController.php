@@ -515,45 +515,46 @@ class ConsommationController extends Controller
                     array_push($data["graph"], $tpl);
 
 
-                    for ($i = 0; $i < $month; $i++) {
-
-
-
-
-                        foreach ($conso as $keyCons => $cons){
-                            if($months[$i] == $cons["Month"]){
-
-
-                                // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
-                                $tplTempCa .= "<td>" . $cons["CLC_PRIX_CENTRALE"] . " €</td>";
-
-                                // On obtient le total d"économies
-                                $eco = $cons["CLC_PRIX_PUBLIC"] - $cons["CLC_PRIX_CENTRALE"];
-
-                                //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
-                                $tplTempEco .= "<td>" . $eco . " € (<b>" . $helper->Pourcentage($eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
-
-
-                                $total_ca = $total_ca + intval($cons["CLC_PRIX_CENTRALE"]);
-
-                                $total_eco = $total_eco + $eco;
-                                continue;
-                            }else {
-                                $tplTempCa .= "<td>0</td>";
-                                $tplTempEco .= "<td>0</td>";
-
-                                continue;
-                            }
-                        }
-
+                    foreach ($cons_ca as $conso_ca) {
+                        // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
+                        $tplTempCa .= "<td>" . $conso_ca . " €</td>";
                     }
+
+                    foreach ($cons_eco as $conso_eco) {
+                        //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
+                        $tplTempEco .= "<td>" . $conso_eco . " € (<b>" . $helper->Pourcentage($conso_eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
+                    }
+
+
+//                    foreach ($conso as $keyCons => $cons){
+//                            if($months[$i] == $cons["Month"]){
+//
+//
+//                                // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
+//                                $tplTempCa .= "<td>" . $cons["CLC_PRIX_CENTRALE"] . " €</td>";
+//
+//                                // On obtient le total d"économies
+//                                $eco = $cons["CLC_PRIX_PUBLIC"] - $cons["CLC_PRIX_CENTRALE"];
+//
+//                                //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
+//                                $tplTempEco .= "<td>" . $eco . " € (<b>" . $helper->Pourcentage($eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
+//
+//
+//                                $total_ca = $total_ca + intval($cons["CLC_PRIX_CENTRALE"]);
+//
+//                                $total_eco = $total_eco + $eco;
+//                            }else {
+//                                $tplTempCa .= "<td>0</td>";
+//                                $tplTempEco .= "<td>0</td>";
+//
+//                            }
+//                        }
+
 
                     // on ajoute a la derniere colonne le total CA
                     $tplTempCa .= "<td>" . $total_ca . " €</td>";
                     // on ajoute a la derniere colonne le total ECO
                     $tplTempEco .= "<td>" . $total_eco . " € (<b>" . $helper->Pourcentage($total_eco, $total_ca + $total_eco) . "%</b>)</td>";
-
-
 
 
                     // on génère le tableau
