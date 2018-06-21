@@ -81,7 +81,6 @@ class ConsommationController extends Controller
         $tplDataFinal = "";
 
 
-
         switch ($centrale) {
 
             //achat centrale
@@ -515,24 +514,39 @@ class ConsommationController extends Controller
                     $eco_total += array_sum($cons_eco);
                     array_push($data["graph"], $tpl);
 
-                    foreach ($conso as $keyCons => $cons) {
 
-                        // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
-                        $tplTempCa .= "<td>" . $cons["CLC_PRIX_CENTRALE"] . " €</td>";
+                    for ($i = 0; $i < $month; $i++) {
+                        foreach ($conso as $keyCons => $cons) {
 
-                        // On obtient le total d"économies
-                        $eco = $cons["CLC_PRIX_PUBLIC"] - $cons["CLC_PRIX_CENTRALE"];
+                            if ($months[$i] == $cons['Month'] ){
+                            // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
+                            $tplTempCa .= "<td>" . $cons["CLC_PRIX_CENTRALE"] . " €</td>";
 
-                        //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
-                        $tplTempEco .= "<td>" . $eco . " € (<b>" . $helper->Pourcentage($eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
+                            // On obtient le total d"économies
+                            $eco = $cons["CLC_PRIX_PUBLIC"] - $cons["CLC_PRIX_CENTRALE"];
 
-                        // on obtient le total de chiffre d'afffaire
-                        $total_ca = $total_ca + intval($cons["CLC_PRIX_CENTRALE"]);
+                            //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
+                            $tplTempEco .= "<td>" . $eco . " € (<b>" . $helper->Pourcentage($eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
 
-                        // on obtient le total d'économies
-                        $total_eco = $total_eco + $eco;
+                            // on obtient le total de chiffre d'afffaire
+                            $total_ca = $total_ca + intval($cons["CLC_PRIX_CENTRALE"]);
+
+                            // on obtient le total d'économies
+                            $total_eco = $total_eco + $eco;
+                            }
 
 
+                            // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
+                            $tplTempCa .= "<td> 0 €</td>";
+
+
+                            //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
+                            $tplTempEco .= "<td>0 €</td>";
+
+
+
+
+                        }
                     }
 
                     // on ajoute a la derniere colonne le total CA
@@ -583,8 +597,6 @@ class ConsommationController extends Controller
                 array_push($data["graph"]["Total"]["ca"], $ca_total);
                 array_push($data["graph"]["Total"]["eco"], $eco_total);
                 array_push($data["table"], trim($tplFinal));
-
-
 
 
                 return new JsonResponse($data, 200);
