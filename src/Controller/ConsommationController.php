@@ -516,31 +516,66 @@ class ConsommationController extends Controller
 
 
                     for ($i = 0; $i < $month; $i++) {
-                        foreach ($conso as $keyCons => $cons) {
 
-                            //dump($cons);
-                            //dump($months[$i]);
-                           // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
-                            $tplTempCa .= "<td>" . $cons["CLC_PRIX_CENTRALE"] . " €</td>";
+                        $tplTempCa .= "<td>0</td>";
 
-                            // On obtient le total d"économies
-                            $eco = $cons["CLC_PRIX_PUBLIC"] - $cons["CLC_PRIX_CENTRALE"];
 
-                            //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
-                            $tplTempEco .= "<td>" . $eco . " € (<b>" . $helper->Pourcentage($eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
+                        foreach ($conso as $keyCons => $cons){
+                            if($months[$i] == $cons["Month"]){
+// on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
+                                $tplTempCa .= "<td>" . $cons["CLC_PRIX_CENTRALE"] . " €</td>";
 
-                            // on obtient le total de chiffre d'afffaire
-                            $total_ca = $total_ca + intval($cons["CLC_PRIX_CENTRALE"]);
+                                // On obtient le total d"économies
+                                $eco = $cons["CLC_PRIX_PUBLIC"] - $cons["CLC_PRIX_CENTRALE"];
 
-                            // on obtient le total d'économies
-                            $total_eco = $total_eco + $eco;
+                                //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
+                                $tplTempEco .= "<td>" . $eco . " € (<b>" . $helper->Pourcentage($eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
+
+                            }
+
+
                         }
+
+                        $eco = $cons["CLC_PRIX_PUBLIC"] - $cons["CLC_PRIX_CENTRALE"];
+
+                        $tplTempEco .= "<td>" . $eco . " € (<b>" . $helper->Pourcentage($eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
+
+                        $total_ca = $total_ca + intval($cons["CLC_PRIX_CENTRALE"]);
+
+                        $total_eco = $total_eco + $eco;
+
                     }
+
+
+
+
+
+//                    //dump($cons);
+//                    //dump($months[$i]);
+//                    // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
+//                    $tplTempCa .= "<td>" . $cons["CLC_PRIX_CENTRALE"] . " €</td>";
+//
+//                    // On obtient le total d"économies
+//                    $eco = $cons["CLC_PRIX_PUBLIC"] - $cons["CLC_PRIX_CENTRALE"];
+//
+//                    //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
+//                    $tplTempEco .= "<td>" . $eco . " € (<b>" . $helper->Pourcentage($eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
+//
+//                    // on obtient le total de chiffre d'afffaire
+//                    $total_ca = $total_ca + intval($cons["CLC_PRIX_CENTRALE"]);
+//
+//                    // on obtient le total d'économies
+//                    $total_eco = $total_eco + $eco;
+
+
+
 
                     // on ajoute a la derniere colonne le total CA
                     $tplTempCa .= "<td>" . $total_ca . " €</td>";
                     // on ajoute a la derniere colonne le total ECO
                     $tplTempEco .= "<td>" . $total_eco . " € (<b>" . $helper->Pourcentage($total_eco, $total_ca + $total_eco) . "%</b>)</td>";
+
+
 
 
                     // on génère le tableau
@@ -563,6 +598,7 @@ class ConsommationController extends Controller
                         $tplTempEco
                         . "
         </tr>";
+                    dump($tplData);
 
                     // on ajoute au tpl final les rangées pour pour chaque fournisseurs
                     $tplDataFinal .= $tplData;
