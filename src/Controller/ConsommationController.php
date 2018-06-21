@@ -537,6 +537,9 @@ class ConsommationController extends Controller
                                 $total_ca = $total_ca + intval($cons["CLC_PRIX_CENTRALE"]);
 
                                 $total_eco = $total_eco + $eco;
+                            }else {
+                                $tplTempCa .= "<td>0</td>";
+                                $tplTempEco .= "<td>0</td>";
                             }
                         }
 
