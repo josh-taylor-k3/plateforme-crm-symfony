@@ -526,29 +526,11 @@ class ConsommationController extends Controller
                     }
 
 
-//                    foreach ($conso as $keyCons => $cons){
-//                            if($months[$i] == $cons["Month"]){
-//
-//
-//                                // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
-//                                $tplTempCa .= "<td>" . $cons["CLC_PRIX_CENTRALE"] . " €</td>";
-//
-//                                // On obtient le total d"économies
-//                                $eco = $cons["CLC_PRIX_PUBLIC"] - $cons["CLC_PRIX_CENTRALE"];
-//
-//                                //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
-//                                $tplTempEco .= "<td>" . $eco . " € (<b>" . $helper->Pourcentage($eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
-//
-//
-//                                $total_ca = $total_ca + intval($cons["CLC_PRIX_CENTRALE"]);
-//
-//                                $total_eco = $total_eco + $eco;
-//                            }else {
-//                                $tplTempCa .= "<td>0</td>";
-//                                $tplTempEco .= "<td>0</td>";
-//
-//                            }
-//                        }
+                    // on obtient le total de chiffre d'afffaire
+                    $total_ca = $ca_total;
+
+                    // on obtient le total d'économies
+                    $total_eco = $eco_total;
 
 
                     // on ajoute a la derniere colonne le total CA
