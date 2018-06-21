@@ -598,7 +598,6 @@ class ConsommationController extends Controller
                         $tplTempEco
                         . "
         </tr>";
-                    dump($tplData);
 
                     // on ajoute au tpl final les rangées pour pour chaque fournisseurs
                     $tplDataFinal .= $tplData;
