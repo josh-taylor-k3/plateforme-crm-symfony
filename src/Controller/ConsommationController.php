@@ -517,13 +517,14 @@ class ConsommationController extends Controller
 
                     for ($i = 0; $i < $month; $i++) {
 
-                        $tplTempCa .= "<td>0</td>";
-                        $tplTempEco .= "<td>0</td>";
+
 
 
                         foreach ($conso as $keyCons => $cons){
                             if($months[$i] == $cons["Month"]){
-// on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
+
+
+                                // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
                                 $tplTempCa .= "<td>" . $cons["CLC_PRIX_CENTRALE"] . " €</td>";
 
                                 // On obtient le total d"économies
@@ -537,39 +538,9 @@ class ConsommationController extends Controller
 
                                 $total_eco = $total_eco + $eco;
                             }
-
-
                         }
 
-
-
-
-
                     }
-
-
-
-
-
-//                    //dump($cons);
-//                    //dump($months[$i]);
-//                    // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
-//                    $tplTempCa .= "<td>" . $cons["CLC_PRIX_CENTRALE"] . " €</td>";
-//
-//                    // On obtient le total d"économies
-//                    $eco = $cons["CLC_PRIX_PUBLIC"] - $cons["CLC_PRIX_CENTRALE"];
-//
-//                    //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
-//                    $tplTempEco .= "<td>" . $eco . " € (<b>" . $helper->Pourcentage($eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
-//
-//                    // on obtient le total de chiffre d'afffaire
-//                    $total_ca = $total_ca + intval($cons["CLC_PRIX_CENTRALE"]);
-//
-//                    // on obtient le total d'économies
-//                    $total_eco = $total_eco + $eco;
-
-
-
 
                     // on ajoute a la derniere colonne le total CA
                     $tplTempCa .= "<td>" . $total_ca . " €</td>";
