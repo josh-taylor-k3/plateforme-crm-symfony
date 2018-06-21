@@ -518,8 +518,9 @@ class ConsommationController extends Controller
                     for ($i = 0; $i < $month; $i++) {
                         foreach ($conso as $keyCons => $cons) {
 
-                            if ($months[$i] == $cons['Month'] ){
-                            // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
+                            //dump($cons);
+                            //dump($months[$i]);
+                           // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
                             $tplTempCa .= "<td>" . $cons["CLC_PRIX_CENTRALE"] . " €</td>";
 
                             // On obtient le total d"économies
@@ -533,19 +534,6 @@ class ConsommationController extends Controller
 
                             // on obtient le total d'économies
                             $total_eco = $total_eco + $eco;
-                            }
-
-
-                            // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
-                            $tplTempCa .= "<td> 0 €</td>";
-
-
-                            //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
-                            $tplTempEco .= "<td>0 €</td>";
-
-
-
-
                         }
                     }
 
