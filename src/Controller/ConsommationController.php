@@ -62,6 +62,26 @@ class ConsommationController extends Controller
         $month = count($months);
 
 
+        //On cherche a obtenir les mois pour avoir les noms de colones
+
+        // variable pour contenir les mois
+        $list_month = [];
+
+        // tpl des colonnes
+        $tplMoisTemp = "";
+
+        foreach ($months as $mois) {
+            //on ajoute chaque mois dans le tableau
+            array_push($list_month, $mois);
+            // on ajoute au tpl les th avec mois
+            $tplMoisTemp .= "<th>" . $mois . "</th>";
+        }
+
+        //tpl final du tableau
+        $tplDataFinal = "";
+
+
+
         switch ($centrale) {
 
             //achat centrale
@@ -408,6 +428,7 @@ class ConsommationController extends Controller
 
 
                 foreach ($ListFourn as $key => $fourn) {
+
                     $sqlConso = "SELECT
                           CLC_ID,
                           CL_ID,
@@ -439,8 +460,6 @@ class ConsommationController extends Controller
                         WHERE CLC_DATE BETWEEN :start AND :end
                               AND CL_ID = :id
                               AND FO_ID = :fournisseur";
-
-
                     $conn = $connection->prepare($sqlConso);
                     $conn->bindValue('id', $id);
                     $conn->bindValue('fournisseur', $fourn['FO_ID']);
@@ -453,10 +472,23 @@ class ConsommationController extends Controller
                     $cons_ca = [];
                     $cons_eco = [];
 
+                    // variable temporaire tpl pour le chiffre d'affaire
+                    $tplTempCa = "";
+                    // variable temporaire tpl pour les économies
+                    $tplTempEco = "";
+
+                    // variable contenant le total d'économies
+                    $total_eco = 0;
+                    // variable contenant le total chiffre d'affaire
+                    $total_ca = 0;
+
+
                     // on initialise a 0
                     for ($i = 0; $i < $month; $i++) {
                         array_push($cons_eco, 0);
                         array_push($cons_ca, 0);
+
+
                     }
 
 
@@ -483,17 +515,82 @@ class ConsommationController extends Controller
                     $eco_total += array_sum($cons_eco);
                     array_push($data["graph"], $tpl);
 
+                    foreach ($conso as $keyCons => $cons) {
+
+                        // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
+                        $tplTempCa .= "<td>" . $cons["CLC_PRIX_CENTRALE"] . " €</td>";
+
+                        // On obtient le total d"économies
+                        $eco = $cons["CLC_PRIX_PUBLIC"] - $cons["CLC_PRIX_CENTRALE"];
+
+                        //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
+                        $tplTempEco .= "<td>" . $eco . " € (<b>" . $helper->Pourcentage($eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
+
+                        // on obtient le total de chiffre d'afffaire
+                        $total_ca = $total_ca + intval($cons["CLC_PRIX_CENTRALE"]);
+
+                        // on obtient le total d'économies
+                        $total_eco = $total_eco + $eco;
+
+
+                    }
+
+                    // on ajoute a la derniere colonne le total CA
+                    $tplTempCa .= "<td>" . $total_ca . " €</td>";
+                    // on ajoute a la derniere colonne le total ECO
+                    $tplTempEco .= "<td>" . $total_eco . " € (<b>" . $helper->Pourcentage($total_eco, $total_ca + $total_eco) . "%</b>)</td>";
+
+
+                    // on génère le tableau
+
+                    $tplMois = "<tr style='font-size: 13pt'>
+            <th></th>
+            <th></th>
+            " . $tplMoisTemp . "
+            <th style=\"background-color: #a8a8a8;\" >Total</th>
+            </tr>";
+
+
+                    $tplData = "<tr style='font-size: 9pt'>
+            <td rowspan=\"2\">" . $fourn["FO_RAISONSOC"] . "</td>
+            <td>Mes achats</td>" .
+                        $tplTempCa
+                        . "</tr>
+        <tr style='font-size: 9pt'>
+            <td>Mes gains</td>" .
+                        $tplTempEco
+                        . "
+        </tr>";
+
+                    // on ajoute au tpl final les rangées pour pour chaque fournisseurs
+                    $tplDataFinal .= $tplData;
+
 
                 }
 
+                $tplMois = "<tr style='font-size: 13pt'><th></th><th></th>" . $tplMoisTemp . "<th style='background-color: #a8a8a8;' >Total</th></tr>";
+
+                $tplFinal = " <table id=\"table_conso\" class=\"table compact table-striped table-bordered\" style=\"width: 95%;margin: 0 auto;\">
+        <thead>
+        " . $tplMois . "
+        </thead>
+        <tbody>
+        " . $tplDataFinal . "
+        </tbody>
+    </table>";
+
+
                 array_push($data["graph"]["Total"]["ca"], $ca_total);
                 array_push($data["graph"]["Total"]["eco"], $eco_total);
+                array_push($data["table"], trim($tplFinal));
+
+
 
 
                 return new JsonResponse($data, 200);
 
                 break;
-                //PFPL
+            //PFPL
             case 5:
 
                 $sqlFourn = "SELECT DISTINCT FO_ID,
