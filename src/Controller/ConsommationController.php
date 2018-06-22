@@ -530,11 +530,7 @@ class ConsommationController extends Controller
                     $total_ca = array_sum($cons_ca);
 
                     // on obtient le total d'économies
-                    $total_eco =array_sum($cons_eco);
-
-
-
-
+                    $total_eco = array_sum($cons_eco);
                     // on ajoute a la derniere colonne le total CA
                     $tplTempCa .= "<td>" . $total_ca . " €</td>";
                     // on ajoute a la derniere colonne le total ECO
@@ -606,10 +602,23 @@ class ConsommationController extends Controller
 
                 $data["graph"]["count"] = count($ListFourn);
 
+                $cons_ca = [];
+                $cons_eco = [];
+
+
                 // chiffre d'affaires et eco total
                 $ca_total = 0;
                 $eco_total = 0;
 
+                // variable temporaire tpl pour le chiffre d'affaire
+                $tplTempCa = "";
+                // variable temporaire tpl pour les économies
+                $tplTempEco = "";
+
+                // variable contenant le total d'économies
+                $total_eco = 0;
+                // variable contenant le total chiffre d'affaire
+                $total_ca = 0;
 
                 foreach ($ListFourn as $key => $fourn) {
                     $sqlConso = "SELECT
@@ -688,10 +697,71 @@ class ConsommationController extends Controller
                     array_push($data["graph"], $tpl);
 
 
+                    foreach ($cons_ca as $conso_ca) {
+                        // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
+                        $tplTempCa .= "<td>" . $conso_ca . " €</td>";
+                    }
+
+                    foreach ($cons_eco as $conso_eco) {
+                        //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
+                        $tplTempEco .= "<td>" . $conso_eco . " € (<b>" . $helper->Pourcentage($conso_eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
+                    }
+
+
+                    // on obtient le total de chiffre d'afffaire
+                    $total_ca = array_sum($cons_ca);
+
+                    // on obtient le total d'économies
+                    $total_eco = array_sum($cons_eco);
+                    // on ajoute a la derniere colonne le total CA
+                    $tplTempCa .= "<td>" . $total_ca . " €</td>";
+                    // on ajoute a la derniere colonne le total ECO
+                    $tplTempEco .= "<td>" . $total_eco . " € (<b>" . $helper->Pourcentage($total_eco, $total_ca + $total_eco) . "%</b>)</td>";
+
+
+                    // on génère le tableau
+
+                    $tplMois = "<tr style='font-size: 13pt'>
+            <th></th>
+            <th></th>
+            " . $tplMoisTemp . "
+            <th style=\"background-color: #a8a8a8;\" >Total</th>
+            </tr>";
+
+
+                    $tplData = "<tr style='font-size: 9pt'>
+            <td rowspan=\"2\">" . $helper->array_utf8_encode($fourn['FO_RAISONSOC']) . "</td>
+            <td>Mes achats</td>" .
+                        $tplTempCa
+                        . "</tr>
+        <tr style='font-size: 9pt'>
+            <td>Mes gains</td>" .
+                        $tplTempEco
+                        . "
+        </tr>";
+                    //dump($tplData);
+
+                    // on ajoute au tpl final les rangées pour pour chaque fournisseurs
+                    $tplDataFinal .= $tplData;
+
+
                 }
+
+                $tplMois = "<tr style='font-size: 13pt'><th></th><th></th>" . $tplMoisTemp . "<th style='background-color: #a8a8a8;' >Total</th></tr>";
+
+                $tplFinal = " <table id=\"table_conso\" class=\"table compact table-striped table-bordered\" style=\"width: 95%;margin: 0 auto;\">
+        <thead>
+        " . $tplMois . "
+        </thead>
+        <tbody>
+        " . $tplDataFinal . "
+        </tbody>
+    </table>";
+
 
                 array_push($data["graph"]["Total"]["ca"], $ca_total);
                 array_push($data["graph"]["Total"]["eco"], $eco_total);
+                array_push($data["table"], trim($tplFinal));
 
 
                 return new JsonResponse($data, 200);
