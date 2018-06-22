@@ -527,10 +527,12 @@ class ConsommationController extends Controller
 
 
                     // on obtient le total de chiffre d'afffaire
-                    $total_ca = $ca_total;
+                    $total_ca = array_sum($cons_ca);
 
                     // on obtient le total d'économies
-                    $total_eco = $eco_total;
+                    $total_eco =array_sum($cons_eco);
+
+
 
 
                     // on ajoute a la derniere colonne le total CA
