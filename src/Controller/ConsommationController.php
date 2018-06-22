@@ -439,18 +439,18 @@ class ConsommationController extends Controller
                           INS_DATE,
                           INS_USER ,
                           (case month(CLC_DATE)
-                                WHEN 1 THEN 'Janvier'
-                                WHEN 2 THEN 'Février'
+                                WHEN 1 THEN 'Janv'
+                                WHEN 2 THEN 'Févr'
                                 WHEN 3 THEN 'Mars'
-                                WHEN 4 THEN 'Avril'
+                                WHEN 4 THEN 'Avri'
                                 WHEN 5 THEN 'Mai'
                                 WHEN 6 THEN 'Juin'
-                                WHEN 7 THEN 'Juillet'
+                                WHEN 7 THEN 'Juil'
                                 WHEN 8 THEN 'Août'
-                                WHEN 9 THEN 'Septembre'
-                                WHEN 10 THEN 'Octobre'
-                                WHEN 11 THEN 'Novembre'
-                                ELSE 'Décembre'
+                                WHEN 9 THEN 'Sept'
+                                WHEN 10 THEN 'Octo'
+                                WHEN 11 THEN 'Nove'
+                                ELSE 'Déce'
                            end) 
                             as Month,
                             (month(CLC_DATE)) 
