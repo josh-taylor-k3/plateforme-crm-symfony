@@ -623,9 +623,9 @@ class ConsommationController extends Controller
                     // on obtient le total d'économies
                     $total_eco = array_sum($cons_eco);
                     // on ajoute a la derniere colonne le total CA
-                    $tplTempCa .= "<td>" . $total_ca . " €</td>";
+                    $tplTempCa .= "<td><b>" . $total_ca . " €</b></td>";
                     // on ajoute a la derniere colonne le total ECO
-                    $tplTempEco .= "<td>" . $total_eco . " € (<b>" . $helper->Pourcentage($total_eco, $total_ca + $total_eco) . "%</b>)</td>";
+                    $tplTempEco .= "<td><b>" . $total_eco . " € (" . $helper->Pourcentage($total_eco, $total_ca + $total_eco) . "%)</b></td>";
 
 
                     // on génère le tableau
