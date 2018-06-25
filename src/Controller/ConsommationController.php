@@ -594,7 +594,7 @@ class ConsommationController extends Controller
                         // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
 
                         if ($conso_ca === 0 ) {
-                            $tplTempCa .= "<td> - </td>";
+                            $tplTempCa .= "<td> _ </td>";
 
                         }else {
                             $tplTempCa .= "<td>" . $conso_ca . " €</td>";
@@ -607,7 +607,7 @@ class ConsommationController extends Controller
                     foreach ($cons_eco as $conso_eco) {
                         //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
                         if ($conso_eco === 0 ) {
-                            $tplTempEco .= "<td> - </td>";
+                            $tplTempEco .= "<td> _ </td>";
 
                         }else {
                             $tplTempEco .= "<td>" . $conso_eco . " € (<b>" . $helper->Pourcentage($conso_eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
