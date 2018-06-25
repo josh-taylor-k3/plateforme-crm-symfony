@@ -730,7 +730,7 @@ class ConsommationController extends Controller
                     // on ajoute a la derniere colonne le total CA
                     $tplTempCa .= "<td><b>" . $total_ca . " €</b></td>";
                     // on ajoute a la derniere colonne le total ECO
-                    $tplTempEco .= "<td><b>" . $total_eco . " € (" . $helper->Pourcentage($total_eco, $total_ca + $total_eco) . "%)</b></td>";
+                    $tplTempEco .= "<td style='background-color: #f0f3f3'><b>" . $total_eco . " € (" . $helper->Pourcentage($total_eco, $total_ca + $total_eco) . "%)</b></td>";
 
 
                     // on génère le tableau
