@@ -592,7 +592,16 @@ class ConsommationController extends Controller
 
                     foreach ($cons_ca as $conso_ca) {
                         // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
-                        $tplTempCa .= "<td>" . $conso_ca . " €</td>";
+
+                        if ($conso_ca === 0 ) {
+                            $tplTempCa .= "<td> - </td>";
+
+                        }else {
+                            $tplTempCa .= "<td>" . $conso_ca . " €</td>";
+
+                        }
+
+
                     }
 
                     foreach ($cons_eco as $conso_eco) {
@@ -615,24 +624,20 @@ class ConsommationController extends Controller
                     // on génère le tableau
 
                     $tplMois = "<tr style='font-size: 13pt'>
-            <th></th>
-            <th></th>
-            " . $tplMoisTemp . "
-            <th style=\"background-color: #a8a8a8;\" >Total</th>
-            </tr>";
+                                <th></th>
+                                <th></th>
+                                " . $tplMoisTemp . "
+                                <th style=\"background-color: #a8a8a8;\" >Total</th>
+                                </tr>";
 
 
                     $tplData = "<tr style='font-size: 9pt'>
-            <td rowspan=\"2\">" . $helper->array_utf8_encode($fourn['FO_RAISONSOC']) . "</td>
-            <td>Mes achats</td>" .
-                        $tplTempCa
-                        . "</tr>
-        <tr style='font-size: 9pt'>
-            <td>Mes gains</td>" .
-                        $tplTempEco
-                        . "
-        </tr>";
-                    //dump($tplData);
+                                <td rowspan=\"2\">" . $helper->array_utf8_encode($fourn['FO_RAISONSOC']) . "</td>
+                                <td>Mes achats</td>" .
+                                            $tplTempCa
+                                            . "</tr>
+                            <tr style='font-size: 9pt'>
+                                <td>Mes gains</td>" .$tplTempEco. "</tr>";
 
                     // on ajoute au tpl final les rangées pour pour chaque fournisseurs
                     $tplDataFinal .= $tplData;
