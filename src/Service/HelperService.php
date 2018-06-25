@@ -117,7 +117,7 @@ class HelperService
         $time1  = strtotime($date1);
         $time2  = strtotime($date2);
         $my     = date('n-Y', $time2);
-        $mesi = array("Janv","Févr","Mars","Avri","Mai","Juin","Juil","Août","Sept","Octo","Nove","Déce");
+        $mesi = array("Janv","Févr","Mars","Avr","Mai","Juin","Juill","Août","Sept","Oct","Nov","Déc");
 
         //$months = array(date('F', $time1));
         $months = array();
