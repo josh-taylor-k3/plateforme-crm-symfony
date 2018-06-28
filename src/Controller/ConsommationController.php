@@ -97,6 +97,13 @@ class ConsommationController extends Controller
                 $ListFourn = $conn->fetchAll();
 
 
+
+                if (empty($ListFourn)){
+                    return new JsonResponse("none", 200);
+                }
+
+
+
                 $data["graph"]["count"] = count($ListFourn);
 
                 // chiffre d'affaires et eco total
@@ -291,6 +298,9 @@ class ConsommationController extends Controller
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
 
+                if (empty($ListFourn)){
+                    return new JsonResponse("none", 200);
+                }
 
                 $data["graph"]["count"] = count($ListFourn);
 
@@ -487,6 +497,10 @@ class ConsommationController extends Controller
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
 
+                if (empty($ListFourn)){
+                    return new JsonResponse("none", 200);
+                }
+
 
                 $data["graph"]["count"] = count($ListFourn);
 
@@ -682,6 +696,9 @@ class ConsommationController extends Controller
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
 
+                if (empty($ListFourn)){
+                    return new JsonResponse("none", 200);
+                }
 
                 $data["graph"]["count"] = count($ListFourn);
 
@@ -875,6 +892,10 @@ class ConsommationController extends Controller
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
 
+                if (empty($ListFourn)){
+                    return new JsonResponse("none", 200);
+                }
+
 
                 $data["graph"]["count"] = count($ListFourn);
 
@@ -1067,6 +1088,10 @@ class ConsommationController extends Controller
                 $conn->bindValue('end', $end);
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
+
+                if (empty($ListFourn)){
+                    return new JsonResponse("none", 200);
+                }
 
 
                 $data["graph"]["count"] = count($ListFourn);
