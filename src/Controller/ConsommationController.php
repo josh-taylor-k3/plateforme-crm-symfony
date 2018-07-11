@@ -800,10 +800,10 @@ class ConsommationController extends Controller
                         // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
 
                         if ($conso_ca === 0 ) {
-                            $tplTempCa .= "<td> _ </td>";
+                            $tplTempCa .= "<td style='background-color: #ececec' > _ </td>";
 
                         }else {
-                            $tplTempCa .= "<td>" . $conso_ca . " €</td>";
+                            $tplTempCa .= "<td style='background-color: #ececec' >" . $conso_ca . " €</td>";
 
                         }
 
