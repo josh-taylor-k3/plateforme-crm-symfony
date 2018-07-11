@@ -813,10 +813,10 @@ class ConsommationController extends Controller
                     foreach ($cons_eco as $conso_eco) {
                         //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
                         if ($conso_eco === 0 ) {
-                            $tplTempEco .= "<td> _ </td>";
+                            $tplTempEco .= "<td style='background-color: #d4d4d5' > _ </td>";
 
                         }else {
-                            $tplTempEco .= "<td>" . $conso_eco . " € (<b>" . $helper->Pourcentage($conso_eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
+                            $tplTempEco .= "<td style='background-color: #d4d4d5' >" . $conso_eco . " € (<b>" . $helper->Pourcentage($conso_eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
 
                         }
 
