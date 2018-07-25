@@ -1314,7 +1314,10 @@ class ConsommationController extends Controller
                 $conn->bindValue('end', $end);
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
-                return new JsonResponse($ListFourn, 200);
+
+
+
+                return new JsonResponse($helper->array_utf8_encode($ListFourn), 200);
                 break;
             //GCCP
             case 2:
@@ -1336,7 +1339,7 @@ class ConsommationController extends Controller
                 $conn->bindValue('end', $end);
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
-                return new JsonResponse($ListFourn, 200);
+                return new JsonResponse($helper->array_utf8_encode($ListFourn), 200);
 
                 break;
             //NALDEO
@@ -1359,7 +1362,7 @@ class ConsommationController extends Controller
                 $conn->bindValue('end', $end);
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
-                return new JsonResponse($ListFourn, 200);
+                return new JsonResponse($helper->array_utf8_encode($ListFourn), 200);
 
                 break;
             //Funecap
@@ -1381,7 +1384,7 @@ class ConsommationController extends Controller
                 $conn->bindValue('end', $end);
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
-                return new JsonResponse($ListFourn, 200);
+                return new JsonResponse($helper->array_utf8_encode($ListFourn), 200);
 
                 break;
             //PFPL
@@ -1403,7 +1406,7 @@ class ConsommationController extends Controller
                 $conn->bindValue('end', $end);
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
-                return new JsonResponse($ListFourn, 200);
+                return new JsonResponse($helper->array_utf8_encode($ListFourn), 200);
 
                 break;
             //ROC ECLERC
@@ -1425,7 +1428,7 @@ class ConsommationController extends Controller
                 $conn->bindValue('end', $end);
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
-                return new JsonResponse($ListFourn, 200);
+                return new JsonResponse($helper->array_utf8_encode($ListFourn), 200);
 
                 break;
 
