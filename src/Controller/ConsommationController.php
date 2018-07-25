@@ -97,11 +97,9 @@ class ConsommationController extends Controller
                 $ListFourn = $conn->fetchAll();
 
 
-
-                if (empty($ListFourn)){
+                if (empty($ListFourn)) {
                     return new JsonResponse("none", 200);
                 }
-
 
 
                 $data["graph"]["count"] = count($ListFourn);
@@ -203,10 +201,10 @@ class ConsommationController extends Controller
                     foreach ($cons_ca as $conso_ca) {
                         // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
 
-                        if ($conso_ca === 0 ) {
+                        if ($conso_ca === 0) {
                             $tplTempCa .= "<td> _ </td>";
 
-                        }else {
+                        } else {
                             $tplTempCa .= "<td>" . $conso_ca . " €</td>";
 
                         }
@@ -216,10 +214,10 @@ class ConsommationController extends Controller
 
                     foreach ($cons_eco as $conso_eco) {
                         //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
-                        if ($conso_eco === 0 ) {
+                        if ($conso_eco === 0) {
                             $tplTempEco .= "<td> _ </td>";
 
-                        }else {
+                        } else {
                             $tplTempEco .= "<td>" . $conso_eco . " € (<b>" . $helper->Pourcentage($conso_eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
 
                         }
@@ -298,7 +296,7 @@ class ConsommationController extends Controller
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
 
-                if (empty($ListFourn)){
+                if (empty($ListFourn)) {
                     return new JsonResponse("none", 200);
                 }
 
@@ -401,10 +399,10 @@ class ConsommationController extends Controller
                     foreach ($cons_ca as $conso_ca) {
                         // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
 
-                        if ($conso_ca === 0 ) {
+                        if ($conso_ca === 0) {
                             $tplTempCa .= "<td> _ </td>";
 
-                        }else {
+                        } else {
                             $tplTempCa .= "<td>" . $conso_ca . " €</td>";
 
                         }
@@ -414,10 +412,10 @@ class ConsommationController extends Controller
 
                     foreach ($cons_eco as $conso_eco) {
                         //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
-                        if ($conso_eco === 0 ) {
+                        if ($conso_eco === 0) {
                             $tplTempEco .= "<td> _ </td>";
 
-                        }else {
+                        } else {
                             $tplTempEco .= "<td>" . $conso_eco . " € (<b>" . $helper->Pourcentage($conso_eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
 
                         }
@@ -497,7 +495,7 @@ class ConsommationController extends Controller
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
 
-                if (empty($ListFourn)){
+                if (empty($ListFourn)) {
                     return new JsonResponse("none", 200);
                 }
 
@@ -601,10 +599,10 @@ class ConsommationController extends Controller
                     foreach ($cons_ca as $conso_ca) {
                         // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
 
-                        if ($conso_ca === 0 ) {
+                        if ($conso_ca === 0) {
                             $tplTempCa .= "<td> _ </td>";
 
-                        }else {
+                        } else {
                             $tplTempCa .= "<td>" . $conso_ca . " €</td>";
 
                         }
@@ -614,10 +612,10 @@ class ConsommationController extends Controller
 
                     foreach ($cons_eco as $conso_eco) {
                         //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
-                        if ($conso_eco === 0 ) {
+                        if ($conso_eco === 0) {
                             $tplTempEco .= "<td> _ </td>";
 
-                        }else {
+                        } else {
                             $tplTempEco .= "<td>" . $conso_eco . " € (<b>" . $helper->Pourcentage($conso_eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
 
                         }
@@ -696,7 +694,7 @@ class ConsommationController extends Controller
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
 
-                if (empty($ListFourn)){
+                if (empty($ListFourn)) {
                     return new JsonResponse("none", 200);
                 }
 
@@ -799,10 +797,10 @@ class ConsommationController extends Controller
                     foreach ($cons_ca as $conso_ca) {
                         // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
 
-                        if ($conso_ca === 0 ) {
+                        if ($conso_ca === 0) {
                             $tplTempCa .= "<td style='background-color: #ececec' > _ </td>";
 
-                        }else {
+                        } else {
                             $tplTempCa .= "<td style='background-color: #ececec' >" . $conso_ca . " €</td>";
 
                         }
@@ -812,10 +810,10 @@ class ConsommationController extends Controller
 
                     foreach ($cons_eco as $conso_eco) {
                         //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
-                        if ($conso_eco === 0 ) {
+                        if ($conso_eco === 0) {
                             $tplTempEco .= "<td style='background-color: #d4d4d5' > _ </td>";
 
-                        }else {
+                        } else {
                             $tplTempEco .= "<td style='background-color: #d4d4d5' >" . $conso_eco . " € (<b>" . $helper->Pourcentage($conso_eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
 
                         }
@@ -847,10 +845,10 @@ class ConsommationController extends Controller
                     $tplData = "<tr style='font-size: 9pt'>
                                 <td rowspan=\"2\">" . $helper->array_utf8_encode($fourn['FO_RAISONSOC']) . "</td>
                                 <td>Mes achats</td>" .
-                                            $tplTempCa
-                                            . "</tr>
+                        $tplTempCa
+                        . "</tr>
                             <tr style='font-size: 9pt'>
-                                <td>Mes gains</td>" .$tplTempEco. "</tr>";
+                                <td>Mes gains</td>" . $tplTempEco . "</tr>";
 
                     // on ajoute au tpl final les rangées pour pour chaque fournisseurs
                     $tplDataFinal .= $tplData;
@@ -892,7 +890,7 @@ class ConsommationController extends Controller
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
 
-                if (empty($ListFourn)){
+                if (empty($ListFourn)) {
                     return new JsonResponse("none", 200);
                 }
 
@@ -996,10 +994,10 @@ class ConsommationController extends Controller
                     foreach ($cons_ca as $conso_ca) {
                         // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
 
-                        if ($conso_ca === 0 ) {
+                        if ($conso_ca === 0) {
                             $tplTempCa .= "<td> _ </td>";
 
-                        }else {
+                        } else {
                             $tplTempCa .= "<td>" . $conso_ca . " €</td>";
 
                         }
@@ -1009,10 +1007,10 @@ class ConsommationController extends Controller
 
                     foreach ($cons_eco as $conso_eco) {
                         //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
-                        if ($conso_eco === 0 ) {
+                        if ($conso_eco === 0) {
                             $tplTempEco .= "<td> _ </td>";
 
-                        }else {
+                        } else {
                             $tplTempEco .= "<td>" . $conso_eco . " € (<b>" . $helper->Pourcentage($conso_eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
 
                         }
@@ -1089,7 +1087,7 @@ class ConsommationController extends Controller
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
 
-                if (empty($ListFourn)){
+                if (empty($ListFourn)) {
                     return new JsonResponse("none", 200);
                 }
 
@@ -1193,10 +1191,10 @@ class ConsommationController extends Controller
                     foreach ($cons_ca as $conso_ca) {
                         // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
 
-                        if ($conso_ca === 0 ) {
+                        if ($conso_ca === 0) {
                             $tplTempCa .= "<td> _ </td>";
 
-                        }else {
+                        } else {
                             $tplTempCa .= "<td>" . $conso_ca . " €</td>";
 
                         }
@@ -1206,10 +1204,10 @@ class ConsommationController extends Controller
 
                     foreach ($cons_eco as $conso_eco) {
                         //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
-                        if ($conso_eco === 0 ) {
+                        if ($conso_eco === 0) {
                             $tplTempEco .= "<td> _ </td>";
 
-                        }else {
+                        } else {
                             $tplTempEco .= "<td>" . $conso_eco . " € (<b>" . $helper->Pourcentage($conso_eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
 
                         }
@@ -1284,5 +1282,158 @@ class ConsommationController extends Controller
     }
 
 
+    /**
+     * @Route("/consommation/{id}/{start}/{end}/{centrale}/fournisseur", name="fourn_byClient")
+     */
+    public function fournisseurByClient(Connection $connection, HelperService $helper, $id, $start, $end, $centrale)
+    {
+
+        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Credentials: true ");
+        header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control, X-ac-key");
+
+
+        switch ($centrale) {
+
+            //ACHAT CENTRALE
+            case 1:
+                $sql = "SELECT DISTINCT
+                  FO_ID,
+                  (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_ACHAT.dbo.CLIENTS_CONSO.FO_ID) as fourn,
+                  SUM(CLC_PRIX_PUBLIC) as achat,
+                  SUM(CLC_PRIX_PUBLIC) - SUM(CLC_PRIX_CENTRALE) as eco
+                FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
+                WHERE CL_ID = :id
+                AND CLC_DATE BETWEEN :start AND :end
+                GROUP BY FO_ID
+                ORDER BY eco DESC";
+
+                $conn = $connection->prepare($sql);
+                $conn->bindValue(':id', $id);
+                $conn->bindValue('start', $start);
+                $conn->bindValue('end', $end);
+                $conn->execute();
+                $ListFourn = $conn->fetchAll();
+                return new JsonResponse($ListFourn, 200);
+                break;
+            //GCCP
+            case 2:
+
+                $sql = "SELECT DISTINCT
+                  FO_ID,
+                  (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_GCCP.dbo.CLIENTS_CONSO.FO_ID) as fourn,
+                  SUM(CLC_PRIX_PUBLIC) as achat,
+                  SUM(CLC_PRIX_PUBLIC) - SUM(CLC_PRIX_CENTRALE) as eco
+                FROM CENTRALE_GCCP.dbo.CLIENTS_CONSO
+                WHERE CL_ID = :id
+                AND CLC_DATE BETWEEN :start AND :end
+                GROUP BY FO_ID
+                ORDER BY eco DESC";
+
+                $conn = $connection->prepare($sql);
+                $conn->bindValue(':id', $id);
+                $conn->bindValue('start', $start);
+                $conn->bindValue('end', $end);
+                $conn->execute();
+                $ListFourn = $conn->fetchAll();
+                return new JsonResponse($ListFourn, 200);
+
+                break;
+            //NALDEO
+            case 3:
+
+                $sql = "SELECT DISTINCT
+                  FO_ID,
+                  (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CLIENTS_CONSO.FO_ID) as fourn,
+                  SUM(CLC_PRIX_PUBLIC) as achat,
+                  SUM(CLC_PRIX_PUBLIC) - SUM(CLC_PRIX_CENTRALE) as eco
+                FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
+                WHERE CL_ID = :id
+                AND CLC_DATE BETWEEN :start AND :end
+                GROUP BY FO_ID
+                ORDER BY eco DESC";
+
+                $conn = $connection->prepare($sql);
+                $conn->bindValue(':id', $id);
+                $conn->bindValue('start', $start);
+                $conn->bindValue('end', $end);
+                $conn->execute();
+                $ListFourn = $conn->fetchAll();
+                return new JsonResponse($ListFourn, 200);
+
+                break;
+            //Funecap
+            case 4:
+                $sql = "SELECT DISTINCT
+                  FO_ID,
+                  (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_FUNECAP.dbo.CLIENTS_CONSO.FO_ID) as fourn,
+                  SUM(CLC_PRIX_PUBLIC) as achat,
+                  SUM(CLC_PRIX_PUBLIC) - SUM(CLC_PRIX_CENTRALE) as eco
+                FROM CENTRALE_FUNECAP.dbo.CLIENTS_CONSO
+                WHERE CL_ID = :id
+                AND CLC_DATE BETWEEN :start AND :end
+                GROUP BY FO_ID
+                ORDER BY eco DESC";
+
+                $conn = $connection->prepare($sql);
+                $conn->bindValue(':id', $id);
+                $conn->bindValue('start', $start);
+                $conn->bindValue('end', $end);
+                $conn->execute();
+                $ListFourn = $conn->fetchAll();
+                return new JsonResponse($ListFourn, 200);
+
+                break;
+            //PFPL
+            case 5:
+                $sql = "SELECT DISTINCT
+                  FO_ID,
+                  (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_PFPL.dbo.CLIENTS_CONSO.FO_ID) as fourn,
+                  SUM(CLC_PRIX_PUBLIC) as achat,
+                  SUM(CLC_PRIX_PUBLIC) - SUM(CLC_PRIX_CENTRALE) as eco
+                FROM CENTRALE_PFPL.dbo.CLIENTS_CONSO
+                WHERE CL_ID = :id
+                AND CLC_DATE BETWEEN :start AND :end
+                GROUP BY FO_ID
+                ORDER BY eco DESC";
+
+                $conn = $connection->prepare($sql);
+                $conn->bindValue(':id', $id);
+                $conn->bindValue('start', $start);
+                $conn->bindValue('end', $end);
+                $conn->execute();
+                $ListFourn = $conn->fetchAll();
+                return new JsonResponse($ListFourn, 200);
+
+                break;
+            //ROC ECLERC
+            case 6:
+                $sql = "SELECT DISTINCT
+                  FO_ID,
+                  (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_ROC_ECLERC.dbo.CLIENTS_CONSO.FO_ID) as fourn,
+                  SUM(CLC_PRIX_PUBLIC) as achat,
+                  SUM(CLC_PRIX_PUBLIC) - SUM(CLC_PRIX_CENTRALE) as eco
+                FROM CENTRALE_ROC_ECLERC.dbo.CLIENTS_CONSO
+                WHERE CL_ID = :id
+                AND CLC_DATE BETWEEN :start AND :end
+                GROUP BY FO_ID
+                ORDER BY eco DESC";
+
+                $conn = $connection->prepare($sql);
+                $conn->bindValue(':id', $id);
+                $conn->bindValue('start', $start);
+                $conn->bindValue('end', $end);
+                $conn->execute();
+                $ListFourn = $conn->fetchAll();
+                return new JsonResponse($ListFourn, 200);
+
+                break;
+
+        }
+
+
+        return new JsonResponse("none", 200);
+
+    }
 
 }
