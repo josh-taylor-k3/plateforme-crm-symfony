@@ -1318,7 +1318,7 @@ class ConsommationController extends Controller
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
 
-                $final_tpl = "<table style='width: 60%;margin: 0 auto;'>";
+                $final_tpl = "";
 
                 foreach ($ListFourn as $key => $fourn){
                     switch ($key) {
@@ -1366,8 +1366,7 @@ class ConsommationController extends Controller
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
 
-                $final_tpl = "<table style='width: 60%;margin: 0 auto;'>";
-
+                $final_tpl = "";
                 foreach ($ListFourn as $key => $fourn){
                     switch ($key) {
                         case 0:
@@ -1413,7 +1412,7 @@ class ConsommationController extends Controller
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
 
-                $final_tpl = "<table style='width: 60%;margin: 0 auto;'>";
+                $final_tpl = "";
 
                 foreach ($ListFourn as $key => $fourn){
                     switch ($key) {
@@ -1460,8 +1459,7 @@ class ConsommationController extends Controller
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
 
-                $final_tpl = "<table style='width: 60%;margin: 0 auto;'>";
-
+                $final_tpl = "";
                 foreach ($ListFourn as $key => $fourn){
                     switch ($key) {
                         case 0:
@@ -1507,8 +1505,7 @@ class ConsommationController extends Controller
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
 
-                $final_tpl = "<table style='width: 60%;margin: 0 auto;'>";
-
+                $final_tpl = "";
                 foreach ($ListFourn as $key => $fourn){
                     switch ($key) {
                         case 0:
@@ -1554,8 +1551,7 @@ class ConsommationController extends Controller
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
 
-                $final_tpl = "<table style='width: 60%;margin: 0 auto;'>";
-
+                $final_tpl = "";
                 foreach ($ListFourn as $key => $fourn){
                     switch ($key) {
                         case 0:
