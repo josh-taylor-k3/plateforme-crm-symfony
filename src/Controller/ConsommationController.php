@@ -1323,17 +1323,17 @@ class ConsommationController extends Controller
                 foreach ($ListFourn as $key => $fourn){
                     switch ($key) {
                         case 0:
-                            $tpl_temp = "<tr><th><img src='number_one.png' class='logo_position_img'/></th><th><img src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
+                            $tpl_temp = "<tr><th><img src='number_one.png' class='logo_position_img'/></th><th><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
                             $final_tpl .= $tpl_temp;
 
                             break;
                         case 1:
-                            $tpl_temp = "<tr><th><img src='number_two.png' class='logo_position_img'/></th><th><img src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
+                            $tpl_temp = "<tr><th><img src='number_two.png' class='logo_position_img'/></th><th><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
                             $final_tpl .= $tpl_temp;
 
                             break;
                         case 2:
-                            $tpl_temp = "<tr><th><img src='number_three.png' class='logo_position_img'/></th><th><img src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
+                            $tpl_temp = "<tr><th><img src='number_three.png' class='logo_position_img'/></th><th><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
                             $final_tpl .= $tpl_temp;
                             break;
                     }
