@@ -1318,7 +1318,7 @@ class ConsommationController extends Controller
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
 
-                $final_tpl = "";
+                $final_tpl = " <thead><tr><th>Position</th><th>Logo fournisseur</th><th>Raison sociale</th><th>Montant économie</th></tr></thead><tbody>";
 
                 foreach ($ListFourn as $key => $fourn){
                     switch ($key) {
@@ -1338,7 +1338,7 @@ class ConsommationController extends Controller
                             break;
                     }
                 }
-                $final_tpl .= "</table>";
+                $final_tpl .= "</tbody></table>";
 
                 return new JsonResponse($final_tpl, 200);
                 break;
