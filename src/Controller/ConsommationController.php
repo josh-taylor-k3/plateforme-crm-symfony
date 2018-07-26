@@ -1318,7 +1318,7 @@ class ConsommationController extends Controller
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
 
-                $final_tpl = " <thead><tr><th>Position</th><th>Logo fournisseur</th><th>Raison sociale</th><th style=' white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>Montant économie</th></tr></thead><tbody>";
+                $final_tpl = " <thead class='thead_top_fourn' ><tr><th>Position</th><th>Logo fournisseur</th><th>Raison sociale</th><th style=' white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>Montant économie</th></tr></thead><tbody>";
 
                 foreach ($ListFourn as $key => $fourn){
                     switch ($key) {
