@@ -1325,7 +1325,6 @@ class ConsommationController extends Controller
                         case 0:
                             $tpl_temp = "<tr><th><img src='number_one.png' class='logo_position_img'/></th><th class='container_img_top_fourn' ><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th class='raison_soc_top_fourn' >" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th class='qty_eco_top' >" . $fourn["eco"] . " €</th></tr>";
                             $final_tpl .= $tpl_temp;
-
                             break;
                         case 1:
                             $tpl_temp = "<tr><th><img src='number_two.png' class='logo_position_img'/></th><th class='container_img_top_fourn' ><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th class='raison_soc_top_fourn' >" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th class='qty_eco_top' >" . $fourn["eco"] . " €</th></tr>";
@@ -1366,26 +1365,26 @@ class ConsommationController extends Controller
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
 
-                $final_tpl = "";
+                $final_tpl = " <thead class='thead_top_fourn' ><tr><th>Position</th><th>Logo fournisseur</th><th>Raison sociale</th><th style=' white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>Montant économie</th></tr></thead><tbody>";
+
                 foreach ($ListFourn as $key => $fourn){
                     switch ($key) {
                         case 0:
-                            $tpl_temp = "<tr><th><img src='number_one.png' class='logo_position_img'/></th><th><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th class='raison_soc_top_fourn' >" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th class='qty_eco_top' >" . $fourn["eco"] . " €</th></tr>";
+                            $tpl_temp = "<tr><th><img src='number_one.png' class='logo_position_img'/></th><th class='container_img_top_fourn' ><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th class='raison_soc_top_fourn' >" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th class='qty_eco_top' >" . $fourn["eco"] . " €</th></tr>";
                             $final_tpl .= $tpl_temp;
-
                             break;
                         case 1:
-                            $tpl_temp = "<tr><th><img src='number_two.png' class='logo_position_img'/></th><th><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th class='raison_soc_top_fourn' >" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th class='qty_eco_top' >" . $fourn["eco"] . " €</th></tr>";
+                            $tpl_temp = "<tr><th><img src='number_two.png' class='logo_position_img'/></th><th class='container_img_top_fourn' ><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th class='raison_soc_top_fourn' >" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th class='qty_eco_top' >" . $fourn["eco"] . " €</th></tr>";
                             $final_tpl .= $tpl_temp;
 
                             break;
                         case 2:
-                            $tpl_temp = "<tr><th><img src='number_three.png' class='logo_position_img'/></th><th><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th class='raison_soc_top_fourn' >" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th class='qty_eco_top' >" . $fourn["eco"] . " €</th></tr>";
+                            $tpl_temp = "<tr><th><img src='number_three.png' class='logo_position_img'/></th><th class='container_img_top_fourn' ><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th class='raison_soc_top_fourn' >" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th class='qty_eco_top' >" . $fourn["eco"] . " €</th></tr>";
                             $final_tpl .= $tpl_temp;
                             break;
                     }
                 }
-                $final_tpl .= "</table>";
+                $final_tpl .= "</tbody></table>";
 
                 return new JsonResponse($final_tpl, 200);
                 break;
@@ -1459,26 +1458,26 @@ class ConsommationController extends Controller
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
 
-                $final_tpl = "";
+                $final_tpl = " <thead class='thead_top_fourn' ><tr><th>Position</th><th>Logo fournisseur</th><th>Raison sociale</th><th style=' white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>Montant économie</th></tr></thead><tbody>";
+
                 foreach ($ListFourn as $key => $fourn){
                     switch ($key) {
                         case 0:
-                            $tpl_temp = "<tr><th><img src='number_one.png' class='logo_position_img'/></th><th><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th class='raison_soc_top_fourn' >" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th class='qty_eco_top' >" . $fourn["eco"] . " €</th></tr>";
+                            $tpl_temp = "<tr><th><img src='number_one.png' class='logo_position_img'/></th><th class='container_img_top_fourn' ><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th class='raison_soc_top_fourn' >" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th class='qty_eco_top' >" . $fourn["eco"] . " €</th></tr>";
                             $final_tpl .= $tpl_temp;
-
                             break;
                         case 1:
-                            $tpl_temp = "<tr><th><img src='number_two.png' class='logo_position_img'/></th><th><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th class='raison_soc_top_fourn' >" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th class='qty_eco_top' >" . $fourn["eco"] . " €</th></tr>";
+                            $tpl_temp = "<tr><th><img src='number_two.png' class='logo_position_img'/></th><th class='container_img_top_fourn' ><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th class='raison_soc_top_fourn' >" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th class='qty_eco_top' >" . $fourn["eco"] . " €</th></tr>";
                             $final_tpl .= $tpl_temp;
 
                             break;
                         case 2:
-                            $tpl_temp = "<tr><th><img src='number_three.png' class='logo_position_img'/></th><th><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th class='raison_soc_top_fourn' >" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th class='qty_eco_top' >" . $fourn["eco"] . " €</th></tr>";
+                            $tpl_temp = "<tr><th><img src='number_three.png' class='logo_position_img'/></th><th class='container_img_top_fourn' ><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th class='raison_soc_top_fourn' >" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th class='qty_eco_top' >" . $fourn["eco"] . " €</th></tr>";
                             $final_tpl .= $tpl_temp;
                             break;
                     }
                 }
-                $final_tpl .= "</table>";
+                $final_tpl .= "</tbody></table>";
 
                 return new JsonResponse($final_tpl, 200);
                 break;
@@ -1551,26 +1550,26 @@ class ConsommationController extends Controller
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
 
-                $final_tpl = "";
+                $final_tpl = " <thead class='thead_top_fourn' ><tr><th>Position</th><th>Logo fournisseur</th><th>Raison sociale</th><th style=' white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>Montant économie</th></tr></thead><tbody>";
+
                 foreach ($ListFourn as $key => $fourn){
                     switch ($key) {
                         case 0:
-                            $tpl_temp = "<tr><th><img src='number_one.png' class='logo_position_img'/></th><th><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th class='raison_soc_top_fourn' >" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th class='qty_eco_top' >" . $fourn["eco"] . " €</th></tr>";
+                            $tpl_temp = "<tr><th><img src='number_one.png' class='logo_position_img'/></th><th class='container_img_top_fourn' ><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th class='raison_soc_top_fourn' >" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th class='qty_eco_top' >" . $fourn["eco"] . " €</th></tr>";
                             $final_tpl .= $tpl_temp;
-
                             break;
                         case 1:
-                            $tpl_temp = "<tr><th><img src='number_two.png' class='logo_position_img'/></th><th><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th class='raison_soc_top_fourn' >" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th class='qty_eco_top' >" . $fourn["eco"] . " €</th></tr>";
+                            $tpl_temp = "<tr><th><img src='number_two.png' class='logo_position_img'/></th><th class='container_img_top_fourn' ><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th class='raison_soc_top_fourn' >" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th class='qty_eco_top' >" . $fourn["eco"] . " €</th></tr>";
                             $final_tpl .= $tpl_temp;
 
                             break;
                         case 2:
-                            $tpl_temp = "<tr><th><img src='number_three.png' class='logo_position_img'/></th><th><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th class='raison_soc_top_fourn' >" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th class='qty_eco_top' >" . $fourn["eco"] . " €</th></tr>";
+                            $tpl_temp = "<tr><th><img src='number_three.png' class='logo_position_img'/></th><th class='container_img_top_fourn' ><img class='img_logo_fourn' src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th class='raison_soc_top_fourn' >" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th class='qty_eco_top' >" . $fourn["eco"] . " €</th></tr>";
                             $final_tpl .= $tpl_temp;
                             break;
                     }
                 }
-                $final_tpl .= "</table>";
+                $final_tpl .= "</tbody></table>";
 
                 return new JsonResponse($final_tpl, 200);
                 break;
