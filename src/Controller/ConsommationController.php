@@ -1298,15 +1298,18 @@ class ConsommationController extends Controller
             //ACHAT CENTRALE
             case 1:
                 $sql = "SELECT DISTINCT
-                  FO_ID,
-                  (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_ACHAT.dbo.CLIENTS_CONSO.FO_ID) as fourn,
-                  SUM(CLC_PRIX_PUBLIC) as achat,
-                  SUM(CLC_PRIX_PUBLIC) - SUM(CLC_PRIX_CENTRALE) as eco
-                FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
-                WHERE CL_ID = :id
-                AND CLC_DATE BETWEEN :start AND :end
-                GROUP BY FO_ID
-                ORDER BY eco DESC";
+                          FO_ID,
+                          (SELECT FO_RAISONSOC
+                           FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS
+                           WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_ACHAT.dbo.CLIENTS_CONSO.FO_ID) as fourn,
+                          SUM(CLC_PRIX_PUBLIC)                                                                      as achat,
+                          SUM(CLC_PRIX_PUBLIC) - SUM(CLC_PRIX_CENTRALE)                                             as eco,
+                          (SELECT FO_LOGO FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_ACHAT.dbo.CLIENTS_CONSO.FO_ID) as logo
+                        FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
+                        WHERE CL_ID = :id
+                              AND CLC_DATE BETWEEN :start AND :end
+                        GROUP BY FO_ID
+                        ORDER BY eco DESC";
 
                 $conn = $connection->prepare($sql);
                 $conn->bindValue(':id', $id);
@@ -1315,23 +1318,46 @@ class ConsommationController extends Controller
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
 
+                $final_tpl = "<table style='width: 60%;margin: 0 auto;'>";
 
+                foreach ($ListFourn as $key => $fourn){
+                    switch ($key) {
+                        case 0:
+                            $tpl_temp = "<tr><th><img src='number_one.png' class='logo_position_img'/></th><th><img src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
+                            $final_tpl .= $tpl_temp;
 
-                return new JsonResponse($helper->array_utf8_encode($ListFourn), 200);
+                            break;
+                        case 1:
+                            $tpl_temp = "<tr><th><img src='number_two.png' class='logo_position_img'/></th><th><img src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
+                            $final_tpl .= $tpl_temp;
+
+                            break;
+                        case 2:
+                            $tpl_temp = "<tr><th><img src='number_three.png' class='logo_position_img'/></th><th><img src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
+                            $final_tpl .= $tpl_temp;
+                            break;
+                    }
+                }
+                $final_tpl .= "</table>";
+
+                return new JsonResponse($final_tpl, 200);
                 break;
             //GCCP
             case 2:
 
                 $sql = "SELECT DISTINCT
-                  FO_ID,
-                  (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_GCCP.dbo.CLIENTS_CONSO.FO_ID) as fourn,
-                  SUM(CLC_PRIX_PUBLIC) as achat,
-                  SUM(CLC_PRIX_PUBLIC) - SUM(CLC_PRIX_CENTRALE) as eco
-                FROM CENTRALE_GCCP.dbo.CLIENTS_CONSO
-                WHERE CL_ID = :id
-                AND CLC_DATE BETWEEN :start AND :end
-                GROUP BY FO_ID
-                ORDER BY eco DESC";
+                          FO_ID,
+                          (SELECT FO_RAISONSOC
+                           FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS
+                           WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_GCCP.dbo.CLIENTS_CONSO.FO_ID) as fourn,
+                          SUM(CLC_PRIX_PUBLIC)                                                                      as achat,
+                          SUM(CLC_PRIX_PUBLIC) - SUM(CLC_PRIX_CENTRALE)                                             as eco,
+                          (SELECT FO_LOGO FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_GCCP.dbo.CLIENTS_CONSO.FO_ID) as logo
+                        FROM CENTRALE_GCCP.dbo.CLIENTS_CONSO
+                        WHERE CL_ID = :id
+                              AND CLC_DATE BETWEEN :start AND :end
+                        GROUP BY FO_ID
+                        ORDER BY eco DESC";
 
                 $conn = $connection->prepare($sql);
                 $conn->bindValue(':id', $id);
@@ -1339,22 +1365,46 @@ class ConsommationController extends Controller
                 $conn->bindValue('end', $end);
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
-                return new JsonResponse($helper->array_utf8_encode($ListFourn), 200);
 
+                $final_tpl = "<table style='width: 60%;margin: 0 auto;'>";
+
+                foreach ($ListFourn as $key => $fourn){
+                    switch ($key) {
+                        case 0:
+                            $tpl_temp = "<tr><th><img src='number_one.png' class='logo_position_img'/></th><th><img src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
+                            $final_tpl .= $tpl_temp;
+
+                            break;
+                        case 1:
+                            $tpl_temp = "<tr><th><img src='number_two.png' class='logo_position_img'/></th><th><img src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
+                            $final_tpl .= $tpl_temp;
+
+                            break;
+                        case 2:
+                            $tpl_temp = "<tr><th><img src='number_three.png' class='logo_position_img'/></th><th><img src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
+                            $final_tpl .= $tpl_temp;
+                            break;
+                    }
+                }
+                $final_tpl .= "</table>";
+
+                return new JsonResponse($final_tpl, 200);
                 break;
             //NALDEO
             case 3:
-
                 $sql = "SELECT DISTINCT
-                  FO_ID,
-                  (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CLIENTS_CONSO.FO_ID) as fourn,
-                  SUM(CLC_PRIX_PUBLIC) as achat,
-                  SUM(CLC_PRIX_PUBLIC) - SUM(CLC_PRIX_CENTRALE) as eco
-                FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
-                WHERE CL_ID = :id
-                AND CLC_DATE BETWEEN :start AND :end
-                GROUP BY FO_ID
-                ORDER BY eco DESC";
+                          FO_ID,
+                          (SELECT FO_RAISONSOC
+                           FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS
+                           WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_NALDEO.dbo.CLIENTS_CONSO.FO_ID) as fourn,
+                          SUM(CLC_PRIX_PUBLIC)                                                                      as achat,
+                          SUM(CLC_PRIX_PUBLIC) - SUM(CLC_PRIX_CENTRALE)                                             as eco,
+                          (SELECT FO_LOGO FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_NALDEO.dbo.CLIENTS_CONSO.FO_ID) as logo
+                        FROM CENTRALE_NALDEO.dbo.CLIENTS_CONSO
+                        WHERE CL_ID = :id
+                              AND CLC_DATE BETWEEN :start AND :end
+                        GROUP BY FO_ID
+                        ORDER BY eco DESC";
 
                 $conn = $connection->prepare($sql);
                 $conn->bindValue(':id', $id);
@@ -1362,21 +1412,46 @@ class ConsommationController extends Controller
                 $conn->bindValue('end', $end);
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
-                return new JsonResponse($helper->array_utf8_encode($ListFourn), 200);
 
+                $final_tpl = "<table style='width: 60%;margin: 0 auto;'>";
+
+                foreach ($ListFourn as $key => $fourn){
+                    switch ($key) {
+                        case 0:
+                            $tpl_temp = "<tr><th><img src='number_one.png' class='logo_position_img'/></th><th><img src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
+                            $final_tpl .= $tpl_temp;
+
+                            break;
+                        case 1:
+                            $tpl_temp = "<tr><th><img src='number_two.png' class='logo_position_img'/></th><th><img src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
+                            $final_tpl .= $tpl_temp;
+
+                            break;
+                        case 2:
+                            $tpl_temp = "<tr><th><img src='number_three.png' class='logo_position_img'/></th><th><img src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
+                            $final_tpl .= $tpl_temp;
+                            break;
+                    }
+                }
+                $final_tpl .= "</table>";
+
+                return new JsonResponse($final_tpl, 200);
                 break;
             //Funecap
             case 4:
                 $sql = "SELECT DISTINCT
-                  FO_ID,
-                  (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_FUNECAP.dbo.CLIENTS_CONSO.FO_ID) as fourn,
-                  SUM(CLC_PRIX_PUBLIC) as achat,
-                  SUM(CLC_PRIX_PUBLIC) - SUM(CLC_PRIX_CENTRALE) as eco
-                FROM CENTRALE_FUNECAP.dbo.CLIENTS_CONSO
-                WHERE CL_ID = :id
-                AND CLC_DATE BETWEEN :start AND :end
-                GROUP BY FO_ID
-                ORDER BY eco DESC";
+                          FO_ID,
+                          (SELECT FO_RAISONSOC
+                           FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS
+                           WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_FUNECAP.dbo.CLIENTS_CONSO.FO_ID) as fourn,
+                          SUM(CLC_PRIX_PUBLIC)                                                                      as achat,
+                          SUM(CLC_PRIX_PUBLIC) - SUM(CLC_PRIX_CENTRALE)                                             as eco,
+                          (SELECT FO_LOGO FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_FUNECAP.dbo.CLIENTS_CONSO.FO_ID) as logo
+                        FROM CENTRALE_FUNECAP.dbo.CLIENTS_CONSO
+                        WHERE CL_ID = :id
+                              AND CLC_DATE BETWEEN :start AND :end
+                        GROUP BY FO_ID
+                        ORDER BY eco DESC";
 
                 $conn = $connection->prepare($sql);
                 $conn->bindValue(':id', $id);
@@ -1384,21 +1459,46 @@ class ConsommationController extends Controller
                 $conn->bindValue('end', $end);
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
-                return new JsonResponse($helper->array_utf8_encode($ListFourn), 200);
 
+                $final_tpl = "<table style='width: 60%;margin: 0 auto;'>";
+
+                foreach ($ListFourn as $key => $fourn){
+                    switch ($key) {
+                        case 0:
+                            $tpl_temp = "<tr><th><img src='number_one.png' class='logo_position_img'/></th><th><img src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
+                            $final_tpl .= $tpl_temp;
+
+                            break;
+                        case 1:
+                            $tpl_temp = "<tr><th><img src='number_two.png' class='logo_position_img'/></th><th><img src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
+                            $final_tpl .= $tpl_temp;
+
+                            break;
+                        case 2:
+                            $tpl_temp = "<tr><th><img src='number_three.png' class='logo_position_img'/></th><th><img src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
+                            $final_tpl .= $tpl_temp;
+                            break;
+                    }
+                }
+                $final_tpl .= "</table>";
+
+                return new JsonResponse($final_tpl, 200);
                 break;
             //PFPL
             case 5:
                 $sql = "SELECT DISTINCT
-                  FO_ID,
-                  (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_PFPL.dbo.CLIENTS_CONSO.FO_ID) as fourn,
-                  SUM(CLC_PRIX_PUBLIC) as achat,
-                  SUM(CLC_PRIX_PUBLIC) - SUM(CLC_PRIX_CENTRALE) as eco
-                FROM CENTRALE_PFPL.dbo.CLIENTS_CONSO
-                WHERE CL_ID = :id
-                AND CLC_DATE BETWEEN :start AND :end
-                GROUP BY FO_ID
-                ORDER BY eco DESC";
+                          FO_ID,
+                          (SELECT FO_RAISONSOC
+                           FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS
+                           WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_PFPL.dbo.CLIENTS_CONSO.FO_ID) as fourn,
+                          SUM(CLC_PRIX_PUBLIC)                                                                      as achat,
+                          SUM(CLC_PRIX_PUBLIC) - SUM(CLC_PRIX_CENTRALE)                                             as eco,
+                          (SELECT FO_LOGO FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_PFPL.dbo.CLIENTS_CONSO.FO_ID) as logo
+                        FROM CENTRALE_PFPL.dbo.CLIENTS_CONSO
+                        WHERE CL_ID = :id
+                              AND CLC_DATE BETWEEN :start AND :end
+                        GROUP BY FO_ID
+                        ORDER BY eco DESC";
 
                 $conn = $connection->prepare($sql);
                 $conn->bindValue(':id', $id);
@@ -1406,21 +1506,46 @@ class ConsommationController extends Controller
                 $conn->bindValue('end', $end);
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
-                return new JsonResponse($helper->array_utf8_encode($ListFourn), 200);
 
+                $final_tpl = "<table style='width: 60%;margin: 0 auto;'>";
+
+                foreach ($ListFourn as $key => $fourn){
+                    switch ($key) {
+                        case 0:
+                            $tpl_temp = "<tr><th><img src='number_one.png' class='logo_position_img'/></th><th><img src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
+                            $final_tpl .= $tpl_temp;
+
+                            break;
+                        case 1:
+                            $tpl_temp = "<tr><th><img src='number_two.png' class='logo_position_img'/></th><th><img src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
+                            $final_tpl .= $tpl_temp;
+
+                            break;
+                        case 2:
+                            $tpl_temp = "<tr><th><img src='number_three.png' class='logo_position_img'/></th><th><img src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
+                            $final_tpl .= $tpl_temp;
+                            break;
+                    }
+                }
+                $final_tpl .= "</table>";
+
+                return new JsonResponse($final_tpl, 200);
                 break;
             //ROC ECLERC
             case 6:
                 $sql = "SELECT DISTINCT
-                  FO_ID,
-                  (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_ROC_ECLERC.dbo.CLIENTS_CONSO.FO_ID) as fourn,
-                  SUM(CLC_PRIX_PUBLIC) as achat,
-                  SUM(CLC_PRIX_PUBLIC) - SUM(CLC_PRIX_CENTRALE) as eco
-                FROM CENTRALE_ROC_ECLERC.dbo.CLIENTS_CONSO
-                WHERE CL_ID = :id
-                AND CLC_DATE BETWEEN :start AND :end
-                GROUP BY FO_ID
-                ORDER BY eco DESC";
+                          FO_ID,
+                          (SELECT FO_RAISONSOC
+                           FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS
+                           WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_ROC_ECLERC.dbo.CLIENTS_CONSO.FO_ID) as fourn,
+                          SUM(CLC_PRIX_PUBLIC)                                                                      as achat,
+                          SUM(CLC_PRIX_PUBLIC) - SUM(CLC_PRIX_CENTRALE)                                             as eco,
+                          (SELECT FO_LOGO FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_ROC_ECLERC.dbo.CLIENTS_CONSO.FO_ID) as logo
+                        FROM CENTRALE_ROC_ECLERC.dbo.CLIENTS_CONSO
+                        WHERE CL_ID = :id
+                              AND CLC_DATE BETWEEN :start AND :end
+                        GROUP BY FO_ID
+                        ORDER BY eco DESC";
 
                 $conn = $connection->prepare($sql);
                 $conn->bindValue(':id', $id);
@@ -1428,8 +1553,30 @@ class ConsommationController extends Controller
                 $conn->bindValue('end', $end);
                 $conn->execute();
                 $ListFourn = $conn->fetchAll();
-                return new JsonResponse($helper->array_utf8_encode($ListFourn), 200);
 
+                $final_tpl = "<table style='width: 60%;margin: 0 auto;'>";
+
+                foreach ($ListFourn as $key => $fourn){
+                    switch ($key) {
+                        case 0:
+                            $tpl_temp = "<tr><th><img src='number_one.png' class='logo_position_img'/></th><th><img src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
+                            $final_tpl .= $tpl_temp;
+
+                            break;
+                        case 1:
+                            $tpl_temp = "<tr><th><img src='number_two.png' class='logo_position_img'/></th><th><img src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
+                            $final_tpl .= $tpl_temp;
+
+                            break;
+                        case 2:
+                            $tpl_temp = "<tr><th><img src='number_three.png' class='logo_position_img'/></th><th><img src='http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $fourn["FO_ID"] . "/" . $fourn["logo"] . "' alt=''></th><th>" . $helper->array_utf8_encode($fourn["fourn"]) . "</th><th>" . $fourn["eco"] . " €</th></tr>";
+                            $final_tpl .= $tpl_temp;
+                            break;
+                    }
+                }
+                $final_tpl .= "</table>";
+
+                return new JsonResponse($final_tpl, 200);
                 break;
 
         }
