@@ -76,10 +76,18 @@ class AppTicketsController extends Controller
                     if (!empty($client)){
                         if ($client[0]["CC_PASS"] === $password){
 
+
+
                             $array_answer = [
                                 "status" => "ok",
                                 "uuid" => uniqid(),
-                                "type" => "client"
+                                "type" => "client",
+                                "details" => [
+                                    "SO_ID" => $resultClient[0]["SO_ID"],
+                                    "CL_ID" => $resultClient[0]["CL_ID"],
+                                    "CC_ID" => $client[0]["CC_ID"],
+
+                                ]
                             ];
 
                             return new JsonResponse($array_answer, 200);
@@ -99,10 +107,16 @@ class AppTicketsController extends Controller
                 case !empty($resultFourn):
                     if ( $resultFourn[0]["FC_PASS"] === $password ){
 
+
                         $array_answer = [
                             "status" => "ok",
                             "uuid" => uniqid(),
-                            "type" => "Fournisseur"
+                            "type" => "Fournisseur",
+                            "details" => [
+                                "FO_ID" => $resultFourn[0]["FO_ID"],
+                                "FC_ID" => $resultFourn[0]["FC_ID"],
+
+                            ]
                         ];
 
                         return new JsonResponse($array_answer, 200);
@@ -139,5 +153,21 @@ class AppTicketsController extends Controller
     }
 
 
+    /**
+     * @Route("/client/details", name="client_details")
+     */
+    public function client_details(Request $request, Connection $connection, Environment $twig){
+
+        $contentParam = $request->getContent();
+
+
+        $sqlDetail = "SELECT * FROM CENTRALE_ACHAT.dbo.CLIENTS
+                    INNER JOIN CENTRALE_ACHAT.dbo.CLIENTS_USERS on CLIENTS.CL_ID = CLIENTS_USERS.CL_ID
+                    WHERE CC_ID = 207
+                    ";
+
+
+        return new JsonResponse("client_details", 200);
+    }
 
 }
