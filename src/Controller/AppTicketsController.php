@@ -154,20 +154,31 @@ class AppTicketsController extends Controller
 
 
     /**
-     * @Route("/client/details", name="client_details")
+     * @Route("/client/details/{centrale_id}/{client_id}/{user_id}", name="client_details")
      */
-    public function client_details(Request $request, Connection $connection, Environment $twig){
-
-        $contentParam = $request->getContent();
+    public function client_details(Request $request, Connection $connection, Environment $twig, $centrale_id, $client_id, $user_id){
 
 
-        $sqlDetail = "SELECT * FROM CENTRALE_ACHAT.dbo.CLIENTS
-                    INNER JOIN CENTRALE_ACHAT.dbo.CLIENTS_USERS on CLIENTS.CL_ID = CLIENTS_USERS.CL_ID
-                    WHERE CC_ID = 207
-                    ";
 
 
-        return new JsonResponse("client_details", 200);
+        $sqlCentrale = "SELECT SO_DATABASE FROM CENTRALE_ACHAT.dbo.SOCIETES
+                                    WHERE SO_ID = :so_id";
+        $conn = $connection->prepare($sqlCentrale);
+        $conn->bindValue('so_id', $centrale_id);
+        $conn->execute();
+        $resultCentrale = $conn->fetchAll();
+
+
+        $sqlDetail = sprintf("SELECT * FROM %s.dbo.CLIENTS
+                    INNER JOIN %s.dbo.CLIENTS_USERS on CLIENTS.CL_ID = CLIENTS_USERS.CL_ID
+                    WHERE CC_ID = :user_id",$resultCentrale[0]["SO_DATABASE"], $resultCentrale[0]["SO_DATABASE"] );
+
+        $connClient = $connection->prepare($sqlDetail);
+        $connClient->bindValue('user_id', $user_id);
+        $connClient->execute();
+        $resultClient = $connClient->fetchAll();
+
+        return new JsonResponse($resultClient[0], 200);
     }
 
 }
