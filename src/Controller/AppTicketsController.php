@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\HelperService;
 use Doctrine\DBAL\Connection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -170,11 +171,9 @@ class AppTicketsController extends Controller
 
     /**
      * @Route("/client/details/{centrale_id}/{client_id}/{user_id}", name="client_details")
+     * @Method("GET")
      */
-    public function client_details(Request $request, Connection $connection, Environment $twig, $centrale_id, $client_id, $user_id){
-
-
-
+    public function client_details(Request $request, Connection $connection, Environment $twig, $centrale_id, $client_id, $user_id, HelperService $helper){
 
         $sqlCentrale = "SELECT SO_DATABASE FROM CENTRALE_ACHAT.dbo.SOCIETES
                                     WHERE SO_ID = :so_id";
@@ -193,7 +192,10 @@ class AppTicketsController extends Controller
         $connClient->execute();
         $resultClient = $connClient->fetchAll();
 
-        return new JsonResponse($resultClient[0], 200);
+
+
+
+        return new JsonResponse($helper->array_utf8_encode($resultClient[0]), 200);
     }
 
 }
