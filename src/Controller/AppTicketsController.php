@@ -17,6 +17,21 @@ class AppTicketsController extends Controller
 {
 
 
+
+    /**
+     * @Route("/", name="base_endpoint")
+     * @Method("GET")
+     */
+    public function base(){
+
+        $tpl_response = [
+          "status" => "ok"
+        ];
+
+        return new JsonResponse($tpl_response, 200);
+    }
+
+
     /**
      * @Route("/user/login", name="user_login")
      * @Method("POST")
