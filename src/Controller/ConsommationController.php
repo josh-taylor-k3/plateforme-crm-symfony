@@ -81,37 +81,40 @@ class ConsommationController extends Controller
         $tplDataFinal = "";
 
 
-        switch ($centrale) {
 
-            //achat centrale
-            case 1:
-                $sqlFourn = "SELECT DISTINCT FO_ID,
-                      (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_ACHAT.dbo.CLIENTS_CONSO.FO_ID GROUP BY FO_RAISONSOC) as FO_RAISONSOC
-                    FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO WHERE CL_ID = :id AND CLC_DATE BETWEEN :start AND :end";
-
-                $conn = $connection->prepare($sqlFourn);
-                $conn->bindValue(':id', $id);
-                $conn->bindValue('start', $start);
-                $conn->bindValue('end', $end);
-                $conn->execute();
-                $ListFourn = $conn->fetchAll();
+        $centrale_database = $helper->getCentrale($centrale)["SO_DATABASE"];
 
 
-                if (empty($ListFourn)) {
-                    return new JsonResponse("none", 200);
-                }
+
+        $sqlFourn = sprintf("SELECT DISTINCT FO_ID,
+                      (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = %s.dbo.CLIENTS_CONSO.FO_ID GROUP BY FO_RAISONSOC) as FO_RAISONSOC
+                    FROM %s.dbo.CLIENTS_CONSO WHERE CL_ID = :id AND CLC_DATE BETWEEN :start AND :end", $centrale_database, $centrale_database );
 
 
-                $data["graph"]["count"] = count($ListFourn);
 
-                // chiffre d'affaires et eco total
-                $ca_total = 0;
-                $eco_total = 0;
+        $conn = $connection->prepare($sqlFourn);
+        $conn->bindValue(':id', $id);
+        $conn->bindValue('start', $start);
+        $conn->bindValue('end', $end);
+        $conn->execute();
+        $ListFourn = $conn->fetchAll();
 
 
-                foreach ($ListFourn as $key => $fourn) {
+        if (empty($ListFourn)) {
+            return new JsonResponse("none", 200);
+        }
 
-                    $sqlConso = "SELECT
+
+        $data["graph"]["count"] = count($ListFourn);
+
+        // chiffre d'affaires et eco total
+        $ca_total = 0;
+        $eco_total = 0;
+
+
+        foreach ($ListFourn as $key => $fourn) {
+
+            $sqlConso = sprintf("SELECT
                           CLC_ID,
                           CL_ID,
                           CC_ID,
@@ -138,106 +141,105 @@ class ConsommationController extends Controller
                             as Month,
                             (month(CLC_DATE)) 
                             as Month_number
-                        FROM CENTRALE_ACHAT.dbo.CLIENTS_CONSO
+                        FROM %s.dbo.CLIENTS_CONSO
                         WHERE CLC_DATE BETWEEN :start AND :end
                               AND CL_ID = :id
-                              AND FO_ID = :fournisseur";
-                    $conn = $connection->prepare($sqlConso);
-                    $conn->bindValue('id', $id);
-                    $conn->bindValue('fournisseur', $fourn['FO_ID']);
-                    $conn->bindValue('start', $start);
-                    $conn->bindValue('end', $end);
-                    $conn->execute();
-                    $conso = $conn->fetchAll();
+                              AND FO_ID = :fournisseur", $centrale_database);
 
 
-                    $cons_ca = [];
-                    $cons_eco = [];
-
-                    // variable temporaire tpl pour le chiffre d'affaire
-                    $tplTempCa = "";
-                    // variable temporaire tpl pour les économies
-                    $tplTempEco = "";
-
-                    // variable contenant le total d'économies
-                    $total_eco = 0;
-                    // variable contenant le total chiffre d'affaire
-                    $total_ca = 0;
+            $conn = $connection->prepare($sqlConso);
+            $conn->bindValue('id', $id);
+            $conn->bindValue('fournisseur', $fourn['FO_ID']);
+            $conn->bindValue('start', $start);
+            $conn->bindValue('end', $end);
+            $conn->execute();
+            $conso = $conn->fetchAll();
 
 
-                    // on initialise a 0
-                    for ($i = 0; $i < $month; $i++) {
-                        array_push($cons_eco, 0);
-                        array_push($cons_ca, 0);
+            $cons_ca = [];
+            $cons_eco = [];
+
+            // variable temporaire tpl pour le chiffre d'affaire
+            $tplTempCa = "";
+            // variable temporaire tpl pour les économies
+            $tplTempEco = "";
 
 
+
+
+            // on initialise a 0
+            for ($i = 0; $i < $month; $i++) {
+                array_push($cons_eco, 0);
+                array_push($cons_ca, 0);
+
+
+            }
+
+
+            //on remplace les 0 par les vraies valeur
+            for ($i = 0; $i < $month; $i++) {
+                foreach ($conso as $keyCons => $cons) {
+                    if ($cons['Month'] == $months[$i]) {
+                        $cons_eco[$i] = $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
+                        $cons_ca[$i] = $cons["CLC_PRIX_CENTRALE"];
                     }
+                }
+            }
 
 
-                    //on remplace les 0 par les vraies valeur
-                    for ($i = 0; $i < $month; $i++) {
-                        foreach ($conso as $keyCons => $cons) {
-                            if ($cons['Month'] == $months[$i]) {
-                                $cons_eco[$i] = $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
-                                $cons_ca[$i] = $cons["CLC_PRIX_CENTRALE"];
-                            }
-                        }
-                    }
+            $tpl = Array($helper->array_utf8_encode($fourn['FO_RAISONSOC']) => [
+                "id" => $fourn['FO_ID'],
+                "CA" => $cons_ca,
+                "ECO" => $cons_eco,
+                "total_ca" => array_sum($cons_ca),
+                "total_eco" => array_sum($cons_eco)
+            ]);
+
+            $ca_total += array_sum($cons_ca);
+            $eco_total += array_sum($cons_eco);
+            array_push($data["graph"], $tpl);
 
 
-                    $tpl = Array($helper->array_utf8_encode($fourn['FO_RAISONSOC']) => [
-                        "id" => $fourn['FO_ID'],
-                        "CA" => $cons_ca,
-                        "ECO" => $cons_eco,
-                        "total_ca" => array_sum($cons_ca),
-                        "total_eco" => array_sum($cons_eco)
-                    ]);
+            foreach ($cons_ca as $conso_ca) {
+                // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
 
-                    $ca_total += array_sum($cons_ca);
-                    $eco_total += array_sum($cons_eco);
-                    array_push($data["graph"], $tpl);
+                if ($conso_ca === 0) {
+                    $tplTempCa .= "<td> _ </td>";
 
+                } else {
+                    $tplTempCa .= "<td>" . $conso_ca . " €</td>";
 
-                    foreach ($cons_ca as $conso_ca) {
-                        // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
-
-                        if ($conso_ca === 0) {
-                            $tplTempCa .= "<td> _ </td>";
-
-                        } else {
-                            $tplTempCa .= "<td>" . $conso_ca . " €</td>";
-
-                        }
+                }
 
 
-                    }
+            }
 
-                    foreach ($cons_eco as $conso_eco) {
-                        //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
-                        if ($conso_eco === 0) {
-                            $tplTempEco .= "<td> _ </td>";
+            foreach ($cons_eco as $conso_eco) {
+                //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
+                if ($conso_eco === 0) {
+                    $tplTempEco .= "<td> _ </td>";
 
-                        } else {
-                            $tplTempEco .= "<td>" . $conso_eco . " € (<b>" . $helper->Pourcentage($conso_eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
+                } else {
+                    $tplTempEco .= "<td>" . $conso_eco . " € (<b>" . $helper->Pourcentage($conso_eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
 
-                        }
+                }
 
-                    }
+            }
 
 
-                    // on obtient le total de chiffre d'afffaire
-                    $total_ca = array_sum($cons_ca);
+            // on obtient le total de chiffre d'afffaire
+            $total_ca = array_sum($cons_ca);
 
-                    // on obtient le total d'économies
-                    $total_eco = array_sum($cons_eco);
-                    // on ajoute a la derniere colonne le total CA
-                    $tplTempCa .= "<td style='background-color: #d4d4d5'><b>" . $total_ca . " €</b></td>";
-                    // on ajoute a la derniere colonne le total ECO
-                    $tplTempEco .= "<td style='background-color: #d4d4d5'><b>" . $total_eco . " € (" . $helper->Pourcentage($total_eco, $total_ca + $total_eco) . "%)</b></td>";
+            // on obtient le total d'économies
+            $total_eco = array_sum($cons_eco);
+            // on ajoute a la derniere colonne le total CA
+            $tplTempCa .= "<td style='background-color: #d4d4d5'><b>" . $total_ca . " €</b></td>";
+            // on ajoute a la derniere colonne le total ECO
+            $tplTempEco .= "<td style='background-color: #d4d4d5'><b>" . $total_eco . " € (" . $helper->Pourcentage($total_eco, $total_ca + $total_eco) . "%)</b></td>";
 
-                    // on génère le tableau
+            // on génère le tableau
 
-                    $tplMois = "<tr style='font-size: 13pt'>
+            $tplMois = "<tr style='font-size: 13pt'>
             <th></th>
             <th></th>
             " . $tplMoisTemp . "
@@ -245,1040 +247,69 @@ class ConsommationController extends Controller
             </tr>";
 
 
-                    $tplData = "<tr style='font-size: 9pt'>
+            $tplData = "<tr style='font-size: 9pt'>
             <td rowspan=\"2\">" . $helper->array_utf8_encode($fourn['FO_RAISONSOC']) . "</td>
             <td>Mes achats</td>" .
-                        $tplTempCa
-                        . "</tr>
+                $tplTempCa
+                . "</tr>
         <tr style='font-size: 9pt'>
             <td>Mes gains</td>" .
-                        $tplTempEco
-                        . "
+                $tplTempEco
+                . "
         </tr>";
 
-                    // on ajoute au tpl final les rangées pour pour chaque fournisseurs
-                    $tplDataFinal .= $tplData;
-
-
-                }
-
-                $tplMois = "<tr style='font-size: 13pt'><th></th><th></th>" . $tplMoisTemp . "<th style='background-color: #a8a8a8;' >Total</th></tr>";
-
-                $tplFinal = " <table id=\"table_conso\" class=\"table compact table-striped table-bordered\" style=\"width: 95%;margin: 0 auto;\">
-        <thead>
-        " . $tplMois . "
-        </thead>
-        <tbody>
-        " . $tplDataFinal . "
-        </tbody>
-    </table>";
-
-
-                array_push($data["graph"]["Total"]["ca"], $ca_total);
-                array_push($data["graph"]["Total"]["eco"], $eco_total);
-                array_push($data["table"], trim($tplFinal));
-
-
-                return new JsonResponse($data, 200);
-
-                break;
-            //GCCP
-            case 2:
-
-                $sqlFourn = "SELECT DISTINCT FO_ID,
-                      (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_GCCP.dbo.CLIENTS_CONSO.FO_ID GROUP BY FO_RAISONSOC) as FO_RAISONSOC
-                    FROM CENTRALE_GCCP.dbo.CLIENTS_CONSO WHERE CL_ID = :id AND CLC_DATE BETWEEN :start AND :end";
-
-                $conn = $connection->prepare($sqlFourn);
-                $conn->bindValue(':id', $id);
-                $conn->bindValue('start', $start);
-                $conn->bindValue('end', $end);
-                $conn->execute();
-                $ListFourn = $conn->fetchAll();
-
-                if (empty($ListFourn)) {
-                    return new JsonResponse("none", 200);
-                }
-
-                $data["graph"]["count"] = count($ListFourn);
-
-                // chiffre d'affaires et eco total
-                $ca_total = 0;
-                $eco_total = 0;
-
-
-                foreach ($ListFourn as $key => $fourn) {
-
-                    $sqlConso = "SELECT
-                          CLC_ID,
-                          CL_ID,
-                          CC_ID,
-                          FO_ID,
-                          CLC_DATE,
-                          CLC_PRIX_PUBLIC,
-                          CLC_PRIX_CENTRALE,
-                          INS_DATE,
-                          INS_USER ,
-                          (case month(CLC_DATE)
-                                WHEN 1 THEN 'Janv'
-                                WHEN 2 THEN 'Févr'
-                                WHEN 3 THEN 'Mars'
-                                WHEN 4 THEN 'Avr'
-                                WHEN 5 THEN 'Mai'
-                                WHEN 6 THEN 'Juin'
-                                WHEN 7 THEN 'Juill'
-                                WHEN 8 THEN 'Août'
-                                WHEN 9 THEN 'Sept'
-                                WHEN 10 THEN 'Oct'
-                                WHEN 11 THEN 'Nov'
-                                ELSE 'Déc'
-                           end) 
-                            as Month,
-                            (month(CLC_DATE)) 
-                            as Month_number
-                        FROM CENTRALE_GCCP.dbo.CLIENTS_CONSO
-                        WHERE CLC_DATE BETWEEN :start AND :end
-                              AND CL_ID = :id
-                              AND FO_ID = :fournisseur";
-                    $conn = $connection->prepare($sqlConso);
-                    $conn->bindValue('id', $id);
-                    $conn->bindValue('fournisseur', $fourn['FO_ID']);
-                    $conn->bindValue('start', $start);
-                    $conn->bindValue('end', $end);
-                    $conn->execute();
-                    $conso = $conn->fetchAll();
-
-
-                    $cons_ca = [];
-                    $cons_eco = [];
-
-                    // variable temporaire tpl pour le chiffre d'affaire
-                    $tplTempCa = "";
-                    // variable temporaire tpl pour les économies
-                    $tplTempEco = "";
-
-                    // variable contenant le total d'économies
-                    $total_eco = 0;
-                    // variable contenant le total chiffre d'affaire
-                    $total_ca = 0;
-
-
-                    // on initialise a 0
-                    for ($i = 0; $i < $month; $i++) {
-                        array_push($cons_eco, 0);
-                        array_push($cons_ca, 0);
-
-
-                    }
-
-
-                    //on remplace les 0 par les vraies valeur
-                    for ($i = 0; $i < $month; $i++) {
-                        foreach ($conso as $keyCons => $cons) {
-                            if ($cons['Month'] == $months[$i]) {
-                                $cons_eco[$i] = $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
-                                $cons_ca[$i] = $cons["CLC_PRIX_CENTRALE"];
-                            }
-                        }
-                    }
-
-
-                    $tpl = Array($helper->array_utf8_encode($fourn['FO_RAISONSOC']) => [
-                        "id" => $fourn['FO_ID'],
-                        "CA" => $cons_ca,
-                        "ECO" => $cons_eco,
-                        "total_ca" => array_sum($cons_ca),
-                        "total_eco" => array_sum($cons_eco)
-                    ]);
-
-                    $ca_total += array_sum($cons_ca);
-                    $eco_total += array_sum($cons_eco);
-                    array_push($data["graph"], $tpl);
-
-
-                    foreach ($cons_ca as $conso_ca) {
-                        // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
-
-                        if ($conso_ca === 0) {
-                            $tplTempCa .= "<td> _ </td>";
-
-                        } else {
-                            $tplTempCa .= "<td>" . $conso_ca . " €</td>";
-
-                        }
-
-
-                    }
-
-                    foreach ($cons_eco as $conso_eco) {
-                        //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
-                        if ($conso_eco === 0) {
-                            $tplTempEco .= "<td> _ </td>";
-
-                        } else {
-                            $tplTempEco .= "<td>" . $conso_eco . " € (<b>" . $helper->Pourcentage($conso_eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
-
-                        }
-
-                    }
-
-
-                    // on obtient le total de chiffre d'afffaire
-                    $total_ca = array_sum($cons_ca);
-
-                    // on obtient le total d'économies
-                    $total_eco = array_sum($cons_eco);
-                    // on ajoute a la derniere colonne le total CA
-                    $tplTempCa .= "<td style='background-color: #d4d4d5'><b>" . $total_ca . " €</b></td>";
-                    // on ajoute a la derniere colonne le total ECO
-                    $tplTempEco .= "<td style='background-color: #d4d4d5'><b>" . $total_eco . " € (" . $helper->Pourcentage($total_eco, $total_ca + $total_eco) . "%)</b></td>";
-
-                    // on génère le tableau
-
-                    $tplMois = "<tr style='font-size: 13pt'>
-            <th></th>
-            <th></th>
-            " . $tplMoisTemp . "
-            <th style=\"background-color: #a8a8a8;\" >Total</th>
-            </tr>";
-
-
-                    $tplData = "<tr style='font-size: 9pt'>
-            <td rowspan=\"2\">" . $helper->array_utf8_encode($fourn['FO_RAISONSOC']) . "</td>
-            <td>Mes achats</td>" .
-                        $tplTempCa
-                        . "</tr>
-        <tr style='font-size: 9pt'>
-            <td>Mes gains</td>" .
-                        $tplTempEco
-                        . "
-        </tr>";
-                    //dump($tplData);
-
-                    // on ajoute au tpl final les rangées pour pour chaque fournisseurs
-                    $tplDataFinal .= $tplData;
-
-
-                }
-
-                $tplMois = "<tr style='font-size: 13pt'><th></th><th></th>" . $tplMoisTemp . "<th style='background-color: #a8a8a8;' >Total</th></tr>";
-
-                $tplFinal = " <table id=\"table_conso\" class=\"table compact table-striped table-bordered\" style=\"width: 95%;margin: 0 auto;\">
-        <thead>
-        " . $tplMois . "
-        </thead>
-        <tbody>
-        " . $tplDataFinal . "
-        </tbody>
-    </table>";
-
-
-                array_push($data["graph"]["Total"]["ca"], $ca_total);
-                array_push($data["graph"]["Total"]["eco"], $eco_total);
-                array_push($data["table"], trim($tplFinal));
-
-
-                return new JsonResponse($data, 200);
-
-                break;
-            //naldeo
-            case 3:
-
-                $sqlFourn = "SELECT DISTINCT FO_ID,
-                      (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_NALDEO.dbo.CLIENTS_CONSO.FO_ID GROUP BY FO_RAISONSOC) as FO_RAISONSOC
-                    FROM CENTRALE_NALDEO.dbo.CLIENTS_CONSO WHERE CL_ID = :id AND CLC_DATE BETWEEN :start AND :end";
-
-                $conn = $connection->prepare($sqlFourn);
-                $conn->bindValue(':id', $id);
-                $conn->bindValue('start', $start);
-                $conn->bindValue('end', $end);
-                $conn->execute();
-                $ListFourn = $conn->fetchAll();
-
-                if (empty($ListFourn)) {
-                    return new JsonResponse("none", 200);
-                }
-
-
-                $data["graph"]["count"] = count($ListFourn);
-
-                // chiffre d'affaires et eco total
-                $ca_total = 0;
-                $eco_total = 0;
-
-
-                foreach ($ListFourn as $key => $fourn) {
-
-                    $sqlConso = "SELECT
-                          CLC_ID,
-                          CL_ID,
-                          CC_ID,
-                          FO_ID,
-                          CLC_DATE,
-                          CLC_PRIX_PUBLIC,
-                          CLC_PRIX_CENTRALE,
-                          INS_DATE,
-                          INS_USER ,
-                          (case month(CLC_DATE)
-                                WHEN 1 THEN 'Janv'
-                                WHEN 2 THEN 'Févr'
-                                WHEN 3 THEN 'Mars'
-                                WHEN 4 THEN 'Avr'
-                                WHEN 5 THEN 'Mai'
-                                WHEN 6 THEN 'Juin'
-                                WHEN 7 THEN 'Juill'
-                                WHEN 8 THEN 'Août'
-                                WHEN 9 THEN 'Sept'
-                                WHEN 10 THEN 'Oct'
-                                WHEN 11 THEN 'Nov'
-                                ELSE 'Déc'
-                           end) 
-                            as Month,
-                            (month(CLC_DATE)) 
-                            as Month_number
-                        FROM CENTRALE_NALDEO.dbo.CLIENTS_CONSO
-                        WHERE CLC_DATE BETWEEN :start AND :end
-                              AND CL_ID = :id
-                              AND FO_ID = :fournisseur";
-                    $conn = $connection->prepare($sqlConso);
-                    $conn->bindValue('id', $id);
-                    $conn->bindValue('fournisseur', $fourn['FO_ID']);
-                    $conn->bindValue('start', $start);
-                    $conn->bindValue('end', $end);
-                    $conn->execute();
-                    $conso = $conn->fetchAll();
-
-
-                    $cons_ca = [];
-                    $cons_eco = [];
-
-                    // variable temporaire tpl pour le chiffre d'affaire
-                    $tplTempCa = "";
-                    // variable temporaire tpl pour les économies
-                    $tplTempEco = "";
-
-                    // variable contenant le total d'économies
-                    $total_eco = 0;
-                    // variable contenant le total chiffre d'affaire
-                    $total_ca = 0;
-
-
-                    // on initialise a 0
-                    for ($i = 0; $i < $month; $i++) {
-                        array_push($cons_eco, 0);
-                        array_push($cons_ca, 0);
-
-
-                    }
-
-
-                    //on remplace les 0 par les vraies valeur
-                    for ($i = 0; $i < $month; $i++) {
-                        foreach ($conso as $keyCons => $cons) {
-                            if ($cons['Month'] == $months[$i]) {
-                                $cons_eco[$i] = $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
-                                $cons_ca[$i] = $cons["CLC_PRIX_CENTRALE"];
-                            }
-                        }
-                    }
-
-
-                    $tpl = Array($helper->array_utf8_encode($fourn['FO_RAISONSOC']) => [
-                        "id" => $fourn['FO_ID'],
-                        "CA" => $cons_ca,
-                        "ECO" => $cons_eco,
-                        "total_ca" => array_sum($cons_ca),
-                        "total_eco" => array_sum($cons_eco)
-                    ]);
-
-                    $ca_total += array_sum($cons_ca);
-                    $eco_total += array_sum($cons_eco);
-                    array_push($data["graph"], $tpl);
-
-
-                    foreach ($cons_ca as $conso_ca) {
-                        // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
-
-                        if ($conso_ca === 0) {
-                            $tplTempCa .= "<td> _ </td>";
-
-                        } else {
-                            $tplTempCa .= "<td>" . $conso_ca . " €</td>";
-
-                        }
-
-
-                    }
-
-                    foreach ($cons_eco as $conso_eco) {
-                        //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
-                        if ($conso_eco === 0) {
-                            $tplTempEco .= "<td> _ </td>";
-
-                        } else {
-                            $tplTempEco .= "<td>" . $conso_eco . " € (<b>" . $helper->Pourcentage($conso_eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
-
-                        }
-
-                    }
-
-
-                    // on obtient le total de chiffre d'afffaire
-                    $total_ca = array_sum($cons_ca);
-
-                    // on obtient le total d'économies
-                    $total_eco = array_sum($cons_eco);
-                    // on ajoute a la derniere colonne le total CA
-                    $tplTempCa .= "<td style='background-color: #d4d4d5'><b>" . $total_ca . " €</b></td>";
-                    // on ajoute a la derniere colonne le total ECO
-                    $tplTempEco .= "<td style='background-color: #d4d4d5'><b>" . $total_eco . " € (" . $helper->Pourcentage($total_eco, $total_ca + $total_eco) . "%)</b></td>";
-
-                    // on génère le tableau
-
-                    $tplMois = "<tr style='font-size: 13pt'>
-            <th></th>
-            <th></th>
-            " . $tplMoisTemp . "
-            <th style=\"background-color: #a8a8a8;\" >Total</th>
-            </tr>";
-
-
-                    $tplData = "<tr style='font-size: 9pt'>
-            <td rowspan=\"2\">" . $helper->array_utf8_encode($fourn['FO_RAISONSOC']) . "</td>
-            <td>Mes achats</td>" .
-                        $tplTempCa
-                        . "</tr>
-        <tr style='font-size: 9pt'>
-            <td>Mes gains</td>" .
-                        $tplTempEco
-                        . "
-        </tr>";
-
-                    // on ajoute au tpl final les rangées pour pour chaque fournisseurs
-                    $tplDataFinal .= $tplData;
-
-
-                }
-
-                $tplMois = "<tr style='font-size: 13pt'><th></th><th></th>" . $tplMoisTemp . "<th style='background-color: #a8a8a8;' >Total</th></tr>";
-
-                $tplFinal = " <table id=\"table_conso\" class=\"table compact table-striped table-bordered\" style=\"width: 95%;margin: 0 auto;\">
-        <thead>
-        " . $tplMois . "
-        </thead>
-        <tbody>
-        " . $tplDataFinal . "
-        </tbody>
-    </table>";
-
-
-                array_push($data["graph"]["Total"]["ca"], $ca_total);
-                array_push($data["graph"]["Total"]["eco"], $eco_total);
-                array_push($data["table"], trim($tplFinal));
-
-
-                return new JsonResponse($data, 200);
-
-                break;
-            //funecap
-            case 4:
-
-                $sqlFourn = "SELECT DISTINCT FO_ID,
-                      (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_FUNECAP.dbo.CLIENTS_CONSO.FO_ID GROUP BY FO_RAISONSOC) as FO_RAISONSOC
-                    FROM CENTRALE_FUNECAP.dbo.CLIENTS_CONSO WHERE CL_ID = :id AND CLC_DATE BETWEEN :start AND :end";
-
-                $conn = $connection->prepare($sqlFourn);
-                $conn->bindValue(':id', $id);
-                $conn->bindValue('start', $start);
-                $conn->bindValue('end', $end);
-                $conn->execute();
-                $ListFourn = $conn->fetchAll();
-
-                if (empty($ListFourn)) {
-                    return new JsonResponse("none", 200);
-                }
-
-                $data["graph"]["count"] = count($ListFourn);
-
-                // chiffre d'affaires et eco total
-                $ca_total = 0;
-                $eco_total = 0;
-
-
-                foreach ($ListFourn as $key => $fourn) {
-
-                    $sqlConso = "SELECT
-                          CLC_ID,
-                          CL_ID,
-                          CC_ID,
-                          FO_ID,
-                          CLC_DATE,
-                          CLC_PRIX_PUBLIC,
-                          CLC_PRIX_CENTRALE,
-                          INS_DATE,
-                          INS_USER ,
-                          (case month(CLC_DATE)
-                                WHEN 1 THEN 'Janv'
-                                WHEN 2 THEN 'Févr'
-                                WHEN 3 THEN 'Mars'
-                                WHEN 4 THEN 'Avri'
-                                WHEN 5 THEN 'Mai'
-                                WHEN 6 THEN 'Juin'
-                                WHEN 7 THEN 'Juil'
-                                WHEN 8 THEN 'Août'
-                                WHEN 9 THEN 'Sept'
-                                WHEN 10 THEN 'Octo'
-                                WHEN 11 THEN 'Nove'
-                                ELSE 'Déce'
-                           end) 
-                            as Month,
-                            (month(CLC_DATE)) 
-                            as Month_number
-                        FROM CENTRALE_FUNECAP.dbo.CLIENTS_CONSO
-                        WHERE CLC_DATE BETWEEN :start AND :end
-                              AND CL_ID = :id
-                              AND FO_ID = :fournisseur";
-                    $conn = $connection->prepare($sqlConso);
-                    $conn->bindValue('id', $id);
-                    $conn->bindValue('fournisseur', $fourn['FO_ID']);
-                    $conn->bindValue('start', $start);
-                    $conn->bindValue('end', $end);
-                    $conn->execute();
-                    $conso = $conn->fetchAll();
-
-
-                    $cons_ca = [];
-                    $cons_eco = [];
-
-                    // variable temporaire tpl pour le chiffre d'affaire
-                    $tplTempCa = "";
-                    // variable temporaire tpl pour les économies
-                    $tplTempEco = "";
-
-                    // variable contenant le total d'économies
-                    $total_eco = 0;
-                    // variable contenant le total chiffre d'affaire
-                    $total_ca = 0;
-
-
-                    // on initialise a 0
-                    for ($i = 0; $i < $month; $i++) {
-                        array_push($cons_eco, 0);
-                        array_push($cons_ca, 0);
-
-
-                    }
-
-
-                    //on remplace les 0 par les vraies valeur
-                    for ($i = 0; $i < $month; $i++) {
-                        foreach ($conso as $keyCons => $cons) {
-                            if ($cons['Month'] == $months[$i]) {
-                                $cons_eco[$i] = $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
-                                $cons_ca[$i] = $cons["CLC_PRIX_CENTRALE"];
-                            }
-                        }
-                    }
-
-
-                    $tpl = Array($helper->array_utf8_encode($fourn['FO_RAISONSOC']) => [
-                        "id" => $fourn['FO_ID'],
-                        "CA" => $cons_ca,
-                        "ECO" => $cons_eco,
-                        "total_ca" => array_sum($cons_ca),
-                        "total_eco" => array_sum($cons_eco)
-                    ]);
-
-                    $ca_total += array_sum($cons_ca);
-                    $eco_total += array_sum($cons_eco);
-                    array_push($data["graph"], $tpl);
-
-
-                    foreach ($cons_ca as $conso_ca) {
-                        // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
-
-                        if ($conso_ca === 0) {
-                            $tplTempCa .= "<td style='background-color: #ececec' > _ </td>";
-
-                        } else {
-                            $tplTempCa .= "<td style='background-color: #ececec' >" . $conso_ca . " €</td>";
-
-                        }
-
-
-                    }
-
-                    foreach ($cons_eco as $conso_eco) {
-                        //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
-                        if ($conso_eco === 0) {
-                            $tplTempEco .= "<td style='background-color: #d4d4d5' > _ </td>";
-
-                        } else {
-                            $tplTempEco .= "<td style='background-color: #d4d4d5' >" . $conso_eco . " € (<b>" . $helper->Pourcentage($conso_eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
-
-                        }
-
-                    }
-
-
-                    // on obtient le total de chiffre d'afffaire
-                    $total_ca = array_sum($cons_ca);
-
-                    // on obtient le total d'économies
-                    $total_eco = array_sum($cons_eco);
-                    // on ajoute a la derniere colonne le total CA
-                    $tplTempCa .= "<td style='background-color: #ececec'><b>" . $total_ca . " €</b></td>";
-                    // on ajoute a la derniere colonne le total ECO
-                    $tplTempEco .= "<td style='background-color: #d4d4d5'><b>" . $total_eco . " € (" . $helper->Pourcentage($total_eco, $total_ca + $total_eco) . "%)</b></td>";
-
-
-                    // on génère le tableau
-
-                    $tplMois = "<tr style='font-size: 13pt'>
-                                <th></th>
-                                <th></th>
-                                " . $tplMoisTemp . "
-                                <th style=\"background-color: #a8a8a8;\" >Total</th>
-                                </tr>";
-
-
-                    $tplData = "<tr style='font-size: 9pt'>
-                                <td rowspan=\"2\">" . $helper->array_utf8_encode($fourn['FO_RAISONSOC']) . "</td>
-                                <td>Mes achats</td>" .
-                        $tplTempCa
-                        . "</tr>
-                            <tr style='font-size: 9pt'>
-                                <td>Mes gains</td>" . $tplTempEco . "</tr>";
-
-                    // on ajoute au tpl final les rangées pour pour chaque fournisseurs
-                    $tplDataFinal .= $tplData;
-
-
-                }
-
-                $tplMois = "<tr style='font-size: 13pt'><th></th><th></th>" . $tplMoisTemp . "<th style='background-color: #a8a8a8;' >Total</th></tr>";
-
-                $tplFinal = " <table id=\"table_conso\" class=\"table compact table-striped table-bordered\" style=\"width: 95%;margin: 0 auto;\">
-        <thead>
-        " . $tplMois . "
-        </thead>
-        <tbody>
-        " . $tplDataFinal . "
-        </tbody>
-    </table>";
-
-
-                array_push($data["graph"]["Total"]["ca"], $ca_total);
-                array_push($data["graph"]["Total"]["eco"], $eco_total);
-                array_push($data["table"], trim($tplFinal));
-
-
-                return new JsonResponse($data, 200);
-
-                break;
-            //PFPL
-            case 5:
-
-                $sqlFourn = "SELECT DISTINCT FO_ID,
-                      (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_PFPL.dbo.CLIENTS_CONSO.FO_ID GROUP BY FO_RAISONSOC) as FO_RAISONSOC
-                    FROM CENTRALE_PFPL.dbo.CLIENTS_CONSO WHERE CL_ID = :id AND CLC_DATE BETWEEN :start AND :end";
-
-                $conn = $connection->prepare($sqlFourn);
-                $conn->bindValue(':id', $id);
-                $conn->bindValue('start', $start);
-                $conn->bindValue('end', $end);
-                $conn->execute();
-                $ListFourn = $conn->fetchAll();
-
-                if (empty($ListFourn)) {
-                    return new JsonResponse("none", 200);
-                }
-
-
-                $data["graph"]["count"] = count($ListFourn);
-
-                $cons_ca = [];
-                $cons_eco = [];
-
-
-                // chiffre d'affaires et eco total
-                $ca_total = 0;
-                $eco_total = 0;
-
-                // variable temporaire tpl pour le chiffre d'affaire
-                $tplTempCa = "";
-                // variable temporaire tpl pour les économies
-                $tplTempEco = "";
-
-                // variable contenant le total d'économies
-                $total_eco = 0;
-                // variable contenant le total chiffre d'affaire
-                $total_ca = 0;
-
-                foreach ($ListFourn as $key => $fourn) {
-                    $sqlConso = "SELECT
-                          CLC_ID,
-                          CL_ID,
-                          CC_ID,
-                          FO_ID,
-                          CLC_DATE,
-                          CLC_PRIX_PUBLIC,
-                          CLC_PRIX_CENTRALE,
-                          INS_DATE,
-                          INS_USER ,
-                          (case month(CLC_DATE)
-                                WHEN 1 THEN 'Janvier'
-                                WHEN 2 THEN 'Février'
-                                WHEN 3 THEN 'Mars'
-                                WHEN 4 THEN 'Avril'
-                                WHEN 5 THEN 'Mai'
-                                WHEN 6 THEN 'Juin'
-                                WHEN 7 THEN 'Juillet'
-                                WHEN 8 THEN 'Août'
-                                WHEN 9 THEN 'Septembre'
-                                WHEN 10 THEN 'Octobre'
-                                WHEN 11 THEN 'Novembre'
-                                ELSE 'Décembre'
-                           end) 
-                            as Month,
-                            (month(CLC_DATE)) 
-                            as Month_number
-                        FROM CENTRALE_PFPL.dbo.CLIENTS_CONSO
-                        WHERE CLC_DATE BETWEEN :start AND :end
-                              AND CL_ID = :id
-                              AND FO_ID = :fournisseur";
-
-
-                    $conn = $connection->prepare($sqlConso);
-                    $conn->bindValue('id', $id);
-                    $conn->bindValue('fournisseur', $fourn['FO_ID']);
-                    $conn->bindValue('start', $start);
-                    $conn->bindValue('end', $end);
-                    $conn->execute();
-                    $conso = $conn->fetchAll();
-
-
-                    $cons_ca = [];
-                    $cons_eco = [];
-
-                    // on initialise a 0
-                    for ($i = 0; $i < $month; $i++) {
-                        array_push($cons_eco, 0);
-                        array_push($cons_ca, 0);
-                    }
-
-
-                    //on remplace les 0 par les vraies valeur
-                    for ($i = 0; $i < $month; $i++) {
-                        foreach ($conso as $keyCons => $cons) {
-                            if ($cons['Month'] == $months[$i]) {
-                                $cons_eco[$i] = $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
-                                $cons_ca[$i] = $cons["CLC_PRIX_CENTRALE"];
-                            }
-                        }
-                    }
-
-
-                    $tpl = Array($helper->array_utf8_encode($fourn['FO_RAISONSOC']) => [
-                        "id" => $fourn['FO_ID'],
-                        "CA" => $cons_ca,
-                        "ECO" => $cons_eco,
-                        "total_ca" => array_sum($cons_ca),
-                        "total_eco" => array_sum($cons_eco)
-                    ]);
-
-                    $ca_total += array_sum($cons_ca);
-                    $eco_total += array_sum($cons_eco);
-                    array_push($data["graph"], $tpl);
-
-                    foreach ($cons_ca as $conso_ca) {
-                        // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
-
-                        if ($conso_ca === 0) {
-                            $tplTempCa .= "<td> _ </td>";
-
-                        } else {
-                            $tplTempCa .= "<td>" . $conso_ca . " €</td>";
-
-                        }
-
-
-                    }
-
-                    foreach ($cons_eco as $conso_eco) {
-                        //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
-                        if ($conso_eco === 0) {
-                            $tplTempEco .= "<td> _ </td>";
-
-                        } else {
-                            $tplTempEco .= "<td>" . $conso_eco . " € (<b>" . $helper->Pourcentage($conso_eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
-
-                        }
-
-                    }
-
-                    // on obtient le total de chiffre d'afffaire
-                    $total_ca = array_sum($cons_ca);
-
-                    // on obtient le total d'économies
-                    $total_eco = array_sum($cons_eco);
-                    // on ajoute a la derniere colonne le total CA
-                    $tplTempCa .= "<td style='background-color: #d4d4d5'><b>" . $total_ca . " €</b></td>";
-                    // on ajoute a la derniere colonne le total ECO
-                    $tplTempEco .= "<td style='background-color: #d4d4d5'><b>" . $total_eco . " € (" . $helper->Pourcentage($total_eco, $total_ca + $total_eco) . "%)</b></td>";
-
-                    $tplMois = "<tr style='font-size: 13pt'>
-            <th></th>
-            <th></th>
-            " . $tplMoisTemp . "
-            <th style=\"background-color: #a8a8a8;\" >Total</th>
-            </tr>";
-
-
-                    $tplData = "<tr style='font-size: 9pt'>
-            <td rowspan=\"2\">" . $helper->array_utf8_encode($fourn['FO_RAISONSOC']) . "</td>
-            <td>Mes achats</td>" .
-                        $tplTempCa
-                        . "</tr>
-        <tr style='font-size: 9pt'>
-            <td>Mes gains</td>" .
-                        $tplTempEco
-                        . "
-        </tr>";
-                    //dump($tplData);
-
-                    // on ajoute au tpl final les rangées pour pour chaque fournisseurs
-                    $tplDataFinal .= $tplData;
-
-
-                }
-
-                $tplMois = "<tr style='font-size: 13pt'><th></th><th></th>" . $tplMoisTemp . "<th style='background-color: #a8a8a8;' >Total</th></tr>";
-
-                $tplFinal = " <table id=\"table_conso\" class=\"table compact table-striped table-bordered\" style=\"width: 95%;margin: 0 auto;\">
-        <thead>
-        " . $tplMois . "
-        </thead>
-        <tbody>
-        " . $tplDataFinal . "
-        </tbody>
-    </table>";
-
-
-                array_push($data["graph"]["Total"]["ca"], $ca_total);
-                array_push($data["graph"]["Total"]["eco"], $eco_total);
-                array_push($data["table"], trim($tplFinal));
-
-
-                return new JsonResponse($data, 200);
-
-                break;
-            //ROC
-            case 6:
-
-                $sqlFourn = "SELECT DISTINCT FO_ID,
-                      (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID = CENTRALE_ROC_ECLERC.dbo.CLIENTS_CONSO.FO_ID GROUP BY FO_RAISONSOC) as FO_RAISONSOC
-                    FROM CENTRALE_ROC_ECLERC.dbo.CLIENTS_CONSO WHERE CL_ID = :id AND CLC_DATE BETWEEN :start AND :end";
-
-                $conn = $connection->prepare($sqlFourn);
-                $conn->bindValue(':id', $id);
-                $conn->bindValue('start', $start);
-                $conn->bindValue('end', $end);
-                $conn->execute();
-                $ListFourn = $conn->fetchAll();
-
-                if (empty($ListFourn)) {
-                    return new JsonResponse("none", 200);
-                }
-
-
-                $data["graph"]["count"] = count($ListFourn);
-
-                // chiffre d'affaires et eco total
-                $ca_total = 0;
-                $eco_total = 0;
-
-
-                foreach ($ListFourn as $key => $fourn) {
-
-                    $sqlConso = "SELECT
-                          CLC_ID,
-                          CL_ID,
-                          CC_ID,
-                          FO_ID,
-                          CLC_DATE,
-                          CLC_PRIX_PUBLIC,
-                          CLC_PRIX_CENTRALE,
-                          INS_DATE,
-                          INS_USER ,
-                          (case month(CLC_DATE)
-                                WHEN 1 THEN 'Janvier'
-                                WHEN 2 THEN 'Février'
-                                WHEN 3 THEN 'Mars'
-                                WHEN 4 THEN 'Avril'
-                                WHEN 5 THEN 'Mai'
-                                WHEN 6 THEN 'Juin'
-                                WHEN 7 THEN 'Juillet'
-                                WHEN 8 THEN 'Août'
-                                WHEN 9 THEN 'Septembre'
-                                WHEN 10 THEN 'Octobre'
-                                WHEN 11 THEN 'Novembre'
-                                ELSE 'Décembre'
-                           end) 
-                            as Month,
-                            (month(CLC_DATE)) 
-                            as Month_number
-                        FROM CENTRALE_ROC_ECLERC.dbo.CLIENTS_CONSO
-                        WHERE CLC_DATE BETWEEN :start AND :end
-                              AND CL_ID = :id
-                              AND FO_ID = :fournisseur";
-                    $conn = $connection->prepare($sqlConso);
-                    $conn->bindValue('id', $id);
-                    $conn->bindValue('fournisseur', $fourn['FO_ID']);
-                    $conn->bindValue('start', $start);
-                    $conn->bindValue('end', $end);
-                    $conn->execute();
-                    $conso = $conn->fetchAll();
-
-
-                    $cons_ca = [];
-                    $cons_eco = [];
-
-                    // variable temporaire tpl pour le chiffre d'affaire
-                    $tplTempCa = "";
-                    // variable temporaire tpl pour les économies
-                    $tplTempEco = "";
-
-                    // variable contenant le total d'économies
-                    $total_eco = 0;
-                    // variable contenant le total chiffre d'affaire
-                    $total_ca = 0;
-
-
-                    // on initialise a 0
-                    for ($i = 0; $i < $month; $i++) {
-                        array_push($cons_eco, 0);
-                        array_push($cons_ca, 0);
-
-
-                    }
-
-
-                    //on remplace les 0 par les vraies valeur
-                    for ($i = 0; $i < $month; $i++) {
-                        foreach ($conso as $keyCons => $cons) {
-                            if ($cons['Month'] == $months[$i]) {
-                                $cons_eco[$i] = $cons['CLC_PRIX_PUBLIC'] - $cons["CLC_PRIX_CENTRALE"];
-                                $cons_ca[$i] = $cons["CLC_PRIX_CENTRALE"];
-                            }
-                        }
-                    }
-
-
-                    $tpl = Array($helper->array_utf8_encode($fourn['FO_RAISONSOC']) => [
-                        "id" => $fourn['FO_ID'],
-                        "CA" => $cons_ca,
-                        "ECO" => $cons_eco,
-                        "total_ca" => array_sum($cons_ca),
-                        "total_eco" => array_sum($cons_eco)
-                    ]);
-
-                    $ca_total += array_sum($cons_ca);
-                    $eco_total += array_sum($cons_eco);
-                    array_push($data["graph"], $tpl);
-
-
-                    foreach ($cons_ca as $conso_ca) {
-                        // on ajoute a la variable le contenu du tableau presentant le chiffre d'affaire
-
-                        if ($conso_ca === 0) {
-                            $tplTempCa .= "<td> _ </td>";
-
-                        } else {
-                            $tplTempCa .= "<td>" . $conso_ca . " €</td>";
-
-                        }
-
-
-                    }
-
-                    foreach ($cons_eco as $conso_eco) {
-                        //on obtient pour un fournisseur la rangée du tableau correspondant a l'économies
-                        if ($conso_eco === 0) {
-                            $tplTempEco .= "<td> _ </td>";
-
-                        } else {
-                            $tplTempEco .= "<td>" . $conso_eco . " € (<b>" . $helper->Pourcentage($conso_eco, $cons["CLC_PRIX_PUBLIC"]) . "%</b>)</td>";
-
-                        }
-
-                    }
-
-
-                    // on obtient le total de chiffre d'afffaire
-                    $total_ca = array_sum($cons_ca);
-
-                    // on obtient le total d'économies
-                    $total_eco = array_sum($cons_eco);
-                    // on ajoute a la derniere colonne le total CA
-                    $tplTempCa .= "<td style='background-color: #d4d4d5'><b>" . $total_ca . " €</b></td>";
-                    // on ajoute a la derniere colonne le total ECO
-                    $tplTempEco .= "<td style='background-color: #d4d4d5'><b>" . $total_eco . " € (" . $helper->Pourcentage($total_eco, $total_ca + $total_eco) . "%)</b></td>";
-
-
-                    // on génère le tableau
-
-                    $tplMois = "<tr style='font-size: 13pt'>
-            <th></th>
-            <th></th>
-            " . $tplMoisTemp . "
-            <th style=\"background-color: #a8a8a8;\" >Total</th>
-            </tr>";
-
-
-                    $tplData = "<tr style='font-size: 9pt'>
-            <td rowspan=\"2\">" . $helper->array_utf8_encode($fourn['FO_RAISONSOC']) . "</td>
-            <td>Mes achats</td>" .
-                        $tplTempCa
-                        . "</tr>
-        <tr style='font-size: 9pt'>
-            <td>Mes gains</td>" .
-                        $tplTempEco
-                        . "
-        </tr>";
-                    //dump($tplData);
-
-                    // on ajoute au tpl final les rangées pour pour chaque fournisseurs
-                    $tplDataFinal .= $tplData;
-
-
-                }
-
-                $tplMois = "<tr style='font-size: 13pt'><th></th><th></th>" . $tplMoisTemp . "<th style='background-color: #a8a8a8;' >Total</th></tr>";
-
-                $tplFinal = " <table id=\"table_conso\" class=\"table compact table-striped table-bordered\" style=\"width: 95%;margin: 0 auto;\">
-        <thead>
-        " . $tplMois . "
-        </thead>
-        <tbody>
-        " . $tplDataFinal . "
-        </tbody>
-    </table>";
-
-
-                array_push($data["graph"]["Total"]["ca"], $ca_total);
-                array_push($data["graph"]["Total"]["eco"], $eco_total);
-                array_push($data["table"], trim($tplFinal));
-
-
-                return new JsonResponse($data, 200);
-
-                break;
+            // on ajoute au tpl final les rangées pour pour chaque fournisseurs
+            $tplDataFinal .= $tplData;
 
 
         }
 
-        return new JsonResponse("none", 200);
+        $tplMois = "<tr style='font-size: 13pt'><th></th><th></th>" . $tplMoisTemp . "<th style='background-color: #a8a8a8;' >Total</th></tr>";
+
+        $tplFinal = " <table id=\"table_conso\" class=\"table compact table-striped table-bordered\" style=\"width: 95%;margin: 0 auto;\">
+                                <thead>
+                                " . $tplMois . "
+                                </thead>
+                                <tbody>
+                                " . $tplDataFinal . "
+                                </tbody>
+                            </table>";
+
+
+        $sqlEco = sprintf("SELECT sum(CLC_PRIX_PUBLIC - CLC_PRIX_CENTRALE) as economies FROM %s.dbo.CLIENTS_CONSO WHERE CLC_DATE BETWEEN :start AND :end AND CL_ID = :id", $centrale_database);
+
+        $stmtEco = $connection->prepare($sqlEco);
+        $stmtEco->bindValue(':id', $id);
+        $stmtEco->bindValue('start', $start);
+        $stmtEco->bindValue('end', $end);
+        $stmtEco->execute();
+        $ecoTotal = $stmtEco->fetchAll()[0]["economies"];
+
+
+        $sqlCa = sprintf("SELECT sum(CLC_PRIX_CENTRALE) as chiffre FROM %s.dbo.CLIENTS_CONSO WHERE CLC_DATE BETWEEN :start AND :end AND CL_ID = :id", $centrale_database);
+
+        $stmtCa = $connection->prepare($sqlCa);
+        $stmtCa->bindValue(':id', $id);
+        $stmtCa->bindValue('start', $start);
+        $stmtCa->bindValue('end', $end);
+        $stmtCa->execute();
+        $caTotal = $stmtCa->fetchAll()[0]["chiffre"];
+
+
+
+
+        array_push($data["graph"]["Total"]["ca"], $caTotal);
+        array_push($data["graph"]["Total"]["eco"], $ecoTotal);
+        array_push($data["table"], trim($tplFinal));
+
+
+        return new JsonResponse($data, 200);
+
+
+
+
+
+
     }
 
 

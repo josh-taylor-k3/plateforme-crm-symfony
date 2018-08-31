@@ -139,7 +139,6 @@ class HelperService
         return $months;
     }
 
-
     public function Pourcentage($Nombre, $Total) {
 
         if($Total == 0){
@@ -148,6 +147,25 @@ class HelperService
         }
 
         return "-" .round($Nombre * 100 / $Total);
+    }
+
+    public function getCentrale($so_id)
+    {
+
+        $sql = "SELECT SO_DATABASE FROM CENTRALE_ACHAT.dbo.SOCIETES WHERE SO_ID = :id";
+
+
+        $conn = $this->connection->prepare($sql);
+
+        $conn->bindValue(':id', $so_id);
+
+
+
+        $conn->execute();
+        $result = $conn->fetchAll();
+
+
+        return $result[0];
     }
 
 
