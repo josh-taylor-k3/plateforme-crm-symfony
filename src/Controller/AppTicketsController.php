@@ -109,8 +109,6 @@ class AppTicketsController extends Controller
                                     "SO_ID" => $resultClient[0]["SO_ID"],
                                     "CL_ID" => $resultClient[0]["CL_ID"],
                                     "CC_ID" => $client[0]["CC_ID"],
-                                    "URL" => $helper->getUrlForCentrale($resultCentrale[0]["SO_DATABASE"])
-
                                 ]
                             ];
 
@@ -201,10 +199,15 @@ class AppTicketsController extends Controller
         $connClient->execute();
         $resultClient = $connClient->fetchAll();
 
+        $tpl_result = [
+            "data" => $helper->array_utf8_encode($resultClient[0]),
+            "logo" => $helper->getUrlForCentrale($resultCentrale[0]["SO_DATABASE"]) . "UploadFichiers/Uploads/CLIENT_" . $resultClient[0]["CL_ID"] . "/" . $resultClient[0]["CL_LOGO"],
+        ];
 
 
 
-        return new JsonResponse($helper->array_utf8_encode($resultClient[0]), 200);
+
+        return new JsonResponse($tpl_result, 200);
     }
 
 }
