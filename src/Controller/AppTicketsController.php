@@ -37,7 +37,7 @@ class AppTicketsController extends Controller
      * @Route("/user/login", name="user_login")
      * @Method("POST")
      */
-    public function user_login(Request $request, Connection $connection, Environment $twig)
+    public function user_login(Request $request, Connection $connection, HelperService $helper)
     {
 
         $contentParam = $request->getContent();
@@ -74,6 +74,8 @@ class AppTicketsController extends Controller
 
             switch ($email){
 
+
+                // c'est un client
                 case !empty($resultClient):
                     $sqlCentrale = "SELECT SO_DATABASE FROM CENTRALE_ACHAT.dbo.SOCIETES
                                     WHERE SO_ID = :so_id";
@@ -89,6 +91,11 @@ class AppTicketsController extends Controller
                     $conn->execute();
                     $client = $conn->fetchAll();
 
+
+
+
+
+
                     if (!empty($client)){
                         if ($client[0]["CC_PASS"] === $password){
 
@@ -102,6 +109,7 @@ class AppTicketsController extends Controller
                                     "SO_ID" => $resultClient[0]["SO_ID"],
                                     "CL_ID" => $resultClient[0]["CL_ID"],
                                     "CC_ID" => $client[0]["CC_ID"],
+                                    "URL" => $helper->getUrlForCentrale($resultCentrale[0]["SO_DATABASE"])
 
                                 ]
                             ];
@@ -119,6 +127,8 @@ class AppTicketsController extends Controller
 
                     break;
 
+
+                // C'est un fournisseur
                 case !empty($resultFourn):
                     if ( $resultFourn[0]["FC_PASS"] === $password ){
 

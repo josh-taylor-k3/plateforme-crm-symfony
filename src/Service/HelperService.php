@@ -168,6 +168,40 @@ class HelperService
         return $result[0];
     }
 
+    public function getUrlForCentrale($so_database){
+
+        switch ($so_database)
+        {
+
+            case "CENTRALE_ACHAT":
+                return "http://secure.achatcentrale.fr/";
+                break;
+            case "CENTRALE_GCCP":
+                return "http://www.centrale-gccp.fr/";
+                break;
+            case "CENTRALE_FUNECAP":
+                return "http://www.centrale-funecap.fr/";
+                break;
+            case "CENTRAlE_ROC_ECLERC":
+                return "http://www.centrale-roc-eclerc.fr/";
+                break;
+            case "CENTRALE_PFPL":
+                return "http://www.centrale-pfpl.fr/";
+                break;
+            case "CENTRALE_NALDEO":
+                return "http://www.centrale-naldeo.fr/";
+                break;
+
+
+        }
+
+
+
+
+
+
+    }
+
 
 
 
