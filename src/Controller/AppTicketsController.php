@@ -111,7 +111,6 @@ class AppTicketsController extends Controller
 
 
                         }else{
-                            dump("Mot de passe erroné");
                         }
                     }else{
                         dump("Le client n'a pas été trouvé dans la base de donnée");
