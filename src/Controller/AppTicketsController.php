@@ -52,7 +52,7 @@ class AppTicketsController extends Controller
         if ($email !== "" || $password !== ""){
             //Requete pour savoir si c'est un client
             $sqlIsClient = "SELECT SO_ID, CL_ID
-                        FROM CENTRALE_ACHAT.dbo.Vue_All_Clients
+                        FROM CENTRALE_ACHAT_V2.dbo.Vue_All_Clients
                         WHERE CC_MAIL = :mail";
 
             //Requete pour savoir si c'est un fournisseur
@@ -77,12 +77,14 @@ class AppTicketsController extends Controller
 
                 // c'est un client
                 case !empty($resultClient):
-                    $sqlCentrale = "SELECT SO_DATABASE FROM CENTRALE_ACHAT.dbo.SOCIETES
+
+                    $sqlCentrale = "SELECT SO_DATABASE FROM CENTRALE_ACHAT_V2.dbo.SOCIETES
                                     WHERE SO_ID = :so_id";
                     $conn = $connection->prepare($sqlCentrale);
                     $conn->bindValue('so_id', $resultClient[0]["SO_ID"]);
                     $conn->execute();
                     $resultCentrale = $conn->fetchAll();
+
 
                     $sqlClient = sprintf("SELECT * FROM %s.dbo.CLIENTS_USERS WHERE CC_MAIL = :mail",$resultCentrale[0]["SO_DATABASE"] );
 
@@ -91,19 +93,19 @@ class AppTicketsController extends Controller
                     $conn->execute();
                     $client = $conn->fetchAll();
 
-
-
-
-
-
                     if (!empty($client)){
                         if ($client[0]["CC_PASS"] === $password){
 
+                            //ajout token user en cour
+
+                            $token = $helper->gen_uuid();
+
+                            $helper->setTokenApp($resultCentrale[0]["SO_DATABASE"],$client[0]["CC_ID"], $token );
 
 
                             $array_answer = [
                                 "status" => "ok",
-                                "uuid" => uniqid(),
+                                "uuid" => $resultCentrale[0]["SO_DATABASE"]."-".$token,
                                 "type" => "client",
                                 "details" => [
                                     "SO_ID" => $resultClient[0]["SO_ID"],
@@ -114,9 +116,13 @@ class AppTicketsController extends Controller
 
                             return new JsonResponse($array_answer, 200);
 
-
-
                         }else{
+                            $array_answer = [
+                                "status" => "ko",
+                            ];
+
+                            return new JsonResponse($array_answer, 200);
+
                         }
                     }else{
                         dump("Le client n'a pas été trouvé dans la base de donnée");
@@ -124,7 +130,6 @@ class AppTicketsController extends Controller
 
 
                     break;
-
 
                 // C'est un fournisseur
                 case !empty($resultFourn):
@@ -152,9 +157,7 @@ class AppTicketsController extends Controller
                     break;
 
                 case empty($resultFourn) && empty($resultClient):
-                    $array_answer = [
-                        "status" => "ko",
-                    ];
+                    $array_answer = ["status" => "ko",];
                     return new JsonResponse($array_answer, 404);
                     break;
             }
@@ -177,37 +180,236 @@ class AppTicketsController extends Controller
 
 
     /**
-     * @Route("/client/details/{centrale_id}/{client_id}/{user_id}", name="client_details")
+     * @Route("/client/details/{token}", name="client_details")
      * @Method("GET")
      */
-    public function client_details(Request $request, Connection $connection, Environment $twig, $centrale_id, $client_id, $user_id, HelperService $helper){
-
-        $sqlCentrale = "SELECT SO_DATABASE FROM CENTRALE_ACHAT.dbo.SOCIETES
-                                    WHERE SO_ID = :so_id";
-        $conn = $connection->prepare($sqlCentrale);
-        $conn->bindValue('so_id', $centrale_id);
-        $conn->execute();
-        $resultCentrale = $conn->fetchAll();
+    public function client_details(Request $request, Connection $connection, Environment $twig, HelperService $helper, $token){
 
 
-        $sqlDetail = sprintf("SELECT * FROM %s.dbo.CLIENTS
+        $data_token = $helper->extractTokenDb($token);
+
+        if (!$data_token){
+            $array_answer = [
+                "status" => "ko",
+            ];
+            return new JsonResponse($array_answer, 404);
+        }
+
+        $cc_id = $helper->verifyTokenApp($data_token["token"], $data_token["database"]);
+
+
+        if ($cc_id){
+            $sqlDetail = sprintf("SELECT * FROM %s.dbo.CLIENTS
                     INNER JOIN %s.dbo.CLIENTS_USERS on CLIENTS.CL_ID = CLIENTS_USERS.CL_ID
-                    WHERE CC_ID = :user_id",$resultCentrale[0]["SO_DATABASE"], $resultCentrale[0]["SO_DATABASE"] );
+                    WHERE CC_ID = :user_id",$data_token["database"], $data_token["database"] );
 
-        $connClient = $connection->prepare($sqlDetail);
-        $connClient->bindValue('user_id', $user_id);
-        $connClient->execute();
-        $resultClient = $connClient->fetchAll();
+            $connClient = $connection->prepare($sqlDetail);
+            $connClient->bindValue('user_id', $cc_id);
+            $connClient->execute();
+            $resultClient = $connClient->fetchAll();
 
-        $tpl_result = [
-            "data" => $helper->array_utf8_encode($resultClient[0]),
-            "logo" => $helper->getUrlForCentrale($resultCentrale[0]["SO_DATABASE"]) . "UploadFichiers/Uploads/CLIENT_" . $resultClient[0]["CL_ID"] . "/" . $resultClient[0]["CL_LOGO"],
-        ];
-
-
+            $tpl_result = [
+                "data" => $helper->array_utf8_encode($resultClient[0]),
+                "logo" => $helper->getUrlForCentrale($data_token["database"]) . "UploadFichiers/Uploads/CLIENT_" . $resultClient[0]["CL_ID"] . "/" . $resultClient[0]["CL_LOGO"],
+            ];
 
 
-        return new JsonResponse($tpl_result, 200);
+            return new JsonResponse($tpl_result, 200);
+        }else {
+            $array_answer = [
+                "status" => "ko",
+            ];
+
+            return new JsonResponse($array_answer, 404);
+
+        }
+    }
+
+    /**
+     * @Route("/client/message/open/{token}", name="client_message_open")
+     * @Method("GET")
+     */
+    public function clientMessageOpen(Request $request, Connection $connection, Environment $twig, HelperService $helper, $token)
+    {
+
+
+        $data_token = $helper->extractTokenDb($token);
+
+        if (!$data_token){
+            $array_answer = [
+                "status" => "ko",
+            ];
+            return new JsonResponse($array_answer, 404);
+        }
+
+        $cc_id = $helper->verifyTokenApp($data_token["token"], $data_token["database"]);
+
+
+        if ($cc_id){
+            $sqlNiveau = sprintf("SELECT CC_NIVEAU, CL_ID FROM %s.dbo.CLIENTS_USERS WHERE CC_ID = :cc_id", $data_token["database"] );
+
+            $connClient = $connection->prepare($sqlNiveau);
+            $connClient->bindValue('cc_id', $cc_id);
+            $connClient->execute();
+            $resultNiveau = $connClient->fetchAll();
+
+
+            if ($resultNiveau[0]["CC_NIVEAU"] == 1){
+                //user no level
+
+                $sqlMessagesList = sprintf("SELECT * FROM %s.dbo.MESSAGE_ENTETE WHERE CL_ID = :cl_id AND CC_ID = :cc_id AND ME_STATUS < 2", $data_token["database"]);
+
+                $connClient = $connection->prepare($sqlMessagesList);
+                $connClient->bindValue('cl_id', $resultNiveau[0]["CL_ID"]);
+                $connClient->bindValue('cc_id', $cc_id);
+                $connClient->execute();
+                $resultNiveau = $connClient->fetchAll();
+
+
+                return new JsonResponse($resultNiveau, 200);
+
+            }else if ($resultNiveau[0]["CC_NIVEAU"] == 0) {
+                // user is admin
+
+                $sqlMessagesList = sprintf("SELECT * FROM %s.dbo.MESSAGE_ENTETE WHERE CL_ID = :cl_id AND ME_STATUS < 2", $data_token["database"]);
+
+
+                $connClient = $connection->prepare($sqlMessagesList);
+                $connClient->bindValue('cl_id', $resultNiveau[0]["CL_ID"]);
+                $connClient->execute();
+                $resultNiveau = $connClient->fetchAll();
+
+                return new JsonResponse($resultNiveau, 200);
+            }
+
+
+        }else {
+            $array_answer = [
+                "status" => "ko",
+            ];
+
+            return new JsonResponse($array_answer, 404);
+
+        }
+    }
+
+
+
+    /**
+     * @Route("/client/message/archived/{token}", name="client_message_archived")
+     * @Method("GET")
+     */
+    public function clientMessageArchived(Request $request, Connection $connection, Environment $twig, HelperService $helper, $token)
+    {
+
+
+        $data_token = $helper->extractTokenDb($token);
+
+        if (!$data_token){
+            $array_answer = [
+                "status" => "ko",
+            ];
+            return new JsonResponse($array_answer, 404);
+        }
+
+        $cc_id = $helper->verifyTokenApp($data_token["token"], $data_token["database"]);
+
+
+        if ($cc_id){
+            $sqlNiveau = sprintf("SELECT CC_NIVEAU, CL_ID FROM %s.dbo.CLIENTS_USERS WHERE CC_ID = :cc_id", $data_token["database"] );
+
+            $connClient = $connection->prepare($sqlNiveau);
+            $connClient->bindValue('cc_id', $cc_id);
+            $connClient->execute();
+            $resultNiveau = $connClient->fetchAll();
+
+
+            if ($resultNiveau[0]["CC_NIVEAU"] == 1){
+                //user no level
+
+                $sqlMessagesList = sprintf("SELECT * FROM %s.dbo.MESSAGE_ENTETE WHERE CL_ID = :cl_id AND CC_ID = :cc_id AND ME_STATUS = 2", $data_token["database"]);
+
+                $connClient = $connection->prepare($sqlMessagesList);
+                $connClient->bindValue('cl_id', $resultNiveau[0]["CL_ID"]);
+                $connClient->bindValue('cc_id', $cc_id);
+                $connClient->execute();
+                $resultNiveau = $connClient->fetchAll();
+
+
+                return new JsonResponse($resultNiveau, 200);
+
+            }else if ($resultNiveau[0]["CC_NIVEAU"] == 0) {
+                // user is admin
+
+                $sqlMessagesList = sprintf("SELECT * FROM %s.dbo.MESSAGE_ENTETE WHERE CL_ID = :cl_id AND ME_STATUS = 2", $data_token["database"]);
+
+
+                $connClient = $connection->prepare($sqlMessagesList);
+                $connClient->bindValue('cl_id', $resultNiveau[0]["CL_ID"]);
+                $connClient->execute();
+                $resultNiveau = $connClient->fetchAll();
+
+                return new JsonResponse($resultNiveau, 200);
+            }
+
+
+        }else {
+            $array_answer = [
+                "status" => "ko",
+            ];
+
+            return new JsonResponse($array_answer, 404);
+
+        }
+    }
+
+    /**
+     * @Route("/client/messages/{token}/{me_id}", name="client_message_details")
+     * @Method("GET")
+     */
+    public function clientMessageDetails(Request $request, Connection $connection, Environment $twig, HelperService $helper, $token, $me_id)
+    {
+
+        $data_token = $helper->extractTokenDb($token);
+
+
+        // si il existe un token et un SO_DATABASE
+        if (!$data_token){
+            $array_answer = [
+                "status" => "ko",
+            ];
+            return new JsonResponse($array_answer, 404);
+        }
+
+
+
+        //on verifie le token et on extrait le user
+        $cc_id = $helper->verifyTokenApp($data_token["token"], $data_token["database"]);
+
+
+        if ($cc_id){
+
+
+            $sqlNiveau = sprintf("SELECT * FROM %s.dbo.MESSAGE_DETAIL WHERE ME_ID = :me_id order by MD_DATE ASC", $data_token["database"] );
+
+            $connClient = $connection->prepare($sqlNiveau);
+            $connClient->bindValue('me_id', $me_id);
+            $connClient->execute();
+            $resultMessageDetails = $connClient->fetchAll();
+
+
+            return new JsonResponse($resultMessageDetails, 404);
+
+        }else {
+            $array_answer = [
+                "status" => "ko",
+            ];
+
+            return new JsonResponse($array_answer, 404);
+
+        }
+
+
     }
 
 }
