@@ -212,7 +212,7 @@ class AppTicketsController extends Controller
 
             $tpl_result = [
                 "data" => $helper->array_utf8_encode($resultClient[0]),
-                "logo" => $helper->getBaseUrl($data_token["database"])."UploadFichiers/Uploads/CLIENT_" . $resultClient[0]["CL_ID"] . "/" . $resultClient[0]["CL_LOGO"],
+                "logo" => $helper->getBaseUrl($data_token["database"])."/UploadFichiers/Uploads/CLIENT_" . $resultClient[0]["CL_ID"] . "/" . $resultClient[0]["CL_LOGO"],
             ];
 
 
