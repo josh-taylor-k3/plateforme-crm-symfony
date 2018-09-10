@@ -168,39 +168,6 @@ class HelperService
         return $result[0];
     }
 
-    public function getUrlForCentrale($so_database){
-
-        switch ($so_database)
-        {
-
-            case "CENTRALE_ACHAT":
-                return "http://secure.achatcentrale.fr/";
-                break;
-            case "CENTRALE_GCCP":
-                return "http://www.centrale-gccp.fr/";
-                break;
-            case "CENTRALE_FUNECAP":
-                return "http://www.centrale-funecap.fr/";
-                break;
-            case "CENTRAlE_ROC_ECLERC":
-                return "http://www.centrale-roc-eclerc.fr/";
-                break;
-            case "CENTRALE_PFPL":
-                return "http://www.centrale-pfpl.fr/";
-                break;
-            case "CENTRALE_NALDEO":
-                return "http://www.centrale-naldeo.fr/";
-                break;
-
-
-        }
-
-
-
-
-
-
-    }
 
     public function setTokenApp($so_database, $cc_id, $token)
     {
@@ -216,6 +183,31 @@ class HelperService
         $result = $conn->fetchAll();
 
         return $result;
+
+    }
+
+
+    public function getBaseUrl($centrale)
+    {
+
+        $sqlInsert = "SELECT SO_WEB FROM CENTRALE_ACHAT.dbo.SOCIETES WHERE SO_DATABASE = :database";
+
+        $conn = $this->connection->prepare($sqlInsert);
+        $conn->bindValue("database", $centrale);
+        $conn->execute();
+        $result = $conn->fetchAll();
+
+
+
+        $base_url = $result[0]["SO_WEB"];
+
+        if ($base_url){
+
+            return $base_url;
+        }else {
+
+            return "";
+        }
 
     }
 
