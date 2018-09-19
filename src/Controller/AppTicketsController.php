@@ -18,15 +18,15 @@ class AppTicketsController extends Controller
 {
 
 
-
     /**
      * @Route("/", name="base_endpoint")
      * @Method("GET")
      */
-    public function base(){
+    public function base()
+    {
 
         $tpl_response = [
-          "status" => "ok"
+            "status" => "ok"
         ];
 
         return new JsonResponse($tpl_response, 200);
@@ -48,8 +48,7 @@ class AppTicketsController extends Controller
         $password = $requestFromJson->password;
 
 
-
-        if ($email !== "" || $password !== ""){
+        if ($email !== "" || $password !== "") {
             //Requete pour savoir si c'est un client
             $sqlIsClient = "SELECT SO_ID, CL_ID
                         FROM CENTRALE_ACHAT_V2.dbo.Vue_All_Clients
@@ -72,7 +71,7 @@ class AppTicketsController extends Controller
             $resultFourn = $conn->fetchAll();
 
 
-            switch ($email){
+            switch ($email) {
 
 
                 // c'est un client
@@ -86,26 +85,26 @@ class AppTicketsController extends Controller
                     $resultCentrale = $conn->fetchAll();
 
 
-                    $sqlClient = sprintf("SELECT * FROM %s.dbo.CLIENTS_USERS WHERE CC_MAIL = :mail",$resultCentrale[0]["SO_DATABASE"] );
+                    $sqlClient = sprintf("SELECT * FROM %s.dbo.CLIENTS_USERS WHERE CC_MAIL = :mail", $resultCentrale[0]["SO_DATABASE"]);
 
                     $conn = $connection->prepare($sqlClient);
                     $conn->bindValue('mail', $email);
                     $conn->execute();
                     $client = $conn->fetchAll();
 
-                    if (!empty($client)){
-                        if ($client[0]["CC_PASS"] === $password){
+                    if (!empty($client)) {
+                        if ($client[0]["CC_PASS"] === $password) {
 
                             //ajout token user en cour
 
                             $token = $helper->gen_uuid();
 
-                            $helper->setTokenApp($resultCentrale[0]["SO_DATABASE"],$client[0]["CC_ID"], $token );
+                            $helper->setTokenApp($resultCentrale[0]["SO_DATABASE"], $client[0]["CC_ID"], $token);
 
 
                             $array_answer = [
                                 "status" => "ok",
-                                "uuid" => $resultCentrale[0]["SO_DATABASE"]."-".$token,
+                                "uuid" => $resultCentrale[0]["SO_DATABASE"] . "-" . $token,
                                 "type" => "client",
                                 "details" => [
                                     "SO_ID" => $resultClient[0]["SO_ID"],
@@ -116,7 +115,7 @@ class AppTicketsController extends Controller
 
                             return new JsonResponse($array_answer, 200);
 
-                        }else{
+                        } else {
                             $array_answer = [
                                 "status" => "ko",
                             ];
@@ -124,7 +123,7 @@ class AppTicketsController extends Controller
                             return new JsonResponse($array_answer, 200);
 
                         }
-                    }else{
+                    } else {
                         dump("Le client n'a pas été trouvé dans la base de donnée");
                     }
 
@@ -133,7 +132,7 @@ class AppTicketsController extends Controller
 
                 // C'est un fournisseur
                 case !empty($resultFourn):
-                    if ( $resultFourn[0]["FC_PASS"] === $password ){
+                    if ($resultFourn[0]["FC_PASS"] === $password) {
 
 
                         $array_answer = [
@@ -149,7 +148,7 @@ class AppTicketsController extends Controller
 
                         return new JsonResponse($array_answer, 200);
 
-                    }else {
+                    } else {
                         dump("mauvais mot de passe");
                     }
 
@@ -161,7 +160,7 @@ class AppTicketsController extends Controller
                     return new JsonResponse($array_answer, 404);
                     break;
             }
-        }else {
+        } else {
             $array_answer = [
                 "status" => "ko",
                 "detail" => "il y a pas d'email et de password"
@@ -183,12 +182,13 @@ class AppTicketsController extends Controller
      * @Route("/client/details/{token}", name="client_details")
      * @Method("GET")
      */
-    public function client_details(Request $request, Connection $connection, Environment $twig, HelperService $helper, $token){
+    public function client_details(Request $request, Connection $connection, Environment $twig, HelperService $helper, $token)
+    {
 
 
         $data_token = $helper->extractTokenDb($token);
 
-        if (!$data_token){
+        if (!$data_token) {
             $array_answer = [
                 "status" => "ko",
             ];
@@ -198,12 +198,10 @@ class AppTicketsController extends Controller
         $cc_id = $helper->verifyTokenApp($data_token["token"], $data_token["database"]);
 
 
-
-
-        if ($cc_id){
+        if ($cc_id) {
             $sqlDetail = sprintf("SELECT * FROM %s.dbo.CLIENTS
                     INNER JOIN %s.dbo.CLIENTS_USERS on CLIENTS.CL_ID = CLIENTS_USERS.CL_ID
-                    WHERE CC_ID = :user_id",$data_token["database"], $data_token["database"] );
+                    WHERE CC_ID = :user_id", $data_token["database"], $data_token["database"]);
 
             $connClient = $connection->prepare($sqlDetail);
             $connClient->bindValue('user_id', $cc_id);
@@ -212,12 +210,12 @@ class AppTicketsController extends Controller
 
             $tpl_result = [
                 "data" => $helper->array_utf8_encode($resultClient[0]),
-                "logo" => $helper->getBaseUrl($data_token["database"])."/UploadFichiers/Uploads/CLIENT_" . $resultClient[0]["CL_ID"] . "/" . $resultClient[0]["CL_LOGO"],
+                "logo" => $helper->getBaseUrl($data_token["database"]) . "/UploadFichiers/Uploads/CLIENT_" . $resultClient[0]["CL_ID"] . "/" . $resultClient[0]["CL_LOGO"],
             ];
 
 
             return new JsonResponse($tpl_result, 200);
-        }else {
+        } else {
             $array_answer = [
                 "status" => "ko",
             ];
@@ -237,7 +235,7 @@ class AppTicketsController extends Controller
 
         $data_token = $helper->extractTokenDb($token);
 
-        if (!$data_token){
+        if (!$data_token) {
             $array_answer = [
                 "status" => "ko",
             ];
@@ -247,8 +245,8 @@ class AppTicketsController extends Controller
         $cc_id = $helper->verifyTokenApp($data_token["token"], $data_token["database"]);
 
 
-        if ($cc_id){
-            $sqlNiveau = sprintf("SELECT CC_NIVEAU, CL_ID FROM %s.dbo.CLIENTS_USERS WHERE CC_ID = :cc_id", $data_token["database"] );
+        if ($cc_id) {
+            $sqlNiveau = sprintf("SELECT CC_NIVEAU, CL_ID FROM %s.dbo.CLIENTS_USERS WHERE CC_ID = :cc_id", $data_token["database"]);
 
             $connClient = $connection->prepare($sqlNiveau);
             $connClient->bindValue('cc_id', $cc_id);
@@ -256,21 +254,15 @@ class AppTicketsController extends Controller
             $resultNiveau = $connClient->fetchAll();
 
 
-            if ($resultNiveau[0]["CC_NIVEAU"] == 1){
+            if ($resultNiveau[0]["CC_NIVEAU"] == 1) {
                 //user no level
 
-                $sqlMessagesList = sprintf("SELECT
-                                                           ME_ID,
-                                                           (SELECT CL_RAISONSOC FROM CENTRALE_ACHAT_v2.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as CL,
-                                                           ME_SUJET,
-                                                           (SELECT CC_PRENOM FROM CENTRALE_ACHAT_v2.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_PRENOM,
-                                                           (SELECT CC_NOM FROM CENTRALE_ACHAT_v2.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_NOM,
-                                                           MAJ_DATE,
-                                                           (SELECT CL_LOGO FROM CENTRALE_ACHAT_v2.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as LOGO
-                                                    FROM CENTRALE_ACHAT_v2.dbo.MESSAGE_ENTETE
+                $sqlMessagesList = sprintf("SELECT ME_ID, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as CL, ME_SUJET, (SELECT CC_PRENOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_PRENOM, (SELECT CC_NOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_NOM, MAJ_DATE, (SELECT CL_LOGO FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as LOGO, CL_ID,  (SELECT '') as logo_url, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as raison_soc
+
+                                                    FROM %s.dbo.MESSAGE_ENTETE
                                                     WHERE CL_ID = :cl_id
-                                                      AND CC_ID = :cc_id
-                                                      AND ME_STATUS < 2", $data_token["database"]);
+                                                    AND CC_ID = :cc_id
+                                                    AND ME_STATUS < 2", $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"]);
 
                 $connClient = $connection->prepare($sqlMessagesList);
                 $connClient->bindValue('cl_id', $resultNiveau[0]["CL_ID"]);
@@ -281,7 +273,7 @@ class AppTicketsController extends Controller
 
                 $res_final = [];
 
-                foreach($resultNiveau as $res){
+                foreach ($resultNiveau as $res) {
 
                     $tpl_temp = [
                         "messages_id" => $res["ME_ID"],
@@ -289,7 +281,8 @@ class AppTicketsController extends Controller
                         "client_firstname" => $res["CC_PRENOM"],
                         "client_lastname" => $res["CC_NOM"],
                         "last_time" => $res["MAJ_DATE"],
-                        "logo_url" => $helper->getBaseUrl($data_token["database"])."/UploadFichiers/Uploads/CLIENT_" . $res["CL_ID"] . "/" . $res["LOGO"],
+                        "raison_social" => $res["raison_soc"],
+                        "logo_url" => $helper->getBaseUrl($data_token["database"]) . "/UploadFichiers/Uploads/CLIENT_" . $res["CL_ID"] . "/" . $res["LOGO"],
                     ];
 
                     array_push($res_final, $tpl_temp);
@@ -299,14 +292,13 @@ class AppTicketsController extends Controller
                 return new JsonResponse($res_final, 200);
 
 
-
-            }else if ($resultNiveau[0]["CC_NIVEAU"] == 0) {
+            } else if ($resultNiveau[0]["CC_NIVEAU"] == 0) {
                 // user is admin
 
-                $sqlMessagesList = sprintf("SELECT ME_ID, (SELECT CL_RAISONSOC FROM CENTRALE_ACHAT_v2.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as CL, ME_SUJET, (SELECT CC_PRENOM FROM CENTRALE_ACHAT_v2.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_PRENOM, (SELECT CC_NOM FROM CENTRALE_ACHAT_v2.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_NOM, MAJ_DATE, (SELECT CL_LOGO FROM CENTRALE_ACHAT_v2.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as LOGO, CL_ID,  (SELECT '') as logo_url
-                                                    FROM CENTRALE_ACHAT_v2.dbo.MESSAGE_ENTETE
+                $sqlMessagesList = sprintf("SELECT ME_ID, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as CL, ME_SUJET, (SELECT CC_PRENOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_PRENOM, (SELECT CC_NOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_NOM, MAJ_DATE, (SELECT CL_LOGO FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as LOGO, CL_ID,  (SELECT '') as logo_url, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as raison_soc
+                                                    FROM %s.dbo.MESSAGE_ENTETE
                                                     WHERE CL_ID = :cl_id
-                                                      AND ME_STATUS < 2", $data_token["database"]);
+                                                    AND ME_STATUS < 2", $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"]);
 
 
                 $connClient = $connection->prepare($sqlMessagesList);
@@ -316,7 +308,7 @@ class AppTicketsController extends Controller
 
                 $res_final = [];
 
-                foreach($resultNiveau as $res){
+                foreach ($resultNiveau as $res) {
 
                     $tpl_temp = [
                         "messages_id" => $res["ME_ID"],
@@ -324,7 +316,8 @@ class AppTicketsController extends Controller
                         "client_firstname" => $res["CC_PRENOM"],
                         "client_lastname" => $res["CC_NOM"],
                         "last_time" => $res["MAJ_DATE"],
-                        "logo_url" => $helper->getBaseUrl($data_token["database"])."/UploadFichiers/Uploads/CLIENT_" . $res["CL_ID"] . "/" . $res["LOGO"],
+                        "raison_social" => $res["raison_soc"],
+                        "logo_url" => $helper->getBaseUrl($data_token["database"]) . "/UploadFichiers/Uploads/CLIENT_" . $res["CL_ID"] . "/" . $res["LOGO"],
                     ];
 
                     array_push($res_final, $tpl_temp);
@@ -335,7 +328,7 @@ class AppTicketsController extends Controller
             }
 
 
-        }else {
+        } else {
             $array_answer = [
                 "status" => "ko",
             ];
@@ -344,7 +337,6 @@ class AppTicketsController extends Controller
 
         }
     }
-
 
 
     /**
@@ -357,7 +349,7 @@ class AppTicketsController extends Controller
 
         $data_token = $helper->extractTokenDb($token);
 
-        if (!$data_token){
+        if (!$data_token) {
             $array_answer = [
                 "status" => "ko",
             ];
@@ -367,8 +359,8 @@ class AppTicketsController extends Controller
         $cc_id = $helper->verifyTokenApp($data_token["token"], $data_token["database"]);
 
 
-        if ($cc_id){
-            $sqlNiveau = sprintf("SELECT CC_NIVEAU, CL_ID FROM %s.dbo.CLIENTS_USERS WHERE CC_ID = :cc_id", $data_token["database"] );
+        if ($cc_id) {
+            $sqlNiveau = sprintf("SELECT CC_NIVEAU, CL_ID FROM %s.dbo.CLIENTS_USERS WHERE CC_ID = :cc_id", $data_token["database"]);
 
             $connClient = $connection->prepare($sqlNiveau);
             $connClient->bindValue('cc_id', $cc_id);
@@ -376,7 +368,7 @@ class AppTicketsController extends Controller
             $resultNiveau = $connClient->fetchAll();
 
 
-            if ($resultNiveau[0]["CC_NIVEAU"] == 1){
+            if ($resultNiveau[0]["CC_NIVEAU"] == 1) {
                 //user no level
 
                 $sqlMessagesList = sprintf("SELECT * FROM %s.dbo.MESSAGE_ENTETE WHERE CL_ID = :cl_id AND CC_ID = :cc_id AND ME_STATUS = 2", $data_token["database"]);
@@ -390,7 +382,7 @@ class AppTicketsController extends Controller
 
                 return new JsonResponse($resultNiveau, 200);
 
-            }else if ($resultNiveau[0]["CC_NIVEAU"] == 0) {
+            } else if ($resultNiveau[0]["CC_NIVEAU"] == 0) {
                 // user is admin
 
                 $sqlMessagesList = sprintf("SELECT * FROM %s.dbo.MESSAGE_ENTETE WHERE CL_ID = :cl_id AND ME_STATUS = 2", $data_token["database"]);
@@ -405,7 +397,7 @@ class AppTicketsController extends Controller
             }
 
 
-        }else {
+        } else {
             $array_answer = [
                 "status" => "ko",
             ];
@@ -426,7 +418,7 @@ class AppTicketsController extends Controller
 
 
         // si il existe un token et un SO_DATABASE
-        if (!$data_token){
+        if (!$data_token) {
             $array_answer = [
                 "status" => "ko",
             ];
@@ -434,15 +426,14 @@ class AppTicketsController extends Controller
         }
 
 
-
         //on verifie le token et on extrait le user
         $cc_id = $helper->verifyTokenApp($data_token["token"], $data_token["database"]);
 
 
-        if ($cc_id){
+        if ($cc_id) {
 
 
-            $sqlNiveau = sprintf("SELECT * FROM %s.dbo.MESSAGE_DETAIL WHERE ME_ID = :me_id order by MD_DATE ASC", $data_token["database"] );
+            $sqlNiveau = sprintf("SELECT * FROM %s.dbo.MESSAGE_DETAIL WHERE ME_ID = :me_id order by MD_DATE ASC", $data_token["database"]);
 
             $connClient = $connection->prepare($sqlNiveau);
             $connClient->bindValue('me_id', $me_id);
@@ -452,7 +443,7 @@ class AppTicketsController extends Controller
 
             return new JsonResponse($resultMessageDetails, 404);
 
-        }else {
+        } else {
             $array_answer = [
                 "status" => "ko",
             ];
