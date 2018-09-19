@@ -259,7 +259,18 @@ class AppTicketsController extends Controller
             if ($resultNiveau[0]["CC_NIVEAU"] == 1){
                 //user no level
 
-                $sqlMessagesList = sprintf("SELECT * FROM %s.dbo.MESSAGE_ENTETE WHERE CL_ID = :cl_id AND CC_ID = :cc_id AND ME_STATUS < 2", $data_token["database"]);
+                $sqlMessagesList = sprintf("SELECT
+                                                           ME_ID,
+                                                           (SELECT CL_RAISONSOC FROM CENTRALE_ACHAT_v2.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as CL,
+                                                           ME_SUJET,
+                                                           (SELECT CC_PRENOM FROM CENTRALE_ACHAT_v2.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_PRENOM,
+                                                           (SELECT CC_NOM FROM CENTRALE_ACHAT_v2.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_NOM,
+                                                           MAJ_DATE,
+                                                           (SELECT CL_LOGO FROM CENTRALE_ACHAT_v2.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as LOGO
+                                                    FROM CENTRALE_ACHAT_v2.dbo.MESSAGE_ENTETE
+                                                    WHERE CL_ID = :cl_id
+                                                      AND CC_ID = :cc_id
+                                                      AND ME_STATUS < 2", $data_token["database"]);
 
                 $connClient = $connection->prepare($sqlMessagesList);
                 $connClient->bindValue('cl_id', $resultNiveau[0]["CL_ID"]);
@@ -268,12 +279,34 @@ class AppTicketsController extends Controller
                 $resultNiveau = $connClient->fetchAll();
 
 
-                return new JsonResponse($resultNiveau, 200);
+                $res_final = [];
+
+                foreach($resultNiveau as $res){
+
+                    $tpl_temp = [
+                        "messages_id" => $res["ME_ID"],
+                        "message_topic" => $res["ME_SUJET"],
+                        "client_firstname" => $res["CC_PRENOM"],
+                        "client_lastname" => $res["CC_NOM"],
+                        "last_time" => $res["MAJ_DATE"],
+                        "logo_url" => $helper->getBaseUrl($data_token["database"])."/UploadFichiers/Uploads/CLIENT_" . $res["CL_ID"] . "/" . $res["LOGO"],
+                    ];
+
+                    array_push($res_final, $tpl_temp);
+                }
+
+
+                return new JsonResponse($res_final, 200);
+
+
 
             }else if ($resultNiveau[0]["CC_NIVEAU"] == 0) {
                 // user is admin
 
-                $sqlMessagesList = sprintf("SELECT * FROM %s.dbo.MESSAGE_ENTETE WHERE CL_ID = :cl_id AND ME_STATUS < 2", $data_token["database"]);
+                $sqlMessagesList = sprintf("SELECT ME_ID, (SELECT CL_RAISONSOC FROM CENTRALE_ACHAT_v2.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as CL, ME_SUJET, (SELECT CC_PRENOM FROM CENTRALE_ACHAT_v2.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_PRENOM, (SELECT CC_NOM FROM CENTRALE_ACHAT_v2.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_NOM, MAJ_DATE, (SELECT CL_LOGO FROM CENTRALE_ACHAT_v2.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as LOGO, CL_ID,  (SELECT '') as logo_url
+                                                    FROM CENTRALE_ACHAT_v2.dbo.MESSAGE_ENTETE
+                                                    WHERE CL_ID = :cl_id
+                                                      AND ME_STATUS < 2", $data_token["database"]);
 
 
                 $connClient = $connection->prepare($sqlMessagesList);
@@ -281,7 +314,24 @@ class AppTicketsController extends Controller
                 $connClient->execute();
                 $resultNiveau = $connClient->fetchAll();
 
-                return new JsonResponse($resultNiveau, 200);
+                $res_final = [];
+
+                foreach($resultNiveau as $res){
+
+                    $tpl_temp = [
+                        "messages_id" => $res["ME_ID"],
+                        "message_topic" => $res["ME_SUJET"],
+                        "client_firstname" => $res["CC_PRENOM"],
+                        "client_lastname" => $res["CC_NOM"],
+                        "last_time" => $res["MAJ_DATE"],
+                        "logo_url" => $helper->getBaseUrl($data_token["database"])."/UploadFichiers/Uploads/CLIENT_" . $res["CL_ID"] . "/" . $res["LOGO"],
+                    ];
+
+                    array_push($res_final, $tpl_temp);
+                }
+
+
+                return new JsonResponse($res_final, 200);
             }
 
 
