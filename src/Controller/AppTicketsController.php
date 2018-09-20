@@ -295,7 +295,8 @@ class AppTicketsController extends Controller
             } else if ($resultNiveau[0]["CC_NIVEAU"] == 0) {
                 // user is admin
 
-                $sqlMessagesList = sprintf("SELECT ME_ID, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as CL, ME_SUJET, (SELECT CC_PRENOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_PRENOM, (SELECT CC_NOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_NOM, MAJ_DATE, (SELECT CL_LOGO FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as LOGO, CL_ID,  (SELECT '') as logo_url, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as raison_soc
+                $sqlMessagesList = sprintf("SELECT ME_ID, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as CL, ME_SUJET, (SELECT CC_PRENOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_PRENOM, (SELECT CC_NOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_NOM, MAJ_DATE, (SELECT CL_LOGO FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as LOGO, CL_ID,  (SELECT '') as logo_url, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as raison_soc, FC_ID,
+       (SELECT FO_LOGO FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE FOURNISSEURS.FO_ID = MESSAGE_ENTETE.FO_ID) as FC_LOGO
                                                     FROM %s.dbo.MESSAGE_ENTETE
                                                     WHERE CL_ID = :cl_id
                                                     AND ME_STATUS < 2", $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"]);
@@ -317,7 +318,7 @@ class AppTicketsController extends Controller
                         "client_lastname" => $res["CC_NOM"],
                         "last_time" => $res["MAJ_DATE"],
                         "raison_social" => $res["raison_soc"],
-                        "logo_url" => $helper->getBaseUrl($data_token["database"]) . "/UploadFichiers/Uploads/CLIENT_" . $res["CL_ID"] . "/" . $res["LOGO"],
+                        "logo_url" => $helper->getBaseUrl($data_token["database"]) . "/UploadFichiers/Uploads/FOURN_" . $res["FC_ID"] . "/" . $res["FC_LOGO"],
                     ];
 
                     array_push($res_final, $tpl_temp);
