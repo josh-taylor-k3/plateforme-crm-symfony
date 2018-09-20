@@ -262,7 +262,8 @@ class AppTicketsController extends Controller
                                                     FROM %s.dbo.MESSAGE_ENTETE
                                                     WHERE CL_ID = :cl_id
                                                     AND CC_ID = :cc_id
-                                                    AND ME_STATUS < 2", $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"]);
+                                                    AND ME_STATUS < 2
+                                                    ORDER BY MAJ_DATE DESC ", $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"]);
 
                 $connClient = $connection->prepare($sqlMessagesList);
                 $connClient->bindValue('cl_id', $resultNiveau[0]["CL_ID"]);
@@ -299,7 +300,8 @@ class AppTicketsController extends Controller
        (SELECT FO_LOGO FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE FOURNISSEURS.FO_ID = MESSAGE_ENTETE.FO_ID) as FC_LOGO
                                                     FROM %s.dbo.MESSAGE_ENTETE
                                                     WHERE CL_ID = :cl_id
-                                                    AND ME_STATUS < 2", $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"]);
+                                                    AND ME_STATUS < 2
+                                                    ORDER BY MAJ_DATE DESC ", $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"]);
 
 
                 $connClient = $connection->prepare($sqlMessagesList);
