@@ -318,7 +318,7 @@ class AppTicketsController extends Controller
                         "client_lastname" => $res["CC_NOM"],
                         "last_time" => $res["MAJ_DATE"],
                         "raison_social" => $res["raison_soc"],
-                        "logo_url" => $helper->getBaseUrl($data_token["database"]) . "/UploadFichiers/Uploads/FOURN_" . $res["FC_ID"] . "/" . $res["FC_LOGO"],
+                        "logo_url" => "http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $res["FC_ID"] . "/" . $res["FC_LOGO"],
                     ];
 
                     array_push($res_final, $tpl_temp);
