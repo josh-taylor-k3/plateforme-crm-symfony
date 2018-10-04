@@ -485,7 +485,50 @@ class AppTicketsController extends Controller
         if ($cc_id) {
 
 
-            $sqlNiveau = sprintf("SELECT * FROM %s.dbo.MESSAGE_DETAIL WHERE ME_ID = :me_id order by MD_DATE ASC", $data_token["database"]);
+            $sqlNiveau = sprintf("SELECT ME_ID,
+                                                   MD_ID,
+                                                   MD_CORPS,
+                                                   (SELECT CC_PRENOM + ' ' + CC_NOM FROM CENTRALE_ACHAT_v2.dbo.CLIENTS_USERS WHERE CC_ID = MESSAGE_DETAIL.CC_ID) as fourn,
+                                                   (SELECT FC_NOM + ' ' + FC_PRENOM FROM CENTRALE_PRODUITS.dbo.FOURN_USERS WHERE FC_ID = MESSAGE_DETAIL.FC_ID) as client,
+                                                   INS_DATE,
+                                                   (SELECT CL_ID
+                                                    FROM %s.dbo.CLIENTS
+                                                    WHERE CL_ID = (SELECT CL_ID
+                                                                   FROM %s.dbo.CLIENTS_USERS
+                                                                   WHERE CLIENTS_USERS.CC_ID = %s.dbo.MESSAGE_DETAIL.CC_ID)) AS client_id,
+                                                   (SELECT FO_ID
+                                                    FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS
+                                                    WHERE FO_ID = (SELECT FO_ID
+                                                                   FROM CENTRALE_PRODUITS.dbo.FOURN_USERS
+                                                                   WHERE FOURN_USERS.FC_ID = %s.dbo.MESSAGE_DETAIL.FC_ID))   AS fournisseur_id,
+                                                   (SELECT CL_RAISONSOC
+                                                    FROM %s.dbo.CLIENTS
+                                                    WHERE CL_ID = (SELECT CL_ID
+                                                                   FROM %s.dbo.CLIENTS_USERS
+                                                                   WHERE CLIENTS_USERS.CC_ID = %s.dbo.MESSAGE_DETAIL.CC_ID)) AS Raison_soc_client,
+                                                   (SELECT CL_RAISONSOC
+                                                    FROM %s.dbo.CLIENTS
+                                                    WHERE CL_ID = (SELECT CL_ID
+                                                                   FROM %s.dbo.CLIENTS_USERS
+                                                                   WHERE CLIENTS_USERS.CC_ID = %s.dbo.MESSAGE_DETAIL.CC_ID)) AS Raison_soc_client,
+                                                   (SELECT FO_RAISONSOC
+                                                    FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS
+                                                    WHERE FO_ID = (SELECT FO_ID
+                                                                   FROM CENTRALE_PRODUITS.dbo.FOURN_USERS
+                                                                   WHERE FOURN_USERS.FC_ID = %s.dbo.MESSAGE_DETAIL.FC_ID))   AS Raison_soc_fourn,
+                                                   (SELECT FO_LOGO
+                                                    FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS
+                                                    WHERE FO_ID = (SELECT FO_ID
+                                                                   FROM CENTRALE_PRODUITS.dbo.FOURN_USERS
+                                                                   WHERE FOURN_USERS.FC_ID = %s.dbo.MESSAGE_DETAIL.FC_ID))   AS logo_fourn,
+                                                   (SELECT CL_LOGO
+                                                    FROM %s.dbo.CLIENTS
+                                                    WHERE CL_ID = (SELECT CL_ID
+                                                                   FROM %s.dbo.CLIENTS_USERS
+                                                                   WHERE CLIENTS_USERS.CC_ID = %s.dbo.MESSAGE_DETAIL.CC_ID)) AS logo_client
+                                            FROM %s.dbo.MESSAGE_DETAIL
+                                            WHERE ME_ID = :me_id
+                                            order by MD_DATE DESC", $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"]);
 
             $connClient = $connection->prepare($sqlNiveau);
             $connClient->bindValue('me_id', $me_id);
@@ -493,7 +536,32 @@ class AppTicketsController extends Controller
             $resultMessageDetails = $connClient->fetchAll();
 
 
-            return new JsonResponse($resultMessageDetails, 404);
+            $res_final = [];
+
+            foreach ($resultMessageDetails as $res) {
+
+                $typeMessage = $helper->getTypeMessage($res["Raison_soc_client"], $res["Raison_soc_fourn"]);
+
+                $logo = ($typeMessage == "client") ? "http://v2.achatcentrale.fr/UploadFichiers/Uploads/CLIENT_" . $res["client_id"] . "/" .  $res["logo_client"] : (($typeMessage == "fournisseur") ? "http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $res["fournisseur_id"] . "/" .  $res["logo_fourn"] : '');
+
+
+
+                $tpl_temp = [
+                    "ID" => $res["MD_ID"],
+                    "thread_id" => $res["ME_ID"],
+                    "corps" => $res["MD_CORPS"],
+                    "type" => $typeMessage,
+                    "logo" => $logo,
+                    "date" =>  $res["INS_DATE"],
+                    "client" =>  $res["client"],
+                    "fournisseur" =>  $res["fourn"],
+                ];
+
+                array_push($res_final, $tpl_temp);
+            }
+
+
+            return new JsonResponse($res_final, 200);
 
         } else {
             $array_answer = [

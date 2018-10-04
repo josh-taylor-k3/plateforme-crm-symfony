@@ -168,7 +168,6 @@ class HelperService
         return $result[0];
     }
 
-
     public function setTokenApp($so_database, $cc_id, $token)
     {
 
@@ -185,7 +184,6 @@ class HelperService
         return $result;
 
     }
-
 
     public function getBaseUrl($centrale)
     {
@@ -277,6 +275,18 @@ class HelperService
         );
     }
 
+    public function getTypeMessage($client, $fournisseur){
+
+
+        if ($client !== null && $fournisseur == null){
+
+            return "client";
+        }else if ($fournisseur !== null && $client == null){
+
+            return "fournisseur";
+        }
+
+    }
 
 
 }
