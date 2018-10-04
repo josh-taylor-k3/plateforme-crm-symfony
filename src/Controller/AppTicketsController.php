@@ -478,6 +478,8 @@ class AppTicketsController extends Controller
         }
 
 
+        // PARTIE CLIENT
+
         //on verifie le token et on extrait le user
         $cc_id = $helper->verifyTokenApp($data_token["token"], $data_token["database"]);
 
@@ -536,7 +538,36 @@ class AppTicketsController extends Controller
             $resultMessageDetails = $connClient->fetchAll();
 
 
-            $res_final = [];
+            $sqlInfoThread = sprintf("SELECT
+                                                   (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as Client,
+                                                   (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE FOURNISSEURS.FO_ID = MESSAGE_ENTETE.FO_ID) as Fournisseur,
+                                                   (SELECT FC_NOM + ' ' + FC_PRENOM FROM CENTRALE_PRODUITS.dbo.FOURN_USERS WHERE FOURN_USERS.FC_ID = MESSAGE_ENTETE.FC_ID) as Fournisseur_user,
+                                                   (SELECT  CC_NOM + ' ' + CC_PRENOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as Client_user,
+                                                   (SELECT CL_LOGO  FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as Client_logo,
+                                                   (SELECT FO_LOGO  FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE FOURNISSEURS.FO_ID = MESSAGE_ENTETE.FO_ID) as Fournisseur_logo,
+                                                   FO_ID,
+                                                   CL_ID
+                                            FROM %s.dbo.MESSAGE_ENTETE
+                                            WHERE ME_ID = :me_id", $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"]);
+
+            $connClient = $connection->prepare($sqlInfoThread);
+            $connClient->bindValue('me_id', $me_id);
+            $connClient->execute();
+            $resultInfoThread = $connClient->fetchAll();
+
+
+            $res_final = [
+                "info" => [
+                    "destinataire" => $resultInfoThread[0]["Fournisseur"],
+                    "destinataire_user" => $resultInfoThread[0]["Fournisseur_user"],
+                    "Fournisseur_logo" => "http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $resultInfoThread[0]["FO_ID"] . "/" .  $resultInfoThread[0]["Fournisseur_logo"],
+                    "Client_logo" => "http://v2.achatcentrale.fr/UploadFichiers/Uploads/CLIENT_" . $resultInfoThread[0]["FO_ID"] . "/" .  $resultInfoThread[0]["Fournisseur_logo"],
+                    "Client" => $resultInfoThread[0]["Client"],
+                    "Client_user" => $resultInfoThread[0]["Client_user"],
+
+                ],
+                "data" => []
+            ];
 
             foreach ($resultMessageDetails as $res) {
 
@@ -557,7 +588,7 @@ class AppTicketsController extends Controller
                     "fournisseur" =>  $res["fourn"],
                 ];
 
-                array_push($res_final, $tpl_temp);
+                array_push($res_final["data"], $tpl_temp);
             }
 
 
