@@ -254,10 +254,10 @@ class AppTicketsController extends Controller
             $resultNiveau = $connClient->fetchAll();
 
 
-            if ($resultNiveau[0]["CC_NIVEAU"] == 1) {
+            if ($resultNiveau[0]["CC_NIVEAU"] == 0) {
                 //user no level
 
-                $sqlMessagesList = sprintf("SELECT ME_ID, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as CL, ME_SUJET, (SELECT CC_PRENOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_PRENOM, (SELECT CC_NOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_NOM, MAJ_DATE, (SELECT CL_LOGO FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as LOGO, CL_ID,  (SELECT '') as logo_url, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as raison_soc
+                $sqlMessagesList = sprintf("SELECT ME_ID, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as CL, ME_SUJET, (SELECT CC_PRENOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_PRENOM, (SELECT CC_NOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_NOM, MAJ_DATE, (SELECT CL_LOGO FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as LOGO, CL_ID,  (SELECT '') as logo_url, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as raison_soc, FO_ID, (SELECT FO_LOGO FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE MESSAGE_ENTETE.FO_ID = FO_ID) as fourn_logo
 
                                                     FROM %s.dbo.MESSAGE_ENTETE
                                                     WHERE CL_ID = :cl_id
@@ -276,6 +276,7 @@ class AppTicketsController extends Controller
 
                 foreach ($resultNiveau as $res) {
 
+
                     $tpl_temp = [
                         "messages_id" => $res["ME_ID"],
                         "message_topic" => $res["ME_SUJET"],
@@ -283,7 +284,7 @@ class AppTicketsController extends Controller
                         "client_lastname" => $res["CC_NOM"],
                         "last_time" => $res["MAJ_DATE"],
                         "raison_social" => $res["raison_soc"],
-                        "logo_url" => $helper->getBaseUrl($data_token["database"]) . "/UploadFichiers/Uploads/CLIENT_" . $res["CL_ID"] . "/" . $res["LOGO"],
+                        "logo_url" => $helper->getBaseUrl($data_token["database"]) . "/UploadFichiers/Uploads/FOURN_" . $res["FO_ID"] . "/" . $res["fourn_logo"],
                     ];
 
                     array_push($res_final, $tpl_temp);
@@ -293,11 +294,12 @@ class AppTicketsController extends Controller
                 return new JsonResponse($res_final, 200);
 
 
-            } else if ($resultNiveau[0]["CC_NIVEAU"] == 0) {
+            } else if ($resultNiveau[0]["CC_NIVEAU"] == 1) {
                 // user is admin
 
-                $sqlMessagesList = sprintf("SELECT ME_ID, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as CL, ME_SUJET, (SELECT CC_PRENOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_PRENOM, (SELECT CC_NOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_NOM, MAJ_DATE, (SELECT CL_LOGO FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as LOGO, CL_ID,  (SELECT '') as logo_url, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as raison_soc, FO_ID,
-       (SELECT FO_LOGO FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE FOURNISSEURS.FO_ID = MESSAGE_ENTETE.FO_ID) as FC_LOGO
+
+                $sqlMessagesList = sprintf("SELECT ME_ID, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as CL, ME_SUJET, (SELECT CC_PRENOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_PRENOM, (SELECT CC_NOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_NOM, MAJ_DATE, (SELECT CL_LOGO FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as LOGO, CL_ID,  (SELECT '') as logo_url, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as raison_soc, FO_ID, (SELECT FO_LOGO FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE FOURNISSEURS.FO_ID = MESSAGE_ENTETE.FO_ID) as FC_LOGO
+
                                                     FROM %s.dbo.MESSAGE_ENTETE
                                                     WHERE CL_ID = :cl_id
                                                     AND ME_STATUS < 2
@@ -572,7 +574,6 @@ class AppTicketsController extends Controller
             foreach ($resultMessageDetails as $res) {
 
                 $typeMessage = $helper->getTypeMessage($res["Raison_soc_client"], $res["Raison_soc_fourn"]);
-
                 $logo = ($typeMessage == "client") ? "http://v2.achatcentrale.fr/UploadFichiers/Uploads/CLIENT_" . $res["client_id"] . "/" .  $res["logo_client"] : (($typeMessage == "fournisseur") ? "http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $res["fournisseur_id"] . "/" .  $res["logo_fourn"] : '');
 
 
