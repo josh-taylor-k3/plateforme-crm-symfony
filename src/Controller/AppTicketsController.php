@@ -373,7 +373,7 @@ class AppTicketsController extends Controller
             $resultNiveau = $connClient->fetchAll();
 
 
-            if ($resultNiveau[0]["CC_NIVEAU"] == 1) {
+            if ($resultNiveau[0]["CC_NIVEAU"] == 0) {
                 //user no level
 
                 $sqlMessagesList = sprintf("SELECT ME_ID, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as CL, ME_SUJET, (SELECT CC_PRENOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_PRENOM, (SELECT CC_NOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_NOM, MAJ_DATE, (SELECT CL_LOGO FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as LOGO, CL_ID,  (SELECT '') as logo_url, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as raison_soc, FO_ID,
@@ -412,7 +412,7 @@ class AppTicketsController extends Controller
 
                 return new JsonResponse($res_final, 200);
 
-            } else if ($resultNiveau[0]["CC_NIVEAU"] == 0) {
+            } else if ($resultNiveau[0]["CC_NIVEAU"] == 1) {
                 // user is admin
 
                 $sqlMessagesList = sprintf("SELECT ME_ID, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as CL, ME_SUJET, (SELECT CC_PRENOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_PRENOM, (SELECT CC_NOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_NOM, MAJ_DATE, (SELECT CL_LOGO FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as LOGO, CL_ID,  (SELECT '') as logo_url, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as raison_soc, FO_ID,
