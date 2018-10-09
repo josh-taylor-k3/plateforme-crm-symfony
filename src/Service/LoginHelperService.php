@@ -36,8 +36,6 @@ class LoginHelperService{
 
 
         foreach ($this->Databases as $key => $value){
-
-
             $sqlIsclient = sprintf("SELECT *
                         FROM %s.dbo.CLIENTS_USERS
                         WHERE CC_MAIL = :mail AND CC_PASS = :pwd", $value[0]);
@@ -58,6 +56,26 @@ class LoginHelperService{
             }
         }
         return false;
+    }
+
+    public function isFourn($mail, $password){
+
+
+        $sqlIsFourn = "SELECT * FROM CENTRALE_PRODUITS.dbo.FOURN_USERS WHERE FC_MAIL = :mail AND FC_PASS = :pass";
+
+        $conn = $this->connection->prepare($sqlIsFourn);
+        $conn->bindValue('mail', $mail);
+        $conn->bindValue('pass', $password);
+        $conn->execute();
+        $resultFourn = $conn->fetchAll();
+
+        if (!empty($resultFourn)) {
+            return $resultFourn[0];
+        }else {
+            return false;
+
+        }
+
     }
 
 

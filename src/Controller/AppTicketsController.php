@@ -76,6 +76,24 @@ class AppTicketsController extends Controller
 
 
 
+            $resultFourn = $loginHelper->isFourn($email, $password);
+
+            if (!empty($resultFourn)) {
+                $token = $helper->gen_uuid();
+
+                $array_answer = [
+                    "status" => "ok",
+                    "uuid" => $token,
+                    "type" => "fournisseur",
+                    "details" => [
+                        "FO_ID" => $resultFourn["FO_ID"],
+                        "FC_ID" => $resultFourn["FC_ID"],
+                    ]
+                ];
+
+                return new JsonResponse($array_answer, 200);
+            }
+
 
             // TODO : IL FAUT FAIRE LES TYPES "FOURNISSEUR" - "ADMIN"
 //            //test pour savoir si l'utilisateur est un admnistrateur
