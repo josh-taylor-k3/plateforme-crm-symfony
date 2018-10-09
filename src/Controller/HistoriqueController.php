@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Security\ApiKeyAuth;
 use App\Service\DbService;
 use App\Service\HelperService;
-use App\Service\LogHsitory;
 use Doctrine\DBAL\Driver\Connection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -18,7 +17,7 @@ class HistoriqueController extends Controller
     /**
      * @Route("/historique/{client_id}", name="historique_client")
      */
-    public function historyForClien(Connection $connection,DbService $db, Request $request, $client_id, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log)
+    public function historyForClien(Connection $connection,DbService $db, Request $request, $client_id, HelperService $helper, ApiKeyAuth $auth)
     {
 
         $key = $request->headers->get('X-ac-key');
@@ -62,7 +61,7 @@ class HistoriqueController extends Controller
     /**
      * @Route("/historique/user/{client_user_id}", name="historique_client_user")
      */
-    public function historyForClientUSer(Connection $connection,DbService $db, Request $request, $client_user_id, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log)
+    public function historyForClientUSer(Connection $connection,DbService $db, Request $request, $client_user_id, HelperService $helper, ApiKeyAuth $auth)
     {
 
         $key = $request->headers->get('X-ac-key');

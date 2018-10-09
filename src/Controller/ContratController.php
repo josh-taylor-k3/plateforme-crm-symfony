@@ -18,7 +18,7 @@ class ContratController extends Controller
     /**
      * @Route("/contrats/{client_id}", name="contrats_byUser")
      */
-    public function contactByClient(Connection $connection,DbService $db, $client_id, Request $request, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log)
+    public function contactByClient(Connection $connection,DbService $db, $client_id, Request $request, HelperService $helper, ApiKeyAuth $auth)
     {
 
         $key = $request->headers->get('X-ac-key');

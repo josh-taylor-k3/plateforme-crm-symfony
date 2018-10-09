@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use Doctrine\DBAL\Driver\Connection;
-use Doctrine\DBAL\Types\IntegerType;
 
 class DbService
 {

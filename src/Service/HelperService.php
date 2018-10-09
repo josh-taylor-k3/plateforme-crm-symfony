@@ -51,7 +51,6 @@ class HelperService
     }
 
 
-
     public function getIdFromApiKey($key)
     {
         $sql = "SELECT APP_ID FROM CENTRALE_ACHAT_v2.dbo.API_USER WHERE AU_SECRET = :key";
@@ -156,11 +155,7 @@ class HelperService
 
 
         $conn = $this->connection->prepare($sql);
-
         $conn->bindValue(':id', $so_id);
-
-
-
         $conn->execute();
         $result = $conn->fetchAll();
 

@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Security\ApiKeyAuth;
 use App\Service\DbService;
 use App\Service\HelperService;
-use App\Service\LogHsitory;
 use Doctrine\DBAL\Connection;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,7 +20,7 @@ class ProductController extends Controller
      * @Route("/produits", name="produits")
      * @Method("GET")
      */
-    public function produits(Connection $connection,DbService $db , Request $request, HelperService $helper, ApiKeyAuth $auth, LogHsitory $log)
+    public function produits(Connection $connection,DbService $db , Request $request, HelperService $helper, ApiKeyAuth $auth)
     {
         header("Access-Control-Allow-Origin: *");
 
@@ -278,7 +277,7 @@ class ProductController extends Controller
      * @Method("GET")
      *
      */
-    public function produit(Connection $connection,DbService $db, Request $request, $id, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log)
+    public function produit(Connection $connection,DbService $db, Request $request, $id, HelperService $helper, ApiKeyAuth $auth)
     {
 
 
@@ -422,7 +421,7 @@ class ProductController extends Controller
      * @Route("/produits/{id}/update", name="produit_update")
      * @Method("PUT")
      */
-    public function produitUpdate(Connection $connection, Request $request, $id,HelperService $helper, ApiKeyAuth $auth,LogHsitory $log)
+    public function produitUpdate(Connection $connection, Request $request, $id,HelperService $helper, ApiKeyAuth $auth)
     {
 
         $key = $request->headers->get('X-ac-key');
@@ -479,7 +478,6 @@ class ProductController extends Controller
 
             $id = $helper->getIdFromApiKey($key);
 
-            $log->logAction($id[0]['APP_ID'], "put:produit");
 
 
             return new JsonResponse($result, 200);
@@ -498,7 +496,7 @@ class ProductController extends Controller
      * @Route("/produit/new", name="produit_new")
      * @Method("POST")
      */
-    public function produitNew(Connection $connection, Request $request, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log)
+    public function produitNew(Connection $connection, Request $request, HelperService $helper, ApiKeyAuth $auth)
     {
 
         $key = $request->headers->get('X-ac-key');

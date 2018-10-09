@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Security\ApiKeyAuth;
 use App\Service\DbService;
 use App\Service\HelperService;
-use App\Service\LogHsitory;
 use Doctrine\DBAL\Driver\Connection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -21,7 +20,7 @@ class TicketsController extends Controller
     /**
      * @Route("/tickets", name="tickets_all")
      */
-    public function ticketsAll(Connection $connection,DbService $db, Request $request, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log)
+    public function ticketsAll(Connection $connection,DbService $db, Request $request, HelperService $helper, ApiKeyAuth $auth)
     {
 
         header("Access-Control-Allow-Origin: *");
@@ -86,7 +85,7 @@ class TicketsController extends Controller
     /**
      * @Route("/ticket/{id}", name="ticket_byId")
      */
-    public function ticketsById(Connection $connection,DbService $db, Request $request, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log, $id)
+    public function ticketsById(Connection $connection,DbService $db, Request $request, HelperService $helper, ApiKeyAuth $auth, $id)
     {
 
         header("Access-Control-Allow-Origin: *");
@@ -149,7 +148,7 @@ class TicketsController extends Controller
     /**
      * @Route("/tickets/client/{id}", name="ticket_client")
      */
-    public function TicketsByClients(Connection $connection,DbService $db, Request $request, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log, $id)
+    public function TicketsByClients(Connection $connection,DbService $db, Request $request, HelperService $helper, ApiKeyAuth $auth, $id)
     {
 
 
@@ -219,7 +218,7 @@ class TicketsController extends Controller
      * @Route("/tickets/new", name="ticket_new")
      * @Method("POST")
      */
-    public function TicketsNew(Connection $connection,DbService $db, Request $request, HelperService $helper, ApiKeyAuth $auth,LogHsitory $log)
+    public function TicketsNew(Connection $connection,DbService $db, Request $request, HelperService $helper, ApiKeyAuth $auth)
     {
 
         header("Access-Control-Allow-Origin: *");
@@ -311,7 +310,7 @@ class TicketsController extends Controller
      * @Route("/ticket/answer/{id}", name="ticket_answer")
      * @Method("POST")
      */
-    public function TicketsAnswer(Connection $connection,DbService $db, Request $request, HelperService $helper, $id, ApiKeyAuth $auth,LogHsitory $log)
+    public function TicketsAnswer(Connection $connection,DbService $db, Request $request, HelperService $helper, $id, ApiKeyAuth $auth)
     {
 
 
