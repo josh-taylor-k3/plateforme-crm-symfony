@@ -72,6 +72,11 @@ class HelperService
 
     public function getCentraleFromId($id)
     {
+
+
+
+
+
         switch ($id){
 
             case 1:

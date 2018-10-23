@@ -17,8 +17,6 @@ use Twig\Environment;
  */
 class AppTicketsController extends Controller
 {
-
-
     /**
      * @Route("/", name="base_endpoint")
      * @Method("GET")
@@ -56,10 +54,20 @@ class AppTicketsController extends Controller
             //on determine si c'est un client
             $resultClient = $loginHelper->isClient($email, $password);
 
+            // Si il s'agit d'un client on lui ajoute un token de connexion
             if (!empty($resultClient)) {
+
+                // On génere un token
                 $token = $helper->gen_uuid();
                 $database = $helper->getCentrale($resultClient["centrale"]);
                 $helper->setTokenApp($database["SO_DATABASE"], $resultClient["data"]["CC_ID"], $token);
+
+
+                $valideur = $loginHelper->isValideur($email, $database["SO_DATABASE"]);
+
+
+
+                // on envois les données pour l'application
                 $array_answer = [
                     "status" => "ok",
                     "uuid" => $database["SO_DATABASE"] . "-" . $token,
@@ -68,13 +76,12 @@ class AppTicketsController extends Controller
                         "SO_ID" => $resultClient["centrale"],
                         "CL_ID" => $resultClient["data"]["CL_ID"],
                         "CC_ID" => $resultClient["data"]["CC_ID"],
+                        "valideur" => $valideur,
                     ]
                 ];
 
                 return new JsonResponse($array_answer, 200);
             }
-
-
 
             $resultFourn = $loginHelper->isFourn($email, $password);
 
@@ -93,154 +100,6 @@ class AppTicketsController extends Controller
 
                 return new JsonResponse($array_answer, 200);
             }
-
-
-            // TODO : IL FAUT FAIRE LES TYPES "FOURNISSEUR" - "ADMIN"
-//            //test pour savoir si l'utilisateur est un admnistrateur
-//            $sqlIsAdmin = "SELECT *
-//                        FROM CENTRALE_ACHAT_V2.dbo.USERS
-//                        WHERE US_MAIL = :mail AND US_PASS = :pwd";
-//
-//            $conn = $connection->prepare($sqlIsAdmin);
-//            $conn->bindValue('mail', $email);
-//            $conn->bindValue('pwd', $password);
-//            $conn->execute();
-//            $resultAdmin = $conn->fetchAll();
-//
-//
-//            if (!empty($resultAdmin)) {
-//                dump($resultAdmin);
-//            }
-//
-//
-//            //test pour savoir si l'utilisateur est un fournisseur
-//            $sqlIsFourn = "SELECT *
-//                        FROM CENTRALE_PRODUITS.dbo.FOURN_USERS
-//                        WHERE FC_MAIL = :mail AND FC_PASS = :pwd";
-//
-//            $conn = $connection->prepare($sqlIsFourn);
-//            $conn->bindValue('mail', $email);
-//            $conn->bindValue('pwd', $password);
-//            $conn->execute();
-//            $resultFourn = $conn->fetchAll();
-//
-//
-//            if (!empty($resultFourn)) {
-//                dump($resultFourn);
-//            }
-
-
-//            //Requete pour savoir si c'est un client
-//            $sqlIsClient = "SELECT SO_ID, CL_ID
-//                        FROM CENTRALE_ACHAT_V2.dbo.Vue_All_Clients
-//                        WHERE CC_MAIL = :mail";
-//
-//            //Requete pour savoir si c'est un fournisseur
-//            $sqlIsFourn = "SELECT *
-//                          FROM CENTRALE_PRODUITS.dbo.FOURN_USERS
-//                          WHERE FC_MAIL = :mail";
-//
-//
-//            $conn = $connection->prepare($sqlIsClient);
-//            $conn->bindValue('mail', $email);
-//            $conn->execute();
-//            $resultClient = $conn->fetchAll();
-//
-//            $conn = $connection->prepare($sqlIsFourn);
-//            $conn->bindValue('mail', $email);
-//            $conn->execute();
-//            $resultFourn = $conn->fetchAll();
-//
-//
-//            switch ($email) {
-//
-//                // c'est un client
-//                case !empty($resultClient):
-//
-//                    $sqlCentrale = "SELECT SO_DATABASE FROM CENTRALE_ACHAT_V2.dbo.SOCIETES
-//                                    WHERE SO_ID = :so_id";
-//                    $conn = $connection->prepare($sqlCentrale);
-//                    $conn->bindValue('so_id', $resultClient[0]["SO_ID"]);
-//                    $conn->execute();
-//                    $resultCentrale = $conn->fetchAll();
-//
-//
-//                    $sqlClient = sprintf("SELECT * FROM %s.dbo.CLIENTS_USERS WHERE CC_MAIL = :mail", $resultCentrale[0]["SO_DATABASE"]);
-//
-//                    $conn = $connection->prepare($sqlClient);
-//                    $conn->bindValue('mail', $email);
-//                    $conn->execute();
-//                    $client = $conn->fetchAll();
-//
-//                    if (!empty($client)) {
-//                        if ($client[0]["CC_PASS"] === $password) {
-//
-//                            //ajout token user en cour
-//
-//                            $token = $helper->gen_uuid();
-//
-//                            $helper->setTokenApp($resultCentrale[0]["SO_DATABASE"], $client[0]["CC_ID"], $token);
-//
-//
-//                            $array_answer = [
-//                                "status" => "ok",
-//                                "uuid" => $resultCentrale[0]["SO_DATABASE"] . "-" . $token,
-//                                "type" => "client",
-//                                "details" => [
-//                                    "SO_ID" => $resultClient[0]["SO_ID"],
-//                                    "CL_ID" => $resultClient[0]["CL_ID"],
-//                                    "CC_ID" => $client[0]["CC_ID"],
-//                                ]
-//                            ];
-//
-//                            return new JsonResponse($array_answer, 200);
-//
-//                        } else {
-//                            $array_answer = [
-//                                "status" => "ko",
-//                            ];
-//
-//                            return new JsonResponse($array_answer, 200);
-//
-//                        }
-//                    } else {
-//                        dump("Le client n'a pas été trouvé dans la base de donnée");
-//                    }
-//
-//
-//                    break;
-//
-//                // C'est un fournisseur
-//                case !empty($resultFourn):
-//                    if ($resultFourn[0]["FC_PASS"] === $password) {
-//
-//
-//                        $array_answer = [
-//                            "status" => "ok",
-//                            "uuid" => uniqid(),
-//                            "type" => "Fournisseur",
-//                            "details" => [
-//                                "FO_ID" => $resultFourn[0]["FO_ID"],
-//                                "FC_ID" => $resultFourn[0]["FC_ID"],
-//
-//                            ]
-//                        ];
-//
-//                        return new JsonResponse($array_answer, 200);
-//
-//                    } else {
-//                        dump("mauvais mot de passe");
-//                    }
-//
-//
-//                    break;
-//
-//                case empty($resultFourn) && empty($resultClient):
-//                    $array_answer = ["status" => "ko",];
-//                    return new JsonResponse($array_answer, 404);
-//                    break;
-//            }
-
 
         } else {
             $array_answer = [

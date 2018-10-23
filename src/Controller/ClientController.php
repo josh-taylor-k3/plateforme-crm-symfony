@@ -78,7 +78,6 @@ class ClientController extends Controller
 
     }
 
-
     /**
      * @Route("/client/{id}", name="clients_by_id")
      */
@@ -159,9 +158,9 @@ class ClientController extends Controller
 
                 $centrale = $grant['centrale'];
 
-                $centrale = $helper->getCentraleFromId($grant['centrale']);
+                $so_database = $helper->getCentrale($grant['centrale']);
 
-                $sql = "SELECT * FROM ".$centrale.".dbo.CLIENTS_USERS WHERE CL_ID = :id";
+                $sql = sprintf("SELECT * FROM %s.dbo.CLIENTS_USERS WHERE CL_ID = :id", $so_database);
                 $conn = $connection->prepare($sql);
                 $conn->bindValue('id', $id);
                 $conn->execute();

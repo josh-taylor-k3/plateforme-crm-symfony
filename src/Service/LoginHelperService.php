@@ -20,22 +20,24 @@ class LoginHelperService{
     {
         $this->connection = $connection;
 
+        // requetes pour avoir toutes les bases de données
         $arrayDatabasesSQL = "SELECT SO_ID, SO_DATABASE FROM CENTRALE_ACHAT.dbo.SOCIETES";
 
         $conn = $this->connection->prepare($arrayDatabasesSQL);
         $conn->execute();
         $result = $conn->fetchAll(\PDO::FETCH_COLUMN|\PDO::FETCH_GROUP);
 
-
         $this->Databases = $result;
 
     }
 
-
     public function isClient($mail, $password){
 
 
+
+        //On cherche si il y a des occurences pour un client_user dans chaque base de données
         foreach ($this->Databases as $key => $value){
+
             $sqlIsclient = sprintf("SELECT *
                         FROM %s.dbo.CLIENTS_USERS
                         WHERE CC_MAIL = :mail AND CC_PASS = :pwd", $value[0]);
@@ -46,12 +48,13 @@ class LoginHelperService{
             $conn->execute();
             $resultClient = $conn->fetchAll();
 
+
+            // si il y a une occurence on retourne la données du client ainsi que la centrale associé
             if (!empty($resultClient)) {
                 $tpl = [
                   "data" => $resultClient[0],
                   "centrale" => $key,
                 ];
-
                 return $tpl;
             }
         }
@@ -78,5 +81,25 @@ class LoginHelperService{
 
     }
 
+
+    public function isValideur($mail, $centrale){
+
+
+        // on cherche a savoir si il y a l'adresse mail, dans la table USERS
+
+        $sqlIsValideur = sprintf("SELECT * FROM %s.dbo.USERS WHERE US_MAIL = :mail ", $centrale);
+
+        $conn = $this->connection->prepare($sqlIsValideur);
+        $conn->bindValue('mail', $mail);
+        $conn->execute();
+        $resultValideur = $conn->fetchAll();
+
+        if (!empty($resultValideur)) {
+            return true;
+        }else {
+            return false;
+
+        }
+    }
 
 }
