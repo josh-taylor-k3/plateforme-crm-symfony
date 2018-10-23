@@ -50,7 +50,6 @@ class AppTicketsController extends Controller
         if ($email !== "" || $password !== "") {
 
 
-
             //on determine si c'est un client
             $resultClient = $loginHelper->isClient($email, $password);
 
@@ -64,7 +63,6 @@ class AppTicketsController extends Controller
 
 
                 $valideur = $loginHelper->isValideur($email, $database["SO_DATABASE"]);
-
 
 
                 // on envois les données pour l'application
@@ -87,6 +85,8 @@ class AppTicketsController extends Controller
 
             if (!empty($resultFourn)) {
                 $token = $helper->gen_uuid();
+
+                $helper->setTokenApp("CENTRALE_PRODUITS", $resultFourn["FC_ID"], $token);
 
                 $array_answer = [
                     "status" => "ok",
@@ -123,7 +123,7 @@ class AppTicketsController extends Controller
      * @Route("/client/details/{token}", name="client_details")
      * @Method("GET")
      */
-    public function client_details(Request $request, Connection $connection, Environment $twig, HelperService $helper, $token)
+    public function client_details(Request $request, Connection $connection, HelperService $helper, $token)
     {
 
 
@@ -170,7 +170,7 @@ class AppTicketsController extends Controller
      * @Route("/client/message/open/{token}", name="client_message_open")
      * @Method("GET")
      */
-    public function clientMessageOpen(Request $request, Connection $connection, Environment $twig, HelperService $helper, $token)
+    public function clientMessageOpen(Request $request, Connection $connection, HelperService $helper, $token)
     {
         $data_token = $helper->extractTokenDb($token);
 
@@ -239,9 +239,9 @@ class AppTicketsController extends Controller
                 return new JsonResponse($res_final, 200);
 
 
+                //TODO: Refaire si user sans niveau
             } else if ($resultNiveau[0]["CC_NIVEAU"] == 0) {
                 // user no level
-
 
                 $sqlMessagesList = sprintf("SELECT ME_ID, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as CL, ME_SUJET, (SELECT CC_PRENOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_PRENOM, (SELECT CC_NOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_NOM, MAJ_DATE, (SELECT CL_LOGO FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as LOGO, CL_ID,  (SELECT '') as logo_url, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as raison_soc, FO_ID, (SELECT FO_LOGO FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE FOURNISSEURS.FO_ID = MESSAGE_ENTETE.FO_ID) as FC_LOGO
 
@@ -287,7 +287,6 @@ class AppTicketsController extends Controller
 
         }
     }
-
 
     /**
      * @Route("/client/message/archived/{token}", name="client_message_archived")
@@ -410,11 +409,9 @@ class AppTicketsController extends Controller
      * @Route("/client/messages/{token}/{me_id}", name="client_message_details")
      * @Method("GET")
      */
-    public function clientMessageDetails(Request $request, Connection $connection, Environment $twig, HelperService $helper, $token, $me_id)
+    public function clientMessageDetails(Request $request, Connection $connection, HelperService $helper, $token, $me_id)
     {
-
         $data_token = $helper->extractTokenDb($token);
-
 
         // si il existe un token et un SO_DATABASE
         if (!$data_token) {
@@ -432,7 +429,6 @@ class AppTicketsController extends Controller
 
 
         if ($cc_id) {
-
 
             $sqlNiveau = sprintf("SELECT ME_ID,
                                                    MD_ID,
@@ -551,4 +547,77 @@ class AppTicketsController extends Controller
 
     }
 
+    /**
+     * @Route("/fourn/message/open/{token}", name="fourn_message_open")
+     * @Method("GET")
+     */
+    public function fournMessageOpen(Request $request, Connection $connection, HelperService $helper, $token)
+    {
+
+        $data_token = $helper->extractTokenDb($token);
+
+        if (!$data_token) {
+            $array_answer = [
+                "status" => "ko",
+            ];
+            return new JsonResponse($array_answer, 404);
+        }
+
+        $fc_id = $helper->verifyTokenApp($data_token["token"], $data_token["database"]);
+
+        $sqlMessagesList = sprintf("SELECT ME_ID,
+                                           (SELECT CL_RAISONSOC FROM %s.dbo. CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as CL,
+                                           ME_SUJET,
+                                           (SELECT CC_PRENOM
+                                            FROM %s.dbo.CLIENTS_USERS
+                                            WHERE CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID
+                                              AND CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID)                                                     as CC_PRENOM,
+                                           (SELECT CC_NOM
+                                            FROM %s.dbo.CLIENTS_USERS
+                                            WHERE CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID
+                                              AND CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID)                                                     as CC_NOM,
+                                           MAJ_DATE,
+                                           CL_ID,
+                                           FO_ID,
+                                           (SELECT CL_LOGO
+                                            FROM %s.dbo.CLIENTS
+                                            WHERE MESSAGE_ENTETE.CL_ID = CL_ID)                                                                 as client_logo
+                                        FROM %s.dbo. MESSAGE_ENTETE
+                                        WHERE FC_ID = :fc_id
+                                          AND FO_ID = :fo_id
+                                          AND ME_STATUS < 2
+                                        ORDER BY MAJ_DATE DESC", $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"]);
+
+        $fo_id = $helper->getFournFromUser($fc_id);
+
+
+        $connClient = $connection->prepare($sqlMessagesList);
+        $connClient->bindValue('fo_id', $fo_id["FO_ID"]);
+        $connClient->bindValue('fc_id', $fc_id);
+        $connClient->execute();
+        $resultMessageOpen = $connClient->fetchAll();
+
+
+        $res_final = [];
+
+        foreach ($resultMessageOpen as $res) {
+            $tpl_temp = [
+                "messages_id" => $res["ME_ID"],
+                "message_topic" => $res["ME_SUJET"],
+                "fourn_firstname" => $res["CC_PRENOM"],
+                "fourn_lastname" => $res["CC_NOM"],
+                "last_time" => $res["MAJ_DATE"],
+                "raison_social" => $res["CL"],
+                "logo_url" => "http://secure.achatcentrale.fr/UploadFichiers/Uploads/CLIENT_" . $res["CL_ID"] . "/" . $res["client_logo"],
+            ];
+
+            array_push($res_final, $tpl_temp);
+        }
+
+
+        return $this->json($res_final, 200);
+
+
+
+    }
 }

@@ -101,6 +101,24 @@ class HelperService
         }
     }
 
+
+    public function getFournFromUser($fc_id){
+
+        $sql = "SELECT FO_ID FROM CENTRALE_PRODUITS.dbo.FOURN_USERS WHERE FC_ID = :fc_id";
+
+
+        $conn = $this->connection->prepare($sql);
+
+        $conn->bindValue('fc_id', $fc_id);
+
+        $conn->execute();
+        $result = $conn->fetchAll();
+
+        return $result[0];
+
+
+    }
+
     /*
      * Returns an array with the $number of specified month
      */
@@ -171,17 +189,33 @@ class HelperService
     public function setTokenApp($so_database, $cc_id, $token)
     {
 
-        $sqlInsert = sprintf("UPDATE %s.dbo.CLIENTS_USERS
+       if ($so_database == "CENTRALE_PRODUITS"){
+           $sqlUpdateToken = "UPDATE CENTRALE_PRODUITS.dbo.FOURN_USERS
+                                      SET FC_TOKEN_APP = :token, MAJ_DATE = GETDATE(), MAJ_USER = 'APP_TOKEN'
+                                      WHERE FC_ID = :fc_id";
+
+           $conn = $this->connection->prepare($sqlUpdateToken);
+           $conn->bindValue('token', $token);
+           $conn->bindValue('fc_id', $cc_id);
+           $conn->execute();
+           $result = $conn->fetchAll();
+
+           return $result;
+
+
+       }else {
+           $sqlInsert = sprintf("UPDATE %s.dbo.CLIENTS_USERS
                                       SET CC_TOKEN_APP = :token, MAJ_DATE = GETDATE(), MAJ_USER = 'APP_TOKEN'
                                       WHERE CC_ID = :cc_id", $so_database);
 
-        $conn = $this->connection->prepare($sqlInsert);
-        $conn->bindValue('token', $token);
-        $conn->bindValue('cc_id', $cc_id);
-        $conn->execute();
-        $result = $conn->fetchAll();
+           $conn = $this->connection->prepare($sqlInsert);
+           $conn->bindValue('token', $token);
+           $conn->bindValue('cc_id', $cc_id);
+           $conn->execute();
+           $result = $conn->fetchAll();
 
-        return $result;
+           return $result;
+       }
 
     }
 
@@ -213,16 +247,31 @@ class HelperService
     {
 
 
-        $sqlInsert = sprintf("SELECT CL_ID, CC_ID FROM %s.dbo.CLIENTS_USERS WHERE CC_TOKEN_APP = :token", $database);
+        $sqlTokenApp = sprintf("SELECT CL_ID, CC_ID FROM %s.dbo.CLIENTS_USERS WHERE CC_TOKEN_APP = :token", $database);
 
-        $conn = $this->connection->prepare($sqlInsert);
+        $conn = $this->connection->prepare($sqlTokenApp);
         $conn->bindValue('token', $token);
         $conn->execute();
         $result = $conn->fetchAll();
 
 
         if (empty($result)){
-            return false;
+
+
+            $sqlTokenAppFourn = "SELECT FC_ID, FO_ID FROM CENTRALE_PRODUITS.dbo.FOURN_USERS WHERE FC_TOKEN_APP = :token";
+
+            $conn = $this->connection->prepare($sqlTokenAppFourn);
+            $conn->bindValue('token', $token);
+            $conn->execute();
+            $resultFourn = $conn->fetchAll();
+
+            if (empty($resultFourn)) {
+                return false;
+            }else {
+                return $resultFourn[0]["FC_ID"];
+
+            }
+
 
         }
         return $result[0]["CC_ID"];
