@@ -172,8 +172,6 @@ class AppTicketsController extends Controller
      */
     public function clientMessageOpen(Request $request, Connection $connection, Environment $twig, HelperService $helper, $token)
     {
-
-
         $data_token = $helper->extractTokenDb($token);
 
         if (!$data_token) {
@@ -195,11 +193,10 @@ class AppTicketsController extends Controller
             $resultNiveau = $connClient->fetchAll();
 
 
-            if ($resultNiveau[0]["CC_NIVEAU"] == 0) {
-                //user no level
+            if ($resultNiveau[0]["CC_NIVEAU"] == 1) {
+                //user is admin
 
                 $sqlMessagesList = sprintf("SELECT ME_ID, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as CL, ME_SUJET, (SELECT CC_PRENOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_PRENOM, (SELECT CC_NOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_NOM, MAJ_DATE, (SELECT CL_LOGO FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as LOGO, CL_ID,  (SELECT '') as logo_url, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as raison_soc, FO_ID, (SELECT FO_LOGO FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE MESSAGE_ENTETE.FO_ID = FO_ID) as fourn_logo
-
                                                     FROM %s.dbo.MESSAGE_ENTETE
                                                     WHERE CL_ID = :cl_id
                                                     AND CC_ID = :cc_id
@@ -235,8 +232,8 @@ class AppTicketsController extends Controller
                 return new JsonResponse($res_final, 200);
 
 
-            } else if ($resultNiveau[0]["CC_NIVEAU"] == 1) {
-                // user is admin
+            } else if ($resultNiveau[0]["CC_NIVEAU"] == 0) {
+                // user no level
 
 
                 $sqlMessagesList = sprintf("SELECT ME_ID, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as CL, ME_SUJET, (SELECT CC_PRENOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_PRENOM, (SELECT CC_NOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CL_ID = MESSAGE_ENTETE.CL_ID AND CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as CC_NOM, MAJ_DATE, (SELECT CL_LOGO FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as LOGO, CL_ID,  (SELECT '') as logo_url, (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as raison_soc, FO_ID, (SELECT FO_LOGO FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE FOURNISSEURS.FO_ID = MESSAGE_ENTETE.FO_ID) as FC_LOGO
