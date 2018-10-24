@@ -283,15 +283,12 @@ class HelperService
 
         $tiretPosition = strpos($token, "-");
 
-
         $centrale = substr($token, 0, $tiretPosition);
         $token_propre = substr($token, $tiretPosition+1, strlen($token));
-
 
         if (!isset($centrale)){
             return false;
         }
-
 
         $tpl = [
             "database" => $centrale,

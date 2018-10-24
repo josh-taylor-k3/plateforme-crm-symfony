@@ -588,8 +588,8 @@ class AppTicketsController extends Controller
                                           AND ME_STATUS < 2
                                         ORDER BY MAJ_DATE DESC", $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"]);
 
-        $fo_id = $helper->getFournFromUser($fc_id);
 
+        $fo_id = $helper->getFournFromUser($fc_id);
 
         $connClient = $connection->prepare($sqlMessagesList);
         $connClient->bindValue('fo_id', $fo_id["FO_ID"]);
@@ -607,7 +607,7 @@ class AppTicketsController extends Controller
                 "fourn_firstname" => $res["CC_PRENOM"],
                 "fourn_lastname" => $res["CC_NOM"],
                 "last_time" => $res["MAJ_DATE"],
-                "raison_social" => $res["CL"],
+                "raison_social" => $helper->array_utf8_encode($res["CL"]),
                 "logo_url" => "http://secure.achatcentrale.fr/UploadFichiers/Uploads/CLIENT_" . $res["CL_ID"] . "/" . $res["client_logo"],
             ];
 
