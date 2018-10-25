@@ -166,6 +166,55 @@ class AppTicketsController extends Controller
         }
     }
 
+
+    /**
+     * @Route("/fourn/details/{token}", name="fourn_details")
+     * @Method("GET")
+     */
+    public function fourn_details(Request $request, Connection $connection, HelperService $helper, $token){
+
+        $data_token = $helper->extractTokenDb($token);
+
+        if (!$data_token) {
+            $array_answer = [
+                "status" => "ko",
+            ];
+            return new JsonResponse($array_answer, 404);
+        }
+
+        $fc_id = $helper->verifyTokenApp($data_token["token"], $data_token["database"]);
+
+        if ($fc_id) {
+            $sqlDetail = "SELECT * FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS
+                                            INNER JOIN CENTRALE_PRODUITS.dbo.FOURN_USERS on FOURNISSEURS.FO_ID = FOURN_USERS.FO_ID
+                                            WHERE FC_ID = :fc_id";
+
+            $connFourn = $connection->prepare($sqlDetail);
+            $connFourn->bindValue('fc_id', $fc_id);
+            $connFourn->execute();
+            $resultClient = $connFourn->fetchAll();
+
+
+            $tpl_result = [
+                "data" => $helper->array_utf8_encode($resultClient[0]),
+                "logo" => "http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $resultClient[0]["FO_ID"] . "/" . $resultClient[0]["FO_LOGO"],
+            ];
+
+
+            return new JsonResponse($tpl_result, 200);
+        } else {
+            $array_answer = [
+                "status" => "ko",
+            ];
+
+            return new JsonResponse($array_answer, 404);
+
+        }
+
+
+    }
+
+
     /**
      * @Route("/client/message/open/{token}", name="client_message_open")
      * @Method("GET")
