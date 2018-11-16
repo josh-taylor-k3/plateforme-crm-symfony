@@ -473,6 +473,8 @@ class AppTicketsController extends Controller
 
         // PARTIE CLIENT
 
+
+
         //on verifie le token et on extrait le user
         $cc_id = $helper->verifyTokenApp($data_token["token"], $data_token["database"]);
 
@@ -571,7 +573,7 @@ class AppTicketsController extends Controller
                     "ID" => $res["MD_ID"],
                     "thread_id" => $res["ME_ID"],
                     "corps" => $res["MD_CORPS"],
-                    "type" => $typeMessage,
+                    "isIncoming" => $typeMessage,
                     "logo" => $logo,
                     "date" => $res["INS_DATE"],
                     "client" => $res["client"],

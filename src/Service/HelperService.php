@@ -281,6 +281,7 @@ class HelperService
 
     public function extractTokenDb($token){
 
+
         $tiretPosition = strpos($token, "-");
 
         $centrale = substr($token, 0, $tiretPosition);
@@ -292,7 +293,7 @@ class HelperService
 
         $tpl = [
             "database" => $centrale,
-            "token" =>$token_propre
+            "token" => $token_propre
         ];
 
 
@@ -325,11 +326,9 @@ class HelperService
 
 
         if ($client !== null && $fournisseur == null){
-
-            return "client";
+            return false;
         }else if ($fournisseur !== null && $client == null){
-
-            return "fournisseur";
+            return true;
         }
 
     }
