@@ -484,8 +484,8 @@ class AppTicketsController extends Controller
             $sqlNiveau = sprintf("SELECT ME_ID,
                                                    MD_ID,
                                                    CAST(MD_CORPS AS TEXT) AS MD_CORPS,
-                                                   (SELECT CC_PRENOM + ' ' + CC_NOM FROM CENTRALE_ACHAT_v2.dbo.CLIENTS_USERS WHERE CC_ID = MESSAGE_DETAIL.CC_ID) as fourn,
-                                                   (SELECT FC_NOM + ' ' + FC_PRENOM FROM CENTRALE_PRODUITS.dbo.FOURN_USERS WHERE FC_ID = MESSAGE_DETAIL.FC_ID) as client,
+                                                   (SELECT CC_PRENOM + ' ' + CC_NOM FROM CENTRALE_ACHAT_v2.dbo.CLIENTS_USERS WHERE CC_ID = MESSAGE_DETAIL.CC_ID) as client,
+                                                   (SELECT FC_NOM + ' ' + FC_PRENOM FROM CENTRALE_PRODUITS.dbo.FOURN_USERS WHERE FC_ID = MESSAGE_DETAIL.FC_ID) as fourn,
                                                    INS_DATE,
                                                    (SELECT CL_ID
                                                     FROM %s.dbo.CLIENTS
@@ -530,24 +530,6 @@ class AppTicketsController extends Controller
             $connClient->bindValue('me_id', $me_id);
             $connClient->execute();
             $resultMessageDetails = $connClient->fetchAll();
-
-
-            $sqlInfoThread = sprintf("SELECT
-                                                   (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as Client,
-                                                   (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE FOURNISSEURS.FO_ID = MESSAGE_ENTETE.FO_ID) as Fournisseur,
-                                                   (SELECT FC_NOM + ' ' + FC_PRENOM FROM CENTRALE_PRODUITS.dbo.FOURN_USERS WHERE FOURN_USERS.FC_ID = MESSAGE_ENTETE.FC_ID) as Fournisseur_user,
-                                                   (SELECT CC_NOM + ' ' + CC_PRENOM FROM %s.dbo.CLIENTS_USERS WHERE CLIENTS_USERS.CC_ID = MESSAGE_ENTETE.CC_ID) as Client_user,
-                                                   (SELECT CL_LOGO  FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as Client_logo,
-                                                   (SELECT FO_LOGO  FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE FOURNISSEURS.FO_ID = MESSAGE_ENTETE.FO_ID) as Fournisseur_logo,
-                                                   FO_ID,
-                                                   CL_ID
-                                            FROM %s.dbo.MESSAGE_ENTETE
-                                            WHERE ME_ID = :me_id", $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"]);
-
-            $connClient = $connection->prepare($sqlInfoThread);
-            $connClient->bindValue('me_id', $me_id);
-            $connClient->execute();
-            $resultInfoThread = $connClient->fetchAll();
 
 
             $res_final = [];
