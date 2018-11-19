@@ -550,9 +550,7 @@ class AppTicketsController extends Controller
             $resultInfoThread = $connClient->fetchAll();
 
 
-            $res_final = [
-                "data" => []
-            ];
+            $res_final = [];
 
             foreach ($resultMessageDetails as $res) {
 
@@ -571,7 +569,7 @@ class AppTicketsController extends Controller
                     "fournisseur" => $res["fourn"],
                 ];
 
-                array_push($res_final["data"], $tpl_temp);
+                array_push($res_final, $tpl_temp);
             }
 
 
