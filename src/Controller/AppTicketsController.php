@@ -551,15 +551,6 @@ class AppTicketsController extends Controller
 
 
             $res_final = [
-                "info" => [
-                    "destinataire" => $resultInfoThread[0]["Fournisseur"],
-                    "destinataire_user" => $resultInfoThread[0]["Fournisseur_user"],
-                    "Fournisseur_logo" => "http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $resultInfoThread[0]["FO_ID"] . "/" . $resultInfoThread[0]["Fournisseur_logo"],
-                    "Client_logo" => "http://v2.achatcentrale.fr/UploadFichiers/Uploads/CLIENT_" . $resultInfoThread[0]["FO_ID"] . "/" . $resultInfoThread[0]["Fournisseur_logo"],
-                    "Client" => $resultInfoThread[0]["Client"],
-                    "Client_user" => $resultInfoThread[0]["Client_user"],
-
-                ],
                 "data" => []
             ];
 
