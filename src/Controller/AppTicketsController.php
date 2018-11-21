@@ -277,7 +277,7 @@ class AppTicketsController extends Controller
                         "fourn_firstname" => $helper->array_utf8_encode($res["FC_PRENOM"]),
                         "fourn_lastname" => $helper->array_utf8_encode($res["FC_NOM"]),
                         "last_time" => $res["MAJ_DATE"],
-                        "raison_social" => $res["raison_soc"],
+                        "raison_social" => $helper->array_utf8_encode($res["raison_soc"]),
                         "logo_url" => "http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $res["FO_ID"] . "/" . $res["fourn_logo"],
                     ];
 
