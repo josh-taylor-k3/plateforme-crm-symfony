@@ -59,7 +59,7 @@ class AppTicketsController extends Controller
                 // On génere un token
                 $token = $helper->gen_uuid();
                 $database = $helper->getCentrale($resultClient["centrale"]);
-                $helper->setTokenApp($database["SO_DATABASE"], $resultClient["data"]["CC_ID"], $token);
+                $helper->setTokenApp("CENTRALE_ACHAT_V2", $resultClient["data"]["CC_ID"], $token);
 
 
                 $valideur = $loginHelper->isValideur($email, $database["SO_DATABASE"]);
