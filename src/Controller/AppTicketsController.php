@@ -274,8 +274,8 @@ class AppTicketsController extends Controller
                     $tpl_temp = [
                         "messages_id" => $res["ME_ID"],
                         "message_topic" => $res["ME_SUJET"],
-                        "fourn_firstname" => $res["FC_PRENOM"],
-                        "fourn_lastname" => $res["FC_NOM"],
+                        "fourn_firstname" => $helper->array_utf8_encode($res["FC_PRENOM"]),
+                        "fourn_lastname" => $helper->array_utf8_encode($res["FC_NOM"]),
                         "last_time" => $res["MAJ_DATE"],
                         "raison_social" => $res["raison_soc"],
                         "logo_url" => "http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $res["FO_ID"] . "/" . $res["fourn_logo"],
