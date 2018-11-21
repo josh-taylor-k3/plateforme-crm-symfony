@@ -68,7 +68,7 @@ class AppTicketsController extends Controller
                 // on envois les données pour l'application
                 $array_answer = [
                     "status" => "ok",
-                    "uuid" => $database["SO_DATABASE"] . "-" . $token,
+                    "uuid" => "CENTRALE_ACHAT_V2-" . $token,
                     "type" => "client",
                     "details" => [
                         "SO_ID" => $resultClient["centrale"],
