@@ -566,6 +566,45 @@ class AppTicketsController extends Controller
 
     }
 
+
+    /**
+     * @Route("/client/info/{token}/{me_id}", name="client_message_info")
+     * @Method("GET")
+     */
+    public function senderMessageDetails(Request $request, Connection $connection, HelperService $helper, $token, $me_id)
+    {
+        $data_token = $helper->extractTokenDb($token);
+
+        // si il existe un token et un SO_DATABASE
+        if (!$data_token) {
+            $array_answer = [
+                "status" => "ko",
+            ];
+            return new JsonResponse($array_answer, 404);
+        }
+
+
+
+        $sql = "SELECT FO_RAISONSOC, FOURNISSEURS.FO_LOGO, FOURNISSEURS.FO_ID  FROM CENTRALE_ACHAT_v2.dbo.MESSAGE_ENTETE LEFT OUTER JOIN CENTRALE_PRODUITS.dbo.FOURNISSEURS ON MESSAGE_ENTETE.FO_ID = FOURNISSEURS.FO_ID  WHERE MESSAGE_ENTETE.ME_ID = :id";
+
+        $connClient = $connection->prepare($sql);
+        $connClient->bindValue('id', $me_id);
+        $connClient->execute();
+        $resultMessageInfo = $connClient->fetchAll();
+
+
+
+        $array_final = [
+            "raisonsoc" => $resultMessageInfo[0]["FO_RAISONSOC"],
+            "logo" => "http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . urlencode($resultMessageInfo[0]["FO_ID"]) . '/' . urlencode($resultMessageInfo[0]["FO_LOGO"]),
+        ];
+
+        return $this->json($array_final, 200);
+
+    }
+
+
+
     /**
      * @Route("/fourn/message/open/{token}", name="fourn_message_open")
      * @Method("GET")
