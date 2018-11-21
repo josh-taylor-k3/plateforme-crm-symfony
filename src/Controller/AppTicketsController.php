@@ -521,7 +521,7 @@ class AppTicketsController extends Controller
                                                                    WHERE CLIENTS_USERS.CC_ID = %s.dbo.MESSAGE_DETAIL.CC_ID)) AS logo_client
                                             FROM %s.dbo.MESSAGE_DETAIL
                                             WHERE ME_ID = :me_id
-                                            order by MD_DATE DESC", $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"]);
+                                            order by MD_DATE ASC", $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"], $data_token["database"]);
 
             $connClient = $connection->prepare($sqlNiveau);
             $connClient->bindValue('me_id', $me_id);
