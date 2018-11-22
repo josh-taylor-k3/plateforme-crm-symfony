@@ -50,7 +50,6 @@ class HelperService
         return $token;
     }
 
-
     public function getIdFromApiKey($key)
     {
         $sql = "SELECT APP_ID FROM CENTRALE_ACHAT_v2.dbo.API_USER WHERE AU_SECRET = :key";
@@ -68,7 +67,6 @@ class HelperService
         return $result[0];
 
     }
-
 
     public function getCentraleFromId($id)
     {
@@ -100,7 +98,6 @@ class HelperService
 
         }
     }
-
 
     public function getFournFromUser($fc_id){
 
@@ -245,8 +242,6 @@ class HelperService
 
     public function verifyTokenApp($token, $database)
     {
-
-
         $sqlTokenApp = sprintf("SELECT CL_ID, CC_ID FROM %s.dbo.CLIENTS_USERS WHERE CC_TOKEN_APP = :token", $database);
 
         $conn = $this->connection->prepare($sqlTokenApp);
@@ -256,8 +251,6 @@ class HelperService
 
 
         if (empty($result)){
-
-
             $sqlTokenAppFourn = "SELECT FC_ID, FO_ID FROM CENTRALE_PRODUITS.dbo.FOURN_USERS WHERE FC_TOKEN_APP = :token";
 
             $conn = $this->connection->prepare($sqlTokenAppFourn);
@@ -269,14 +262,9 @@ class HelperService
                 return false;
             }else {
                 return $resultFourn[0]["FC_ID"];
-
             }
-
-
         }
         return $result[0]["CC_ID"];
-
-
     }
 
     public function extractTokenDb($token){
@@ -333,5 +321,16 @@ class HelperService
 
     }
 
+    public function getMailFromCCID($client_id)
+    {
+        $sqlInsert = "SELECT CC_MAIL FROM CENTRALE_ACHAT_v2.dbo.CLIENTS_USERS WHERE CC_ID = :id";
 
+        $conn = $this->connection->prepare($sqlInsert);
+        $conn->bindValue('id', $client_id);
+        $conn->execute();
+        $result = $conn->fetchAll();
+
+        return $result[0];
+
+    }
 }

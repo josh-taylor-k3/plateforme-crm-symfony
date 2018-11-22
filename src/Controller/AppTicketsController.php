@@ -678,4 +678,76 @@ class AppTicketsController extends Controller
 
 
     }
+
+
+    /**
+     * @Route("/client/message/new", name="client_message_new")
+     * @Method("POST")
+     */
+    public function newClientMessage(Request $request, Connection $connection, HelperService $helper)
+    {
+
+        $contentParam = $request->getContent();
+
+        $requestFromJson = json_decode($contentParam);
+
+        $thread_id = $requestFromJson->thread_id;
+        $token  = $requestFromJson->token;
+        $corps  = $requestFromJson->corps;
+
+        $data_token = $helper->extractTokenDb($token);
+
+        $cc_id = $helper->verifyTokenApp($data_token["token"], $data_token["database"]);
+
+        $cc_mail = $helper->getMailFromCCID($cc_id);
+
+        if (!$data_token) {
+            $array_answer = [
+                "status" => "ko",
+            ];
+            return new JsonResponse($array_answer, 404);
+        }
+
+        if (!$cc_id) {
+            $array_answer = [
+                "status" => "ko",
+            ];
+            return new JsonResponse($array_answer, 404);
+        }
+
+        if (!$corps) {
+            $array_answer = [
+                "status" => "ko",
+            ];
+            return new JsonResponse($array_answer, 404);
+        }
+
+        if (!$token) {
+            $array_answer = [
+                "status" => "ko",
+            ];
+            return new JsonResponse($array_answer, 404);
+        }
+
+        if (!$thread_id) {
+            $array_answer = [
+                "status" => "ko",
+            ];
+            return new JsonResponse($array_answer, 404);
+        }
+
+
+        $sql = "INSERT INTO CENTRALE_ACHAT_v2.dbo.MESSAGE_DETAIL (ME_ID,CC_ID, US_ID, MD_DATE, MD_CORPS, INS_DATE, INS_USER) VALUES ( :thread_id, :cc_id, 0, GETDATE(), :corps, GETDATE(), :cc_mail)";
+
+        $connClient = $connection->prepare($sql);
+        $connClient->bindValue('thread_id', $thread_id);
+        $connClient->bindValue('cc_id', $cc_id);
+        $connClient->bindValue('corps', $corps);
+        $connClient->bindValue('cc_mail', $cc_mail["CC_MAIL"]);
+        $connClient->execute();
+        $result = $connClient->fetchAll();
+        return $this->json($result, 200);
+    }
+
+
 }
