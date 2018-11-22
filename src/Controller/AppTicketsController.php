@@ -746,7 +746,13 @@ class AppTicketsController extends Controller
         $connClient->bindValue('cc_mail', $cc_mail["CC_MAIL"]);
         $connClient->execute();
         $result = $connClient->fetchAll();
-        return $this->json($result, 200);
+
+
+        $result_tpl =[
+            "status" => "ok"
+        ];
+
+        return $this->json($result_tpl, 200);
     }
 
 
