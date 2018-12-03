@@ -260,7 +260,7 @@ class AppTicketsController extends Controller
                 WHERE CL_ID = :cl_id
                   AND CC_ID = :cc_id
                   AND ME_STATUS < 2
-                ORDER BY MAJ_DATE DESC",
+                ORDER BY ME_LU_C ASC, ME_DATE DESC",
                     $data_token["database"], $data_token["database"]);
 
                 $connClient = $connection->prepare($sqlMessagesList);
