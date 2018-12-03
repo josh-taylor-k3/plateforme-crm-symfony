@@ -171,7 +171,8 @@ class AppTicketsController extends Controller
      * @Route("/fourn/details/{token}", name="fourn_details")
      * @Method("GET")
      */
-    public function fourn_details(Request $request, Connection $connection, HelperService $helper, $token){
+    public function fourn_details(Request $request, Connection $connection, HelperService $helper, $token)
+    {
 
         $data_token = $helper->extractTokenDb($token);
 
@@ -253,13 +254,14 @@ class AppTicketsController extends Controller
                        MAJ_DATE,
                        CL_ID,
                        (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE FOURNISSEURS.FO_ID = MESSAGE_ENTETE.FO_ID) as raison_soc,
-                       FO_ID, (SELECT FO_LOGO FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE MESSAGE_ENTETE.FO_ID = FO_ID) as fourn_logo
+                       FO_ID, (SELECT FO_LOGO FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE MESSAGE_ENTETE.FO_ID = FO_ID) as fourn_logo,
+                      ME_LU_C
                 FROM %s.dbo.MESSAGE_ENTETE
                 WHERE CL_ID = :cl_id
                   AND CC_ID = :cc_id
                   AND ME_STATUS < 2
                 ORDER BY MAJ_DATE DESC",
-                    $data_token["database"], $data_token["database"], $data_token["database"]);
+                    $data_token["database"], $data_token["database"]);
 
                 $connClient = $connection->prepare($sqlMessagesList);
                 $connClient->bindValue('cl_id', $resultNiveau[0]["CL_ID"]);
@@ -271,6 +273,7 @@ class AppTicketsController extends Controller
                 $res_final = [];
 
                 foreach ($resultNiveau as $res) {
+
                     $tpl_temp = [
                         "messages_id" => $res["ME_ID"],
                         "message_topic" => $res["ME_SUJET"],
@@ -279,6 +282,7 @@ class AppTicketsController extends Controller
                         "last_time" => $res["MAJ_DATE"],
                         "raison_social" => $helper->array_utf8_encode($res["raison_soc"]),
                         "logo_url" => "http://secure.achatcentrale.fr/UploadFichiers/Uploads/FOURN_" . $res["FO_ID"] . "/" . $res["fourn_logo"],
+                        "Unread" => $res["ME_LU_C"] === 1 ? false : true,
                     ];
 
                     array_push($res_final, $tpl_temp);
@@ -584,14 +588,12 @@ class AppTicketsController extends Controller
         }
 
 
-
         $sql = "SELECT FO_RAISONSOC, FOURNISSEURS.FO_LOGO, FOURNISSEURS.FO_ID  FROM CENTRALE_ACHAT_v2.dbo.MESSAGE_ENTETE LEFT OUTER JOIN CENTRALE_PRODUITS.dbo.FOURNISSEURS ON MESSAGE_ENTETE.FO_ID = FOURNISSEURS.FO_ID  WHERE MESSAGE_ENTETE.ME_ID = :id";
 
         $connClient = $connection->prepare($sql);
         $connClient->bindValue('id', $me_id);
         $connClient->execute();
         $resultMessageInfo = $connClient->fetchAll();
-
 
 
         $array_final = [
@@ -602,7 +604,6 @@ class AppTicketsController extends Controller
         return $this->json($array_final, 200);
 
     }
-
 
 
     /**
@@ -676,7 +677,6 @@ class AppTicketsController extends Controller
         return $this->json($res_final, 200);
 
 
-
     }
 
 
@@ -692,8 +692,8 @@ class AppTicketsController extends Controller
         $requestFromJson = json_decode($contentParam);
 
         $thread_id = $requestFromJson->thread_id;
-        $token  = $requestFromJson->token;
-        $corps  = $requestFromJson->corps;
+        $token = $requestFromJson->token;
+        $corps = $requestFromJson->corps;
 
         $data_token = $helper->extractTokenDb($token);
 
@@ -748,12 +748,23 @@ class AppTicketsController extends Controller
         $result = $connClient->fetchAll();
 
 
-        $result_tpl =[
+        $result_tpl = [
             "status" => "ok"
         ];
 
         return $this->json($result_tpl, 200);
     }
 
+
+    /**
+     * @Route("/client/thread/unread/{thread_id}/{token}")
+     * @Method("GET")
+     */
+    public function showUnreadClientThread(Request $request, Connection $connection, HelperService $helper, $thread_id, $token)
+    {
+
+
+        return $this->json("ook", 200);
+    }
 
 }
