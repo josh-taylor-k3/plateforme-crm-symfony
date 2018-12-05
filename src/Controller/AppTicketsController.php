@@ -247,15 +247,16 @@ class AppTicketsController extends Controller
                 //user is admin
 
                 $sqlMessagesList = sprintf("SELECT ME_ID,
-                       (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as CL,
-                       ME_SUJET,
-                       (SELECT FC_PRENOM FROM CENTRALE_PRODUITS.dbo.FOURN_USERS WHERE FOURN_USERS.FC_ID = MESSAGE_ENTETE.FC_ID AND FOURN_USERS.FO_ID = MESSAGE_ENTETE.FO_ID) as FC_PRENOM,
-                       (SELECT FC_NOM FROM CENTRALE_PRODUITS.dbo.FOURN_USERS WHERE FOURN_USERS.FC_ID = MESSAGE_ENTETE.FC_ID AND FOURN_USERS.FO_ID = MESSAGE_ENTETE.FO_ID) as FC_NOM,
-                       MAJ_DATE,
-                       CL_ID,
-                       (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE FOURNISSEURS.FO_ID = MESSAGE_ENTETE.FO_ID) as raison_soc,
-                       FO_ID, (SELECT FO_LOGO FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE MESSAGE_ENTETE.FO_ID = FO_ID) as fourn_logo,
-                      ME_LU_C
+                        (SELECT CL_RAISONSOC FROM %s.dbo.CLIENTS WHERE CLIENTS.CL_ID = MESSAGE_ENTETE.CL_ID) as CL,
+                        ME_SUJET,
+                        (SELECT FC_PRENOM FROM CENTRALE_PRODUITS.dbo.FOURN_USERS WHERE FOURN_USERS.FC_ID = MESSAGE_ENTETE.FC_ID AND FOURN_USERS.FO_ID = MESSAGE_ENTETE.FO_ID) as FC_PRENOM,
+                        (SELECT FC_NOM FROM CENTRALE_PRODUITS.dbo.FOURN_USERS WHERE FOURN_USERS.FC_ID = MESSAGE_ENTETE.FC_ID AND FOURN_USERS.FO_ID = MESSAGE_ENTETE.FO_ID) as FC_NOM,
+                        MAJ_DATE,
+                        CL_ID,
+                        (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE FOURNISSEURS.FO_ID = MESSAGE_ENTETE.FO_ID) as raison_soc,
+                        FO_ID,
+                        (SELECT FO_LOGO FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE MESSAGE_ENTETE.FO_ID = FO_ID) as fourn_logo,
+                        ME_LU_C
                 FROM %s.dbo.MESSAGE_ENTETE
                 WHERE CL_ID = :cl_id
                   AND CC_ID = :cc_id
@@ -270,6 +271,7 @@ class AppTicketsController extends Controller
                 $resultNiveau = $connClient->fetchAll();
 
                 $res_final = [];
+
 
                 foreach ($resultNiveau as $res) {
 
