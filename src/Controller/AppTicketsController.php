@@ -269,7 +269,6 @@ class AppTicketsController extends Controller
                 $connClient->execute();
                 $resultNiveau = $connClient->fetchAll();
 
-
                 $res_final = [];
 
                 foreach ($resultNiveau as $res) {
@@ -757,14 +756,72 @@ class AppTicketsController extends Controller
 
 
     /**
-     * @Route("/client/thread/unread/{thread_id}/{token}")
+     * @Route("/client/contact/{token}")
      * @Method("GET")
      */
-    public function showUnreadClientThread(Request $request, Connection $connection, HelperService $helper, $thread_id, $token)
+    public function contactClient(Request $request, Connection $connection, HelperService $helper, $token)
     {
 
+        $data_token = $helper->extractTokenDb($token);
 
-        return $this->json("ook", 200);
+        if (!$data_token) {
+            $array_answer = [
+                "status" => "ko",
+            ];
+            return new JsonResponse($array_answer, 404);
+        }
+
+        $cc_id = $helper->verifyTokenApp($data_token["token"], $data_token["database"]);
+
+
+        $sqlRegions = "SELECT
+                      CL_ID,
+                      (SELECT RE_ID FROM CENTRALE_ACHAT_v2.dbo.CLIENTS WHERE CENTRALE_ACHAT_v2.dbo.CLIENTS_USERS.CL_ID = CENTRALE_ACHAT_v2.dbo.CLIENTS.CL_ID) as re_id
+                FROM
+                      CENTRALE_ACHAT_v2.dbo.CLIENTS_USERS
+                WHERE
+                      CC_ID = :id";
+
+        $connClient = $connection->prepare($sqlRegions);
+        $connClient->bindValue('id', $cc_id);
+        $connClient->execute();
+        $result = $connClient->fetchAll();
+
+
+
+        $sqlFourn = "SELECT
+                        CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID,
+                        CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_RAISONSOC
+                    FROM
+                         CENTRALE_ACHAT_v2.dbo.REGIONS_FOURNISSEURS
+                    INNER JOIN
+                           CENTRALE_PRODUITS.dbo.FOURNISSEURS on CENTRALE_ACHAT_v2.dbo.REGIONS_FOURNISSEURS.FO_ID = CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID
+                    WHERE
+                          RE_ID = :re_id
+                    ORDER BY FO_RAISONSOC";
+
+        $connClient = $connection->prepare($sqlFourn);
+        $connClient->bindValue('re_id', $result[0]["re_id"]);
+        $connClient->execute();
+        $resultListFourn = $connClient->fetchAll();
+
+        $arraySort = [];
+
+
+        $previous = null;
+        foreach($resultListFourn as $value) {
+            $firstLetter = substr($value["FO_RAISONSOC"], 0, 1);
+            if($previous !== $firstLetter) {
+                $previous = $firstLetter;
+                $arraySort[$firstLetter] = [];
+            }
+
+            array_push($arraySort[$firstLetter], $value);
+        }
+
+
+
+        return $this->json($arraySort, 200);
     }
 
 }
