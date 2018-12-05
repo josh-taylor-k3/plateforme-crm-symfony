@@ -816,7 +816,7 @@ class AppTicketsController extends Controller
                 $arraySort[$firstLetter] = [];
             }
 
-            array_push($arraySort[$firstLetter], $value);
+            array_push($arraySort[$firstLetter], $helper->array_utf8_encode($value));
         }
 
 
