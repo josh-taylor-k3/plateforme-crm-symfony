@@ -823,7 +823,7 @@ class AppTicketsController extends Controller
 
 
 
-        return $this->json($resultListFourn, 200);
+        return $this->json($helper->array_utf8_encode($resultListFourn), 200);
     }
 
 }
