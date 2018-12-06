@@ -806,20 +806,15 @@ class AppTicketsController extends Controller
         $connClient->bindValue('re_id', $result[0]["re_id"]);
         $connClient->execute();
         $resultListFourn = $connClient->fetchAll();
-//
-//        $arraySort = [];
-//
-//
-//        $previous = null;
-//        foreach($resultListFourn as $value) {
-//            $firstLetter = substr($value["FO_RAISONSOC"], 0, 1);
-//            if($previous !== $firstLetter) {
-//                $previous = $firstLetter;
-//                $arraySort[$firstLetter] = [];
-//            }
-//
-//            array_push($arraySort[$firstLetter], $helper->array_utf8_encode($value));
-//        }
+
+        $arraySort = [];
+
+
+        foreach($resultListFourn as $value) {
+
+
+            array_push($arraySort, $helper->array_utf8_encode($value));
+        }
 
 
 
