@@ -758,7 +758,7 @@ class AppTicketsController extends Controller
 
 
     /**
-     * @Route("/client/contact/{token}")
+     * @Route("/client/contact/{token}", name="contact_client")
      * @Method("GET")
      */
     public function contactClient(Request $request, Connection $connection, HelperService $helper, $token)
@@ -775,7 +775,6 @@ class AppTicketsController extends Controller
 
         $cc_id = $helper->verifyTokenApp($data_token["token"], $data_token["database"]);
 
-
         $sqlRegions = "SELECT
                       CL_ID,
                       (SELECT RE_ID FROM CENTRALE_ACHAT_v2.dbo.CLIENTS WHERE CENTRALE_ACHAT_v2.dbo.CLIENTS_USERS.CL_ID = CENTRALE_ACHAT_v2.dbo.CLIENTS.CL_ID) as re_id
@@ -788,8 +787,6 @@ class AppTicketsController extends Controller
         $connClient->bindValue('id', $cc_id);
         $connClient->execute();
         $result = $connClient->fetchAll();
-
-
 
         $sqlFourn = "SELECT
                         CENTRALE_PRODUITS.dbo.FOURNISSEURS.FO_ID,
@@ -807,18 +804,34 @@ class AppTicketsController extends Controller
         $connClient->execute();
         $resultListFourn = $connClient->fetchAll();
 
-        $arraySort = [];
+        $arrayFinal = [
+            "Fournisseurs" => [],
+            "Sections" => [],
+        ];
 
+        $arraySort = [];
+        $arrayLetter = [];
+        $previous = null;
 
         foreach($resultListFourn as $value) {
+            $firstLetter = substr($value["FO_RAISONSOC"], 0, 1);
+            if($previous !== $firstLetter) {
 
+                array_push($arrayLetter, $firstLetter);
 
-            array_push($arraySort, $helper->array_utf8_encode($value));
+                $previous = $firstLetter;
+                $arraySort[$firstLetter] = [];
+            }
+            array_push($arraySort[$firstLetter], $helper->array_utf8_encode($value));
         }
 
+        foreach ($arraySort as $ar){
+            array_push($arrayFinal["Fournisseurs"], $ar);
+        }
 
+        array_push($arrayFinal["Sections"], $arrayLetter);
 
-        return $this->json($helper->array_utf8_encode($resultListFourn), 200);
+        return $this->json($arrayFinal, 200);
     }
 
 }
