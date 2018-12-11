@@ -56,6 +56,9 @@
     "doctrine/orm": {
         "version": "v2.6.0"
     },
+    "dompdf/dompdf": {
+        "version": "v0.8.2"
+    },
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
     },
@@ -71,6 +74,15 @@
     "ocramius/proxy-manager": {
         "version": "2.1.1"
     },
+    "pdfcrowd/pdfcrowd": {
+        "version": "4.4.1"
+    },
+    "phenx/php-font-lib": {
+        "version": "0.5.1"
+    },
+    "phenx/php-svg-lib": {
+        "version": "v0.3.2"
+    },
     "psr/cache": {
         "version": "1.0.1"
     },
@@ -82,6 +94,9 @@
     },
     "psr/simple-cache": {
         "version": "1.0.0"
+    },
+    "sabberworm/php-css-parser": {
+        "version": "8.1.0"
     },
     "sensio/framework-extra-bundle": {
         "version": "4.0",

@@ -834,4 +834,37 @@ class AppTicketsController extends Controller
         return $this->json($arrayFinal, 200);
     }
 
+    /**
+     * @Route("/client/message/seen/{me_id}/{token}", name="client_message_seen")
+     * @Method("GET")
+     */
+    public function didMessageSeenClient(Request $request, Connection $connection, HelperService $helper, $me_id, $token)
+    {
+
+        $data_token = $helper->extractTokenDb($token);
+
+        // si il existe un token et un SO_DATABASE
+        if (!$data_token) {
+            $array_answer = [
+                "status" => "ko",
+            ];
+            return new JsonResponse($array_answer, 404);
+        }
+
+
+        $cc_id = $helper->verifyTokenApp($data_token["token"], $data_token["database"]);
+
+
+        $sql = "UPDATE CENTRALE_ACHAT_v2.dbo.MESSAGE_ENTETE
+                SET ME_LU_C = 1
+                WHERE ME_ID = :id";
+
+        $connClient = $connection->prepare($sql);
+        $connClient->bindValue('id', $me_id);
+        $connClient->execute();
+        $result = $connClient->fetchAll();
+
+        return $this->json($result, 200);
+    }
+
 }
