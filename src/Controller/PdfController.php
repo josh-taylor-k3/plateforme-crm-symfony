@@ -16,10 +16,10 @@ class PdfController extends Controller
 
 
     /**
-     * @Route("/audit/{id}", name="audit")
+     * @Route("/audit/{id}/{centrale}", name="audit")
      * @Method("GET")
      */
-    public function index($id)
+    public function index($id, $centrale)
     {
 
         $dompdf = new Dompdf(array('enable_remote' => true));

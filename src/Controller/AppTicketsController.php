@@ -854,7 +854,6 @@ class AppTicketsController extends Controller
 
         $cc_id = $helper->verifyTokenApp($data_token["token"], $data_token["database"]);
 
-
         $sql = "UPDATE CENTRALE_ACHAT_v2.dbo.MESSAGE_ENTETE
                 SET ME_LU_C = 1
                 WHERE ME_ID = :id";
