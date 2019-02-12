@@ -62,7 +62,7 @@ class ConsommationController extends Controller
         $month = count($months);
 
 
-        //On cherche a obtenir les mois pour avoir les noms de colones
+        //On cherche a obtenir les mois pour avoir les noms de colonnes
 
         // variable pour contenir les mois
         $list_month = [];

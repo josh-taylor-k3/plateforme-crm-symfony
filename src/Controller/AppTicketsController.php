@@ -24,8 +24,10 @@ class AppTicketsController extends Controller
     public function base()
     {
 
+
         $tpl_response = [
             "status" => "ok"
+
         ];
 
         return new JsonResponse($tpl_response, 200);

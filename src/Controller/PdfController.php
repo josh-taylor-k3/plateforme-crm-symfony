@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Service\HelperService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Dompdf\Dompdf;
+use Dompdf\Options;
 
 /**
  * @Route("/pdf", name="pdf_")
@@ -19,20 +21,39 @@ class PdfController extends Controller
      * @Route("/audit/{id}/{centrale}", name="audit")
      * @Method("GET")
      */
-    public function index($id, $centrale)
+    public function index($id, $centrale, HelperService $helper)
     {
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Calibri');
+        $pdfOptions->setIsHtml5ParserEnabled(true);
+        $pdfOptions->setIsRemoteEnabled(true);
 
-        $dompdf = new Dompdf(array('enable_remote' => true));
+        $dompdf = new Dompdf($pdfOptions);
 
-        $url = sprintf('http://v2.achatcentrale.fr/extranet/Audits_PRN.asp?AE_ID=%d', $id);
-
-        $html = file_get_contents($url);
+        $html = $this->renderView('pdf/Audit.html.twig');
 
         $dompdf->loadHtml($html);
 
+
         $dompdf->render();
 
-        $dompdf->stream();
-
+        $dompdf->stream("audit".$helper->gen_uuid().".pdf", [
+            "Attachment" => true,
+        ]);
     }
+
+
+
+    /**
+     * @Route("/test", name="audit_test")
+     * @Method("GET")
+     */
+    public function testPDF()
+    {
+
+
+
+        return $this->render('pdf/Audit.html.twig');
+    }
+
 }
