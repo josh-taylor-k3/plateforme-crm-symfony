@@ -267,7 +267,7 @@ class ClientController extends Controller
         header("Access-Control-Allow-Methods: OPTIONS, GET, POST");
         header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control, X-ac-key");
 
-        $so_database = $helper->getCentraleDB($centrale);
+        $so_database = $helper->getCentrale($centrale);
 
         $sql = sprintf("SELECT CL_ID FROM %s.dbo.CLIENTS_USERS WHERE CC_ID = :id", $so_database);
 
