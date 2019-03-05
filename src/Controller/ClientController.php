@@ -269,7 +269,7 @@ class ClientController extends Controller
 
         $so_database = $helper->getCentrale($centrale);
 
-        $sql = sprintf("SELECT CL_ID FROM %s.dbo.CLIENTS_USERS WHERE CC_ID = :id", $so_database);
+        $sql = sprintf("SELECT CL_ID FROM %s.dbo.CLIENTS_USERS WHERE CC_ID = :id", $so_database[0]);
 
         $conn = $connection->prepare($sql);
         $conn->bindValue('id', $id);
