@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Service\HelperService;
+use Doctrine\DBAL\Connection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -21,18 +22,29 @@ class PdfController extends Controller
      * @Route("/audit/{id}/{centrale}", name="audit")
      * @Method("GET")
      */
-    public function index($id, $centrale, HelperService $helper)
+    public function index($id, $centrale, HelperService $helper, Connection $connection)
     {
+
+
+
         $pdfOptions = new Options();
-        $pdfOptions->set('defaultFont', 'Calibri');
+        $pdfOptions->set('defaultFont', 'helvetica');
         $pdfOptions->setIsHtml5ParserEnabled(true);
         $pdfOptions->setIsRemoteEnabled(true);
 
+
+        $sql = "SELECT * FROM CENTRALE_ACHAT.dbo.AUDITS_ENTETE";
+        $conn = $connection->prepare($sql);
+        $conn->execute();
+        $result = $conn->fetchAll();
+
+
         $dompdf = new Dompdf($pdfOptions);
-
-        $html = $this->renderView('pdf/Audit.html.twig');
-
+        $html = $this->renderView('pdf/Audit.html.twig', []);
         $dompdf->loadHtml($html);
+
+
+
 
 
         $dompdf->render();

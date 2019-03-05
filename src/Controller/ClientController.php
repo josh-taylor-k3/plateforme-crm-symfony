@@ -267,135 +267,21 @@ class ClientController extends Controller
         header("Access-Control-Allow-Methods: OPTIONS, GET, POST");
         header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control, X-ac-key");
 
+        $so_database = $helper->getCentraleDB($centrale);
 
+        $sql = sprintf("SELECT CL_ID FROM %s.dbo.CLIENTS_USERS WHERE CC_ID = :id", $so_database);
 
-        switch ($centrale){
+        $conn = $connection->prepare($sql);
+        $conn->bindValue('id', $id);
+        $conn->execute();
+        $result = $conn->fetchAll();
 
-            //AC
-            case 1:
-                $sql = "SELECT CL_ID FROM CENTRALE_ACHAT.dbo.CLIENTS_USERS WHERE CC_ID = :id ";
+        if (!empty($result)) {
+            $data = $helper->array_utf8_encode($result);
 
-                $conn = $connection->prepare($sql);
-                $conn->bindValue('id', $id);
-                $conn->execute();
-                $result = $conn->fetchAll();
-
-                if (!empty($result)) {
-
-                    $data = $helper->array_utf8_encode($result);
-
-                    return new JsonResponse($data[0], 200);
-                }
-
-
-                return new JsonResponse("Aucun client trouvé ", 200);
-
-                break;
-                //GCCP
-            case 2:
-                $sql = "SELECT CL_ID FROM CENTRALE_GCCP.dbo.CLIENTS_USERS WHERE CC_ID = :id ";
-
-                $conn = $connection->prepare($sql);
-                $conn->bindValue('id', $id);
-                $conn->execute();
-                $result = $conn->fetchAll();
-
-                if (!empty($result)) {
-
-                    $data = $helper->array_utf8_encode($result);
-
-                    return new JsonResponse($data[0], 200);
-                }
-
-
-                return new JsonResponse("Aucun client trouvé ", 200);
-
-                break;
-                //NALDEO
-            case 3:
-                $sql = "SELECT CL_ID FROM CENTRALE_NALDEO.dbo.CLIENTS_USERS WHERE CC_ID = :id ";
-
-                $conn = $connection->prepare($sql);
-                $conn->bindValue('id', $id);
-                $conn->execute();
-                $result = $conn->fetchAll();
-
-                if (!empty($result)) {
-
-                    $data = $helper->array_utf8_encode($result);
-
-                    return new JsonResponse($data[0], 200);
-                }
-
-
-                return new JsonResponse("Aucun client trouvé ", 200);
-
-                break;
-                //FUNECAP
-            case 4:
-                $sql = "SELECT CL_ID FROM CENTRALE_FUNECAP.dbo.CLIENTS_USERS WHERE CC_ID = :id ";
-
-                $conn = $connection->prepare($sql);
-                $conn->bindValue('id', $id);
-                $conn->execute();
-                $result = $conn->fetchAll();
-
-                if (!empty($result)) {
-
-                    $data = $helper->array_utf8_encode($result);
-
-                    return new JsonResponse($data[0], 200);
-                }
-
-
-                return new JsonResponse("Aucun client trouvé ", 200);
-                break;
-                //PFPL
-            case 5:
-                $sql = "SELECT CL_ID FROM CENTRALE_PFPL.dbo.CLIENTS_USERS WHERE CC_ID = :id ";
-
-                $conn = $connection->prepare($sql);
-                $conn->bindValue('id', $id);
-                $conn->execute();
-                $result = $conn->fetchAll();
-
-                if (!empty($result)) {
-
-                    $data = $helper->array_utf8_encode($result);
-
-                    return new JsonResponse($data[0], 200);
-                }
-
-
-                return new JsonResponse("Aucun client trouvé ", 200);
-
-                break;
-                //ROC
-            case 6:
-                $sql = "SELECT CL_ID FROM CENTRALE_ROC_ECLERC.dbo.CLIENTS_USERS WHERE CC_ID = :id ";
-
-                $conn = $connection->prepare($sql);
-                $conn->bindValue('id', $id);
-                $conn->execute();
-                $result = $conn->fetchAll();
-
-                if (!empty($result)) {
-
-                    $data = $helper->array_utf8_encode($result);
-
-                    return new JsonResponse($data[0], 200);
-                }
-
-
-                return new JsonResponse("Aucun client trouvé ", 200);
-
-                break;
+            return new JsonResponse($data[0], 200);
         }
 
-
-
-
-
-
+        return new JsonResponse("Aucun client trouvé ", 200);
     }
 }

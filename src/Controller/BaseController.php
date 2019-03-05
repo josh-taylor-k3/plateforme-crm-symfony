@@ -16,10 +16,6 @@ use Twig\Environment;
 class BaseController extends Controller
 {
 
-
-
-
-
     /**
      * @Route("/list", name="list_api_user")
      * @throws \Doctrine\DBAL\DBALException
