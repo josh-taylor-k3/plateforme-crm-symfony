@@ -6,7 +6,7 @@ use App\Service\HelperService;
 use Doctrine\DBAL\Connection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
@@ -14,7 +14,7 @@ use Dompdf\Options;
  * @Route("/pdf", name="pdf_")
  * @Method("GET")
  */
-class PdfController extends Controller
+class PdfController extends AbstractController
 {
 
 
@@ -42,10 +42,6 @@ class PdfController extends Controller
         $dompdf = new Dompdf($pdfOptions);
         $html = $this->renderView('pdf/Audit.html.twig', []);
         $dompdf->loadHtml($html);
-
-
-
-
 
         $dompdf->render();
 

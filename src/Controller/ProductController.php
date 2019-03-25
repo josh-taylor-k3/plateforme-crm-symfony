@@ -6,13 +6,15 @@ use App\Security\ApiKeyAuth;
 use App\Service\DbService;
 use App\Service\HelperService;
 use Doctrine\DBAL\Connection;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpFoundation\Response;
+use violuke\Barcodes\BarcodeValidator;
 
-class ProductController extends Controller
+class ProductController extends AbstractController
 {
 
 
@@ -549,7 +551,39 @@ class ProductController extends Controller
     }
 
 
+    /**
+     * @Route("/ean13", name="ean_check")
+     * @Method("GET")
+     */
+    public function checkEAN13(Connection $connection, HelperService $helper)
+    {
 
+        $sql = "SELECT PR_ID, PR_EAN, (SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE FOURNISSEURS.FO_ID = PRODUITS.FO_ID) as fournisseur FROM CENTRALE_PRODUITS.dbo.PRODUITS";
+
+        $validEan = [];
+        $invalidEan = [];
+
+        $conn = $connection->prepare($sql);
+        $conn->execute();
+        $result = $conn->fetchAll();
+
+        foreach ($result as $id => $res){
+            $bc_validator = new BarcodeValidator($res["PR_EAN"]);
+
+            if (!$bc_validator->isValid() && isset($res["PR_EAN"]) && $res["PR_EAN"] !== " " && $res["PR_EAN"] !== "" ) {
+                array_push($invalidEan, $result[$id]);
+            }
+
+
+        }
+
+
+        return $this->render("Api/ListEAN13.html.twig", [
+            "data" => $invalidEan
+        ]);
+
+
+    }
 
 
 }
