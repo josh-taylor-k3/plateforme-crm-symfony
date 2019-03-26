@@ -590,9 +590,13 @@ class ProductController extends AbstractController
         $bc_validator = new BarcodeValidator($ean);
 
         if (!$bc_validator->isValid() && isset($ean) && $ean !== " " && $ean !== "" ) {
-            return new JsonResponse(false, 200);
+            return $this->render("Api/EAN13Check.html.twig", [
+                "data" => false
+            ]);
         }else {
-            return new JsonResponse(true, 200);
+            return $this->render("Api/EAN13Check.html.twig", [
+                "data" => true
+            ]);
         }
 
 
