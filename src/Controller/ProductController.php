@@ -555,12 +555,10 @@ class ProductController extends AbstractController
      * @Route("/ean13", name="ean_check")
      * @Method("GET")
      */
-    public function checkEAN13(Connection $connection, HelperService $helper)
+    public function checkEAN13(Connection $connection)
     {
-
         $sql = "SELECT PR_ID, PR_EAN, PR_REF ,(SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE FOURNISSEURS.FO_ID = PRODUITS.FO_ID) as fournisseur FROM CENTRALE_PRODUITS.dbo.PRODUITS";
 
-        $validEan = [];
         $invalidEan = [];
 
         $conn = $connection->prepare($sql);
@@ -573,14 +571,31 @@ class ProductController extends AbstractController
             if (!$bc_validator->isValid() && isset($res["PR_EAN"]) && $res["PR_EAN"] !== " " && $res["PR_EAN"] !== "" ) {
                 array_push($invalidEan, $result[$id]);
             }
-
-
         }
-
 
         return $this->render("Api/ListEAN13.html.twig", [
             "data" => $invalidEan
         ]);
+    }
+
+
+
+    /**
+     * @Route("/ean13/{ean}", name="ean_unique_check")
+     * @Method("GET")
+     */
+    public function checkUniqueEAN13($ean)
+    {
+
+        $bc_validator = new BarcodeValidator($ean);
+
+        if (!$bc_validator->isValid() && isset($ean) && $ean !== " " && $ean !== "" ) {
+            return new JsonResponse(false, 200);
+        }else {
+            return new JsonResponse(true, 200);
+        }
+
+
 
 
     }
