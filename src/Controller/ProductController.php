@@ -581,7 +581,7 @@ class ProductController extends AbstractController
 
 
     /**
-     * @Route("/ean13/{ean}", name="ean_unique_check")
+     * @Route("/ean13/detail/{ean}", name="ean_unique_check")
      * @Method("GET")
      */
     public function checkUniqueEAN13($ean)
