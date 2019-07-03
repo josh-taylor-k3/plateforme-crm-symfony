@@ -557,7 +557,7 @@ class ProductController extends AbstractController
      */
     public function checkEAN13(Connection $connection)
     {
-        $sql = "SELECT PR_ID, PR_EAN, PR_REF ,(SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE FOURNISSEURS.FO_ID = PRODUITS.FO_ID) as fournisseur FROM CENTRALE_PRODUITS.dbo.PRODUITS";
+        $sql = "SELECT PR_ID, PR_EAN, PR_REF ,(SELECT FO_RAISONSOC FROM CENTRALE_PRODUITS.dbo.FOURNISSEURS WHERE FOURNISSEURS.FO_ID = PRODUITS.FO_ID) as fournisseur FROM CENTRALE_PRODUITS.dbo.PRODUITS WHERE PR_STATUS = 0";
 
         $invalidEan = [];
 
@@ -581,7 +581,7 @@ class ProductController extends AbstractController
 
 
     /**
-     * @Route("/ean13/{ean}", name="ean_unique_check")
+     * @Route("/ean13/detail/{ean}", name="ean_unique_check")
      * @Method("GET")
      */
     public function checkUniqueEAN13($ean)
