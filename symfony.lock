@@ -1,4 +1,7 @@
 {
+    "clue/stream-filter": {
+        "version": "v1.4.1"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
@@ -68,6 +71,15 @@
     "dompdf/dompdf": {
         "version": "v0.8.2"
     },
+    "guzzlehttp/guzzle": {
+        "version": "6.3.3"
+    },
+    "guzzlehttp/promises": {
+        "version": "v1.3.1"
+    },
+    "guzzlehttp/psr7": {
+        "version": "1.6.1"
+    },
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
     },
@@ -89,6 +101,24 @@
     "phenx/php-svg-lib": {
         "version": "v0.3.2"
     },
+    "php-http/discovery": {
+        "version": "1.7.0"
+    },
+    "php-http/guzzle6-adapter": {
+        "version": "v2.0.1"
+    },
+    "php-http/httplug": {
+        "version": "v2.0.0"
+    },
+    "php-http/message": {
+        "version": "1.7.2"
+    },
+    "php-http/message-factory": {
+        "version": "v1.0.2"
+    },
+    "php-http/promise": {
+        "version": "v1.0.0"
+    },
     "picqer/php-barcode-generator": {
         "version": "v0.3"
     },
@@ -98,8 +128,17 @@
     "psr/container": {
         "version": "1.0.0"
     },
+    "psr/http-client": {
+        "version": "1.0.0"
+    },
+    "psr/http-message": {
+        "version": "1.0.1"
+    },
     "psr/log": {
         "version": "1.0.2"
+    },
+    "ralouphie/getallheaders": {
+        "version": "3.0.3"
     },
     "sabberworm/php-css-parser": {
         "version": "8.1.0"
@@ -301,6 +340,12 @@
     },
     "symfony/yaml": {
         "version": "v4.0.4"
+    },
+    "thecodingmachine/gotenberg-php-client": {
+        "version": "5.0.0"
+    },
+    "thecodingmachine/safe": {
+        "version": "v0.1.16"
     },
     "twig/twig": {
         "version": "v2.4.4"

@@ -28,7 +28,6 @@ class DbService
         return $conn->fetchAll();
     }
 
-
     public function getDetailById($id)
     {
         $sql = "SELECT TOP 10 * FROM CENTRALE_ACHAT_v2.dbo.API_USER  WHERE CENTRALE_ACHAT_v2.dbo.API_USER.APP_ID = :id";
@@ -37,7 +36,6 @@ class DbService
         $conn->execute();
         return $conn->fetchAll();
     }
-
 
     public function getRaisonSocFrs($id)
     {

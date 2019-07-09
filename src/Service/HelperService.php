@@ -115,7 +115,6 @@ class HelperService
 
 
     }
-
     /*
      * Returns an array with the $number of specified month
      */
@@ -351,5 +350,56 @@ class HelperService
         return $digits . $check_digit;
     }
 
+    public function getAvatarFromClient($client_id, $centrale)
+    {
+
+        $sql = "SELECT CL_LOGO FROM CENTRALE_ACHAT.dbo.CLIENTS WHERE CL_ID = :id";
+
+
+        $conn = $this->connection->prepare($sql);
+        $conn->bindValue('id', $client_id);
+        $conn->execute();
+        $result = $conn->fetchAll()[0];
+
+        $logo = $result["CL_LOGO"];
+        
+
+        $result = sprintf("http://secure.achatcentrale.fr/UploadFichiers/Uploads/CLIENT_%s/%s",$client_id ,$logo);
+
+        return $result;
+    }
+
+    public function getClient($client_id, $centrale)
+    {
+
+        $sql = "SELECT * FROM CENTRALE_ACHAT.dbo.CLIENTS WHERE CL_ID = :id";
+
+
+        $conn = $this->connection->prepare($sql);
+        $conn->bindValue('id', $client_id);
+        $conn->execute();
+        $result = $conn->fetchAll()[0];
+
+        return $result;
+
+    }
+
+    public function getClientUser($cc_id, $centrale)
+    {
+        $sql = "SELECT * FROM CENTRALE_ACHAT.dbo.CLIENTS_USERS WHERE CC_ID = :id";
+
+
+        $conn = $this->connection->prepare($sql);
+        $conn->bindValue('id', $cc_id);
+        $conn->execute();
+        $result = $conn->fetchAll();
+
+        if (!$result){
+            return 0;
+        }
+
+        return $result[0];
+
+    }
 
 }

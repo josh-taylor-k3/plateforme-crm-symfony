@@ -1,2 +1,50 @@
-{{ barcode| raw }}
-<p>0</p><p>81231723897</p>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style type="text/css">
+        .case {width: 24%; height: 10%;    margin-top: 15px; }
+        .container { display: flex; width: 100%; flex-wrap: wrap;margin-left: 2%;}
+        .content { width: 100%; display: flex; }
+        .detail { width: 50%;text-align: center;padding: 18px 0 0 0; }
+        .barcode { width: 50%; padding-left: 5px; padding-top: 15px; }
+        .detail p { margin: 0; }
+        .price { margin-left: 3%; }
+    </style>
+
+</head>
+<body>
+
+
+
+<div class="container">
+    {% for e in etiquette %}
+        {% for i in 1..e["qty"] %}
+            <div class="case">
+                <div class="content">
+                    <div class="barcode">
+                        <div>{{ e["barcode"] | raw }}</div>
+                        <p style="font-size: 8pt;margin: 0;padding-left: 6px;">{{ e["EAN"] }}</p>
+                    </div>
+                    <div class="detail">
+                        <p style="font-size: 7pt; font-weight: 800;" >Réf : {{ e["ref"] }}</p>
+                        <p style="font-size: 6pt; font-weight: 500;">{{ e["nom"] }}</p>
+                        <div class="price">
+                            <p style="font-size: 16pt;font-weight: 600;">{{ e["prix"] }}€ <span style="font-size: 5pt; font-weight: 300;">TTC</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>
+
+
+
+
+</body>
+</html>
