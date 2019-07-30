@@ -9,9 +9,6 @@ use Doctrine\DBAL\Driver\Connection;
 
 class LoginHelperService{
 
-
-
-
     private $connection;
 
     private $Databases;

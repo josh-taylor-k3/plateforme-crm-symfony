@@ -61,9 +61,6 @@
     }
 
 
-    body {
-        font-family: 'Cabin'
-    }
 
 
     .page_break {
@@ -133,7 +130,6 @@
         width: 150px;
         height: 175px;
         border-radius: 12px;
-        border: 0.4px solid #979797;
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.50);
         margin: 0 18px;
         float: left;
@@ -164,11 +160,9 @@
         font-family: Arial, sans-serif;
         font-size: 14px;
         padding: 10px 5px;
-        border-style: solid;
-        border-width: 1px;
         overflow: hidden;
         word-break: normal;
-        border-color: black;
+        border: 1px solid #c4c4c4;
     }
 
     .tg th {
@@ -176,21 +170,17 @@
         font-size: 14px;
         font-weight: normal;
         padding: 10px 5px;
-        border-style: solid;
-        border-width: 1px;
         overflow: hidden;
         word-break: normal;
-        border-color: black;
+        border: 1px solid #c4c4c4;
     }
 
     .tg .tg-c3ow {
-        border-color: inherit;
         text-align: center;
         vertical-align: top
     }
 
     .tg .tg-0pky {
-        border-color: inherit;
         text-align: left;
         vertical-align: top
     }
@@ -200,11 +190,7 @@
         vertical-align: top
     }
 
-    .container_economie_categorie {
-        display: block;
-        width: 90%;
-        margin: 0 auto;
-    }
+
 
 
     .space_between {
@@ -251,52 +237,61 @@
     .container_categ table {
         margin: 0 auto;
         width: 90%;
-        border: 1px solid;
     }
 
     .container_categ td {
         text-align: center;
-        border: 1px solid;
         padding: 6px;
+        border: 1px solid #c4c4c4;
     }
 
     .AuditFond1 {
         background-color: #f7cf8e;
     }
+
     .AuditFond2 {
         background-color: #f1bfbf;
     }
+
     .AuditFond3 {
         background-color: #b1d5ff;
     }
+
     .AuditFond4 {
         background-color: #d5ffa7;
     }
+
     .AuditFond5 {
         background-color: #FFAAB4;
     }
+
     .AuditFond6 {
         background-color: #F7AE8C;
     }
+
     .AuditFond7 {
         background-color: #FFEFB3;
     }
+
     .AuditFond8 {
         background-color: #BEDE9A;
     }
+
     .AuditFond9 {
         background-color: #A2C0E2;
     }
+
     .AuditFond10 {
         background-color: #BEE8DF;
     }
+
     .AuditFond11 {
         background-color: #ECD2F2;
     }
+
     .AuditFond12 {
         background-color: #E5C6AB;
     }
-
 
 
 </style>
@@ -325,12 +320,12 @@
 
 <div class="container_message_eco">
     <p style="font-family: 'Helvetica';">En adhérant à Achat Centrale, le groupement vous permettrait de réaliser <span
-                style="font-weight: 900;font-size: 30px;font-family: 'Helvetica';">11 035 €</span> d’économies par an.
+                style="font-weight: 900;font-size: 30px;font-family: 'Helvetica';">{{ auditEntete[0]["AE_AN_EUR"] | round | number_format(0, ',', ' ') }} €</span> d’économies par an.
     </p>
 </div>
 
 <div class="container_montant_analyse">
-    <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 50px;color: #000000;text-align: center;">{{ auditDetail["AD_PRIX_ACTU"] | round }}
+    <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 50px;color: #000000;text-align: center;">{{ auditDetail["AD_PRIX_ACTU"] | round | number_format(0, ',', ' ') }}
         €</p>
     <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #000000;text-align: center;">
         Montant analysé</p>
@@ -338,23 +333,22 @@
 
 <div class="container_montant_gain">
     <div class="container_gains">
-        <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 50px;color: #000000;">{{ auditEntete[0]["AE_TOTAL_EUR"] | round }}
+        <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 50px;color: #000000;">{{ auditEntete[0]["AE_TOTAL_EUR"] | round | number_format(0, ',', ' ') }}
             €</p>
         <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #000000;">Gains</p>
-        <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #7CB33C;text-align: center;">{{ auditEntete[0]["AE_TOTAL_PCT"] | round }}
+        <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #7CB33C;text-align: center;">{{ auditEntete[0]["AE_TOTAL_PCT"] | round | number_format(0, ',', ' ') }}
             %</p>
     </div>
     <div class="container_gains_annuel">
         <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 50px;color: #000000;">
             {% if auditEntete[0]["AE_AN_EUR"]  > 0 %}
-                {{ auditEntete[0]["AE_AN_EUR"] }} €
+                {{ auditEntete[0]["AE_AN_EUR"] | round | number_format(0, ',', ' ') }} €
             {% else %}
                 {{ auditEntete[0]["AE_AN_PCT"] }} %
             {% endif %}
         </p>
         <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #000000;">Gains annuel</p>
-        <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #7CB33C;text-align: center;">25
-            %</p>
+        <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #7CB33C;text-align: center;">{{ auditEntete[0]["AE_AN_PCT"] }}%</p>
     </div>
 </div>
 
@@ -364,17 +358,17 @@
 <div class="container_categ">
     <table>
         <tr>
-            <td>Catégories</td>
-            <td>Prix actuel</td>
-            <td>Prix Centrale</td>
-            <td>Economies</td>
+            <td style="font-size: 14pt; font-weight: 800;" >Catégories</td>
+            <td style="font-size: 14pt; font-weight: 800;" >Prix actuel</td>
+            <td style="font-size: 14pt; font-weight: 800;" >Prix Centrale</td>
+            <td style="font-size: 14pt; font-weight: 800;" >Economies</td>
         </tr>
         {% for c in catLst %}
             <tr>
-                <td class="AuditFond{{ loop.index }}" >{{ c["CatTitre"] }}</td>
-                <td>{{ c["AD_PRIX_ACTU"] | round }} €</td>
-                <td>{{ c["AD_PRIX_CA"] | round }} €</td>
-                <td>{{ c["AD_ECO_PCT"] }} %</td>
+                <td class="AuditFond{{ loop.index }}">{{ c["CatTitre"] }}</td>
+                <td>{{ c["AD_PRIX_ACTU"] | round | number_format(0, ',', ' ') }} €</td>
+                <td>{{ c["AD_PRIX_CA"] | round | number_format(0, ',', ' ') }} €</td>
+                <td style="font-size: 11pt; font-weight: 800;" >{{ c["AD_ECO_PCT"] }} %</td>
             </tr>
         {% endfor %}
 
@@ -382,42 +376,43 @@
 </div>
 
 
-<footer class="footer">
-    <img width="150" src="http://www.achatcentrale.fr/wp-content/uploads/2018/01/logo_final-1.png" alt="">
-    <p>contact@achatcentrale.fr, 01 84 25 67 07</p>
-</footer>
+
 
 <div class="page_break"></div>
 
 <div class="container_detail">
     <div class="title_detail">
-        <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 30px;color: #4A4A4A;margin-top: 50px;font-weight: 200 !important;">
-            Détail de l'audit</p>
+        <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 30px;color: #4A4A4A;margin-top: 50px;font-weight: 200 !important;">Détail de l'audit</p>
     </div>
     <div class="container_table_detail">
         <table style="width: 100%;" class="tg">
             <tr>
-                <th class="tg-0pky">Produit</th>
-                <th class="tg-0pky">Réf</th>
-                <th class="tg-0pky">Désignation</th>
-                <th class="tg-0pky">Qté</th>
-                <th class="tg-0pky">Prix actuel</th>
-                <th class="tg-0lax">Prix Centrale</th>
-                <th class="tg-0lax">Économies</th>
+                <th class="tg-0pky" style="text-align: center" >Produit</th>
+                <th class="tg-0pky" style="text-align: center;width: 15%;" >Réf</th>
+                <th class="tg-0pky" style="text-align: center;width: 35%;">Désignation</th>
+                <th class="tg-0pky" style="text-align: center" >Qté</th>
+                <th class="tg-0pky" style="text-align: center" >Prix actuel</th>
+                <th class="tg-0lax" style="text-align: center" >Prix Centrale</th>
+                <th class="tg-0lax" style="text-align: center" >Économies</th>
             </tr>
-            <tr>
-                <td class="tg-c3ow" colspan="7">Fournitures</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"></td>
-                <td class="tg-0pky">55432</td>
-                <td class="tg-0pky">Agrafes</td>
-                <td class="tg-0pky">25</td>
-                <td class="tg-0pky">0,90 €</td>
-                <td class="tg-0lax">0,90 €</td>
-                <td class="tg-0lax">20%/300€</td>
-            </tr>
-
+            {% for d in detail_audit %}
+                <tr>
+                    <td class="tg-c3ow AuditFond{{ loop.index }}" colspan="7">{{ d["categorie"] }}</td>
+                </tr>
+                {% for p in d["produits"] %}
+                    <tr>
+                        <td class="tg-0pky">
+                            <img src="{{ p["PR_ID"] | photo }}" alt="" style="max-width: 70px;min-height: 50px;">
+                        </td>
+                        <td class="tg-0pky" style="text-align: center;width: 15%;">{{ p["AD_REF"] }}</td>
+                        <td class="tg-0pky" style="width: 35%;" >{{ p["AD_DESCR"] | raw }}</td>
+                        <td class="tg-0pky" style="text-align: center;">{{ p["AD_QTE"] }}</td>
+                        <td class="tg-0pky" style="text-align: center;">{{ p["AD_PRIX_ACTU"]  | number_format(2, ',', ' ') }} €</td>
+                        <td class="tg-0pky" style="text-align: center;">{{ p["AD_PRIX_CA"] | number_format(2, ',', ' ') }} €</td>
+                        <td class="tg-0pky" style="text-align: center;font-size: 11pt; font-weight: 800;">{{ p["AD_ECO_EUR"]  | number_format(2, ',', ' ') }} €</td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
         </table>
     </div>
 </div>

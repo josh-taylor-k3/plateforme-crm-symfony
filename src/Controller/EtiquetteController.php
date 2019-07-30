@@ -75,10 +75,10 @@ class EtiquetteController extends AbstractController
 
 
 
-//        return $this->render('Etiquette/index.html.twig', [
-//           "etiquette" => $result,
-//            "qty" => $countQty,
-//        ]);
+        return $this->render('Etiquette/index.html.twig', [
+           "etiquette" => $result,
+            "qty" => $countQty,
+        ]);
 
 
 

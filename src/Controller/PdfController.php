@@ -4,16 +4,15 @@ namespace App\Controller;
 
 use App\Service\HelperService;
 use Doctrine\DBAL\Connection;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Safe\Exceptions\FilesystemException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Dompdf\Dompdf;
-use Dompdf\Options;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
-
 use TheCodingMachine\Gotenberg\Client;
 use TheCodingMachine\Gotenberg\DocumentFactory;
 use TheCodingMachine\Gotenberg\HTMLRequest;
@@ -30,7 +29,6 @@ class PdfController extends AbstractController
 
     public function index($id, $centrale, HelperService $helper, Connection $connection)
     {
-
 
 
         $pdfOptions = new Options();
@@ -51,16 +49,15 @@ class PdfController extends AbstractController
 
         $dompdf->render();
 
-        $dompdf->stream("audit".$helper->gen_uuid().".pdf", [
+        $dompdf->stream("audit" . $helper->gen_uuid() . ".pdf", [
             "Attachment" => true,
         ]);
     }
 
     /**
-     * @Route("/audit/{id}/{centrale}", name="audit")
-     * @Method("GET")
+     * @Route("/audit/{id}/{centrale}", name="audit", methods={"GET"})
      */
-    public function getAudit($id, $centrale, HelperService $helper, Connection $connection,KernelInterface $kernel)
+    public function getAudit($id, $centrale, HelperService $helper, Connection $connection, KernelInterface $kernel)
     {
 
         // Recupération de l'entete de l'audit
@@ -109,11 +106,30 @@ class PdfController extends AbstractController
         $logo = $helper->getAvatarFromClient($auditEntete[0]["CL_ID"], $centrale);
 
 
+        //Récupération detail audit liste
+        $detail_audit = [];
 
-        dump($catLst);
+        foreach ($catLst as $key => $value) {
+
+            $sql = "SELECT AUDITS_DETAIL.* 
+                    FROM CENTRALE_ACHAT.dbo.AUDITS_DETAIL
+                        INNER JOIN CENTRALE_PRODUITS.dbo.PRODUITS ON AUDITS_DETAIL.PR_ID = PRODUITS.PR_ID
+                        INNER JOIN CENTRALE_ACHAT.dbo.CATEG_RAYONS ON PRODUITS.RA_ID = CATEG_RAYONS.RA_ID
+                    WHERE AE_ID = :audit_id AND CatID = :cat_id
+                    ORDER BY AD_ID DESC";
+            $conn = $connection->prepare($sql);
+            $conn->bindValue('audit_id', $id);
+            $conn->bindValue('cat_id', $value["CatID"]);
+            $conn->execute();
+            $detail_list = $conn->fetchAll();
 
 
-
+            $temp = [
+                "categorie" => $value["CatTitre"],
+                "produits" => $detail_list
+            ];
+            array_push($detail_audit, $temp);
+        }
 
 
         return $this->render('pdf/Audit.html.twig', [
@@ -123,8 +139,8 @@ class PdfController extends AbstractController
            "catLst" => $catLst,
            "auditDetail" => $auditDetail,
            "logo" => $logo,
+            "detail_audit" => $detail_audit,
         ]);
-
 
 
         $html = $this->renderView('pdf/Audit.html.twig', [
@@ -134,31 +150,39 @@ class PdfController extends AbstractController
             "catLst" => $catLst,
             "auditDetail" => $auditDetail,
             "logo" => $logo,
+            "detail_audit" => $detail_audit,
         ]);
 
-
+        $footer = $this->renderView('pdf/Audit_footer.html.twig');
 
 
         $client = new Client('http://localhost:3000', new \Http\Adapter\Guzzle6\Client());
 
         try {
             $index = DocumentFactory::makeFromString('index.html', $html);
+            $footerPDF = DocumentFactory::makeFromString('footer.html', $footer);
         } catch (FilesystemException $e) {
         }
 
-        $request = new HTMLRequest($index);
-        $request->setPaperSize(Request::A4);
-        $request->setMargins(Request::NO_MARGINS);
 
-        $dirPath = $kernel->getProjectDir()."/public/pdf/audit".$helper->gen_uuid().".pdf";
+
+        $request = new HTMLRequest($index);
+        $request->setFooter($footerPDF);
+        $request->setPaperSize(Request::A4);
+        $request->setMarginLeft(0);
+        $request->setMarginRight(0);
+        $request->setMarginTop(0.4);
+        $request->setMarginBottom(0.6);
+
+
+        $dirPath = $kernel->getProjectDir() . "/public/pdf/audit" . $helper->gen_uuid() . ".pdf";
         $filename = $client->store($request, $dirPath);
 
 
         $file = new File($dirPath);
 
-        return $this->file($dirPath,"audit".$helper->gen_uuid().".pdf", ResponseHeaderBag::DISPOSITION_INLINE);
+        return $this->file($dirPath, "audit" . $helper->gen_uuid() . ".pdf", ResponseHeaderBag::DISPOSITION_INLINE);
     }
-
 
 
     /**

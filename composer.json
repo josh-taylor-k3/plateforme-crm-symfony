@@ -20,6 +20,7 @@
         "symfony/twig-bundle": "^4.0",
         "symfony/yaml": "^4.0",
         "thecodingmachine/gotenberg-php-client": "^5.0",
+        "twig/extensions": "^1.5",
         "violuke/php-barcodes": "^1.0"
     },
     "require-dev": {
