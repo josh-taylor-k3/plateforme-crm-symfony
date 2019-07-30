@@ -365,7 +365,7 @@
         </tr>
         {% for c in catLst %}
             <tr>
-                <td class="AuditFond{{ loop.index }}">{{ c["CatTitre"] }}</td>
+                <td class="AuditFond{{ loop.index }}">{{ c["CatTitre"] | encodingFrom }}</td>
                 <td>{{ c["AD_PRIX_ACTU"] | round | number_format(0, ',', ' ') }} €</td>
                 <td>{{ c["AD_PRIX_CA"] | round | number_format(0, ',', ' ') }} €</td>
                 <td style="font-size: 11pt; font-weight: 800;" >{{ c["AD_ECO_PCT"] }} %</td>
@@ -397,7 +397,7 @@
             </tr>
             {% for d in detail_audit %}
                 <tr>
-                    <td class="tg-c3ow AuditFond{{ loop.index }}" colspan="7">{{ d["categorie"] }}</td>
+                    <td class="tg-c3ow AuditFond{{ loop.index }}" colspan="7">{{ d["categorie"] | encodingFrom  }}</td>
                 </tr>
                 {% for p in d["produits"] %}
                     <tr>
@@ -405,7 +405,7 @@
                             <img src="{{ p["PR_ID"] | photo }}" alt="" style="max-width: 70px;min-height: 50px;">
                         </td>
                         <td class="tg-0pky" style="text-align: center;width: 15%;">{{ p["AD_REF"] }}</td>
-                        <td class="tg-0pky" style="width: 35%;" >{{ p["AD_DESCR"] | raw }}</td>
+                        <td class="tg-0pky" style="width: 35%;" >{{ p["AD_DESCR"] | encodingFrom  | raw }}</td>
                         <td class="tg-0pky" style="text-align: center;">{{ p["AD_QTE"] }}</td>
                         <td class="tg-0pky" style="text-align: center;">{{ p["AD_PRIX_ACTU"]  | number_format(2, ',', ' ') }} €</td>
                         <td class="tg-0pky" style="text-align: center;">{{ p["AD_PRIX_CA"] | number_format(2, ',', ' ') }} €</td>

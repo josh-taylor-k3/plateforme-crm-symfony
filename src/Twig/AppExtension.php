@@ -21,6 +21,8 @@ class AppExtension extends AbstractExtension
         return [
             new TwigFilter('photo', [$this, 'getPhoto']),
             new TwigFilter('ean', [$this, 'formatEAN']),
+            new TwigFilter('encodingFrom', [$this, 'encodingFromDatabase']),
+
         ];
     }
 
@@ -41,10 +43,8 @@ class AppExtension extends AbstractExtension
     }
 
 
-    public function formatEAN($ean)
-    {
-
-
-
+    public function encodingFromDatabase($value){
+        return utf8_encode($value);
     }
+
 }
