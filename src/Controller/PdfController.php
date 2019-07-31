@@ -132,15 +132,15 @@ class PdfController extends AbstractController
         }
 
 
-        return $this->render('pdf/Audit.html.twig', [
-           "auditEntete" => $auditEntete,
-           "client" => $client,
-           "users" => $users,
-           "catLst" => $catLst,
-           "auditDetail" => $auditDetail,
-           "logo" => $logo,
-            "detail_audit" => $detail_audit,
-        ]);
+//        return $this->render('pdf/Audit.html.twig', [
+//           "auditEntete" => $auditEntete,
+//           "client" => $client,
+//           "users" => $users,
+//           "catLst" => $catLst,
+//           "auditDetail" => $auditDetail,
+//           "logo" => $logo,
+//            "detail_audit" => $detail_audit,
+//        ]);
 
 
         $html = $this->renderView('pdf/Audit.html.twig', [
@@ -156,7 +156,7 @@ class PdfController extends AbstractController
         $footer = $this->renderView('pdf/Audit_footer.html.twig');
 
 
-        $client = new Client('http://localhost:3000', new \Http\Adapter\Guzzle6\Client());
+        $client = new Client('http://pdf.achatcentrale.fr:3000', new \Http\Adapter\Guzzle6\Client());
 
         try {
             $index = DocumentFactory::makeFromString('index.html', $html);
