@@ -57,7 +57,7 @@ class EtiquetteController extends AbstractController
             if ($etiquettes["PR_EAN"])
             {
                 $generator = new BarcodeGeneratorPNG();
-                $barcode =  '<img style="height: 45px; padding: 0px 4px;" src="data:image/png;base64,' . base64_encode($generator->getBarcode($etiquettes["PR_EAN"], $generator::TYPE_EAN_13, 1, 60)) . '">';
+                $barcode =  '<img style="height: 50px; padding: 0px 10px;" src="data:image/png;base64,' . base64_encode($generator->getBarcode($etiquettes["PR_EAN"], $generator::TYPE_EAN_13, 1, 60)) . '">';
             }
 
             $countQty += $value["CD_QTE"];
@@ -75,10 +75,11 @@ class EtiquetteController extends AbstractController
 
 
 
-        return $this->render('Etiquette/index.html.twig', [
-           "etiquette" => $result,
-            "qty" => $countQty,
-        ]);
+//
+//        return $this->render('Etiquette/index.html.twig', [
+//           "etiquette" => $result,
+//            "qty" => $countQty,
+//        ]);
 
 
 
@@ -89,7 +90,7 @@ class EtiquetteController extends AbstractController
         ]);
 
 
-        $client = new Client('http://localhost:3000', new \Http\Adapter\Guzzle6\Client());
+        $client = new Client('http://pdf.achatcentrale.fr:3000', new \Http\Adapter\Guzzle6\Client());
 
         try {
             $index = DocumentFactory::makeFromString('index.html', $html);
