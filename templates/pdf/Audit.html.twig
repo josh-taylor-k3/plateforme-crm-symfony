@@ -325,7 +325,7 @@
 </div>
 
 
-{% if auditEntete[0]["AE_AN_EUR"] > 0 %}
+{% if auditEntete[0]["AE_AN_EUR"] > 0 and auditEntete[0]["AE_AN_PCT"] > 0 %}
     <div class="container_message_eco">
         <p style="font-family: 'Helvetica';">En adhérant à Achat Centrale, le groupement vous permettrait de réaliser <span
                     style="font-weight: 900;font-size: 30px;font-family: 'Helvetica';">{{ auditEntete[0]["AE_AN_EUR"] | round | number_format(0, ',', ' ') }} €</span> d’économies par an.
@@ -335,7 +335,7 @@
     <div class="space_between" style="height: 60px"></div>
 {% endif %}
 
-{% if auditEntete[0]["AE_AN_EUR"] < 0 %}
+{% if auditEntete[0]["AE_AN_EUR"] > 0 and auditEntete[0]["AE_AN_PCT"] > 0 %}
     <div class="container_montant_analyse">
         <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 50px;color: #000000;text-align: center;">{{ auditDetail["AD_PRIX_ACTU"] | round | number_format(0, ',', ' ') }}
             €</p>
@@ -363,12 +363,7 @@
             <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #7CB33C;text-align: center;">{{ auditEntete[0]["AE_AN_PCT"] }}%</p>
         </div>
     </div>
-
-
     {% else %}
-
-
-
         <div class="container_montant_gain">
             <div class="container_gains">
                 <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 50px;color: #000000;text-align: center;">{{ auditDetail["AD_PRIX_ACTU"] | round | number_format(0, ',', ' ') }}
