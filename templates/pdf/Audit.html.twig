@@ -332,25 +332,25 @@
         </p>
     </div>
 {% else %}
-    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    <div class="space_between" style="height: 60px"></div>
 {% endif %}
 
-<div class="container_montant_analyse">
-    <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 50px;color: #000000;text-align: center;">{{ auditDetail["AD_PRIX_ACTU"] | round | number_format(0, ',', ' ') }}
-        €</p>
-    <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #000000;text-align: center;">
-        Montant analysé</p>
-</div>
-
-<div class="container_montant_gain">
-    <div class="container_gains">
-        <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 50px;color: #000000;">{{ auditEntete[0]["AE_TOTAL_EUR"] | round | number_format(0, ',', ' ') }}
+{% if auditEntete[0]["AE_AN_EUR"] < 0 %}
+    <div class="container_montant_analyse">
+        <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 50px;color: #000000;text-align: center;">{{ auditDetail["AD_PRIX_ACTU"] | round | number_format(0, ',', ' ') }}
             €</p>
-        <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #000000;">Gains</p>
-        <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #7CB33C;text-align: center;">{{ auditEntete[0]["AE_TOTAL_PCT"] | round | number_format(0, ',', ' ') }}
-            %</p>
+        <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #000000;text-align: center;">
+            Montant analysé</p>
     </div>
-    {% if auditEntete[0]["AE_AN_EUR"] > 0 %}
+
+    <div class="container_montant_gain">
+        <div class="container_gains">
+            <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 50px;color: #000000;">{{ auditEntete[0]["AE_TOTAL_EUR"] | round | number_format(0, ',', ' ') }}
+                €</p>
+            <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #000000;">Gains</p>
+            <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #7CB33C;text-align: center;">{{ auditEntete[0]["AE_TOTAL_PCT"] | round | number_format(0, ',', ' ') }}
+                %</p>
+        </div>
         <div class="container_gains_annuel">
             <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 50px;color: #000000;">
                 {% if auditEntete[0]["AE_AN_EUR"]  > 0 %}
@@ -362,8 +362,32 @@
             <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #000000;">Gains annuel</p>
             <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #7CB33C;text-align: center;">{{ auditEntete[0]["AE_AN_PCT"] }}%</p>
         </div>
-    {% endif %}
-</div>
+    </div>
+
+
+    {% else %}
+
+
+
+        <div class="container_montant_gain">
+            <div class="container_gains">
+                <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 50px;color: #000000;text-align: center;">{{ auditDetail["AD_PRIX_ACTU"] | round | number_format(0, ',', ' ') }}
+                    €</p>
+                <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #000000;text-align: center;">
+                    Montant analysé</p>
+            </div>
+            <div class="container_gains_annuel">
+                <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 50px;color: #000000;">{{ auditEntete[0]["AE_TOTAL_EUR"] | round | number_format(0, ',', ' ') }}
+                    €</p>
+                <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #000000;">Gains</p>
+                <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #7CB33C;text-align: center;">{{ auditEntete[0]["AE_TOTAL_PCT"] | round | number_format(0, ',', ' ') }}
+                    %</p>
+            </div>
+        </div>
+
+
+{% endif %}
+
 
 
 <div class="space_between"></div>
