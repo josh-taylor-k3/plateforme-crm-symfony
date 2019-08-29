@@ -35,8 +35,7 @@ class AppTicketsController extends Controller
 
 
     /**
-     * @Route("/user/login", name="user_login")
-     * @Method("POST")
+     * @Route("/user/login", name="user_login", methods={"POST"})
      */
     public function user_login(Request $request, Connection $connection, HelperService $helper, LoginHelperService $loginHelper)
     {
@@ -122,8 +121,7 @@ class AppTicketsController extends Controller
 
 
     /**
-     * @Route("/client/details/{token}", name="client_details")
-     * @Method("GET")
+     * @Route("/client/details/{token}", name="client_details", methods={"GET"})
      */
     public function client_details(Request $request, Connection $connection, HelperService $helper, $token)
     {
@@ -170,8 +168,7 @@ class AppTicketsController extends Controller
 
 
     /**
-     * @Route("/fourn/details/{token}", name="fourn_details")
-     * @Method("GET")
+     * @Route("/fourn/details/{token}", name="fourn_details", methods={"GET"})
      */
     public function fourn_details(Request $request, Connection $connection, HelperService $helper, $token)
     {
@@ -219,8 +216,7 @@ class AppTicketsController extends Controller
 
 
     /**
-     * @Route("/client/message/open/{token}", name="client_message_open")
-     * @Method("GET")
+     * @Route("/client/message/open/{token}", name="client_message_open", methods={"GET"})
      */
     public function clientMessageOpen(Request $request, Connection $connection, HelperService $helper, $token)
     {
@@ -610,8 +606,7 @@ class AppTicketsController extends Controller
 
 
     /**
-     * @Route("/fourn/message/open/{token}", name="fourn_message_open")
-     * @Method("GET")
+     * @Route("/fourn/message/open/{token}", name="fourn_message_open", methods={"GET"})
      */
     public function fournMessageOpen(Request $request, Connection $connection, HelperService $helper, $token)
     {
@@ -685,7 +680,6 @@ class AppTicketsController extends Controller
 
     /**
      * @Route("/client/message/new", name="client_message_new")
-     * @Method("POST")
      */
     public function newClientMessage(Request $request, Connection $connection, HelperService $helper)
     {

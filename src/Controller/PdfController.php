@@ -77,13 +77,17 @@ class PdfController extends AbstractController
         $client = $conn->fetchAll()[0];
 
 
-        // Récupération de l'utilisateur
+       if($auditEntete[0]["CC_ID"] !== 0){
+           // Récupération de l'utilisateur
 
-        $sqlClient = "SELECT * FROM CENTRALE_ACHAT.dbo.CLIENTS_USERS WHERE CC_ID = :cc_id";
-        $conn = $connection->prepare($sqlClient);
-        $conn->bindValue('cc_id', $auditEntete[0]["CC_ID"]);
-        $conn->execute();
-        $users = $conn->fetchAll()[0];
+           $sqlClient = "SELECT * FROM CENTRALE_ACHAT.dbo.CLIENTS_USERS WHERE CC_ID = :cc_id";
+           $conn = $connection->prepare($sqlClient);
+           $conn->bindValue('cc_id', $auditEntete[0]["CC_ID"]);
+           $conn->execute();
+           $users = $conn->fetchAll()[0];
+       }else {
+           $users = "";
+       }
 
         //Récupération liste catégories
 

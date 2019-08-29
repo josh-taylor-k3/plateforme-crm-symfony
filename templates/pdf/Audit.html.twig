@@ -293,6 +293,13 @@
         background-color: #E5C6AB;
     }
 
+    table.print-friendly tr td, table.print-friendly tr th {
+        page-break-inside: avoid !important;
+    }
+
+
+
+
 
 </style>
 <body>
@@ -318,11 +325,15 @@
 </div>
 
 
-<div class="container_message_eco">
-    <p style="font-family: 'Helvetica';">En adhérant à Achat Centrale, le groupement vous permettrait de réaliser <span
-                style="font-weight: 900;font-size: 30px;font-family: 'Helvetica';">{{ auditEntete[0]["AE_AN_EUR"] | round | number_format(0, ',', ' ') }} €</span> d’économies par an.
-    </p>
-</div>
+{% if auditEntete[0]["AE_AN_EUR"] > 0 %}
+    <div class="container_message_eco">
+        <p style="font-family: 'Helvetica';">En adhérant à Achat Centrale, le groupement vous permettrait de réaliser <span
+                    style="font-weight: 900;font-size: 30px;font-family: 'Helvetica';">{{ auditEntete[0]["AE_AN_EUR"] | round | number_format(0, ',', ' ') }} €</span> d’économies par an.
+        </p>
+    </div>
+{% else %}
+    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+{% endif %}
 
 <div class="container_montant_analyse">
     <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 50px;color: #000000;text-align: center;">{{ auditDetail["AD_PRIX_ACTU"] | round | number_format(0, ',', ' ') }}
@@ -339,17 +350,19 @@
         <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #7CB33C;text-align: center;">{{ auditEntete[0]["AE_TOTAL_PCT"] | round | number_format(0, ',', ' ') }}
             %</p>
     </div>
-    <div class="container_gains_annuel">
-        <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 50px;color: #000000;">
-            {% if auditEntete[0]["AE_AN_EUR"]  > 0 %}
-                {{ auditEntete[0]["AE_AN_EUR"] | round | number_format(0, ',', ' ') }} €
-            {% else %}
-                {{ auditEntete[0]["AE_AN_PCT"] }} %
-            {% endif %}
-        </p>
-        <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #000000;">Gains annuel</p>
-        <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #7CB33C;text-align: center;">{{ auditEntete[0]["AE_AN_PCT"] }}%</p>
-    </div>
+    {% if auditEntete[0]["AE_AN_EUR"] > 0 %}
+        <div class="container_gains_annuel">
+            <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 50px;color: #000000;">
+                {% if auditEntete[0]["AE_AN_EUR"]  > 0 %}
+                    {{ auditEntete[0]["AE_AN_EUR"] | round | number_format(0, ',', ' ') }} €
+                {% else %}
+                    {{ auditEntete[0]["AE_AN_PCT"] }} %
+                {% endif %}
+            </p>
+            <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #000000;">Gains annuel</p>
+            <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 20px;color: #7CB33C;text-align: center;">{{ auditEntete[0]["AE_AN_PCT"] }}%</p>
+        </div>
+    {% endif %}
 </div>
 
 
@@ -385,7 +398,7 @@
         <p style="font-family: 'Helvetica';font-family: Helvetica;font-size: 30px;color: #4A4A4A;margin-top: 50px;font-weight: 200 !important;">Détail de l'audit</p>
     </div>
     <div class="container_table_detail">
-        <table style="width: 100%;" class="tg">
+        <table style="width: 100%;" class="tg print-friendly">
             <tr>
                 <th class="tg-0pky" style="text-align: center" >Produit</th>
                 <th class="tg-0pky" style="text-align: center;width: 15%;" >Réf</th>
@@ -395,6 +408,7 @@
                 <th class="tg-0lax" style="text-align: center" >Prix Centrale</th>
                 <th class="tg-0lax" style="text-align: center" >Économies</th>
             </tr>
+
             {% for d in detail_audit %}
                 <tr>
                     <td class="tg-c3ow AuditFond{{ loop.index }}" colspan="7">{{ d["categorie"] | encodingFrom  }}</td>
